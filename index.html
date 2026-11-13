@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), bahan kursus, AI Tutor dan Games.">
+<title>C Programming Learning Lab · DEC20313</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+  // Tema disimpan pada pelayar pelajar (Light / Dark). Jika tiada pilihan, ikut tetapan peranti.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("clab-tema"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<style>
+  /* ================= WARNA (Light) ================= */
+  :root {
+    --latar: #F4F6FC;
+    --permukaan: #FFFFFF;
+    --teks: #1B1F3B;
+    --teks-lembut: #4A5070;
+    --garis: #E3E6F2;
+    --bayang: rgba(27, 31, 59, .08);
+    --fokus: #5B4BDB;
+    --hero-1: #3A2CC9; --hero-2: #7B3FE4; --hero-3: #E2508C;
+    --kuning: #FFD54F; --kuning-teks: #2B2100;
+    --nota-latar: #FFF6DB; --nota-garis: #F5C84C; --nota-teks: #5A4300;
+    /* warna kad (latar, garis, ikon, teks ikon) */
+    --k1: #E8F8EE; --k1g: #BFE8CF; --k1i: #187A43;   /* Kehadiran */
+    --k2: #EAF2FF; --k2g: #C6DBFB; --k2i: #2557B8;   /* Rayuan */
+    --k3: #FFF0E8; --k3g: #F8D2BF; --k3i: #B5461A;   /* Hantar PW */
+    --k4: #F1ECFF; --k4g: #D9CCFB; --k4i: #5631C2;   /* Learn C */
+    --k5: #E6F7F8; --k5g: #BDE6E9; --k5i: #0B6C78;   /* Bahan */
+    --k6: #FDEBF6; --k6g: #F5C8E3; --k6i: #A0276E;   /* AI Tutor */
+    --k7: #FFF7DD; --k7g: #F3DE95; --k7i: #855A00;   /* Games */
+    color-scheme: light;
+  }
+  /* ================= WARNA (Dark) ================= */
+  :root[data-theme="dark"] {
+    --latar: #0F1222;
+    --permukaan: #181C33;
+    --teks: #EEF0FF;
+    --teks-lembut: #B6BBD9;
+    --garis: #2B3152;
+    --bayang: rgba(0, 0, 0, .35);
+    --fokus: #A99CFF;
+    --hero-1: #2A1F8F; --hero-2: #5A2BB0; --hero-3: #A83270;
+    --nota-latar: #2C2614; --nota-garis: #7A6320; --nota-teks: #FFE08A;
+    --k1: #13291E; --k1g: #22513A; --k1i: #5FD992;
+    --k2: #142339; --k2g: #274670; --k2i: #7FB0FF;
+    --k3: #2E1B13; --k3g: #5C3422; --k3i: #FF9C6E;
+    --k4: #211A3D; --k4g: #3F3375; --k4i: #B9A3FF;
+    --k5: #112A2D; --k5g: #22545A; --k5i: #5ED6E2;
+    --k6: #2D1726; --k6g: #5A2B4B; --k6i: #F58AC8;
+    --k7: #2C2611; --k7g: #5C4D1E; --k7i: #FFD15C;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 16px; line-height: 1.6;
+    background: var(--latar); color: var(--teks);
+    transition: background .25s, color .25s;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1140px, 100% - 32px); margin-inline: auto; }
+  code, .mono { font-family: "JetBrains Mono", Consolas, monospace; }
+
+  /* ================= HEADER ================= */
+  header.atas { background: var(--permukaan); border-bottom: 1px solid var(--garis); position: sticky; top: 0; z-index: 10; }
+  header.atas .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; }
+  .jenama { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 17px;
+          background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  .jenama b { display: block; font-size: 16px; line-height: 1.2; }
+  .jenama small { display: block; font-size: 12.5px; color: var(--teks-lembut); font-weight: 600; }
+  .tema { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--latar); border: 1px solid var(--garis); }
+  .tema button { border: 0; background: transparent; color: var(--teks-lembut); font: 700 14px "Plus Jakarta Sans", sans-serif;
+                 padding: 7px 14px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .tema button[aria-pressed="true"] { background: var(--permukaan); color: var(--teks); box-shadow: 0 2px 8px var(--bayang); }
+
+  /* ================= HERO ================= */
+  main { padding: 24px 0 40px; }
+  .hero { position: relative; overflow: hidden; border-radius: 24px; color: #fff; padding: 40px;
+          background: linear-gradient(130deg, var(--hero-1) 0%, var(--hero-2) 55%, var(--hero-3) 100%);
+          display: grid; grid-template-columns: 1.2fr .8fr; gap: 24px; align-items: center; }
+  .hero::before { content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%; right: -120px; top: -140px; background: rgba(255,255,255,.08); }
+  .hero::after { content: ""; position: absolute; width: 220px; height: 220px; border-radius: 50%; left: 38%; bottom: -150px; background: rgba(255,213,79,.18); }
+  .hero > * { position: relative; z-index: 1; }
+  .label { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 5px 14px; font-size: 13.5px; font-weight: 600; }
+  .hero h1 { font-size: clamp(30px, 4.6vw, 46px); line-height: 1.15; font-weight: 800; margin: 14px 0 10px; }
+  .hero h1 span { color: var(--kuning); }
+  .hero p.desc { font-size: 17px; max-width: 540px; color: rgba(255,255,255,.92); }
+  .butang { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 16px;
+         padding: 14px 22px; border-radius: 14px; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-utama { background: var(--kuning); color: var(--kuning-teks); box-shadow: 0 8px 20px rgba(0,0,0,.22); }
+  .btn-putih { background: #fff; color: #2A1F8F; box-shadow: 0 8px 20px rgba(0,0,0,.18); }
+  .hero .kecil { margin-top: 14px; font-size: 14.5px; color: rgba(255,255,255,.88); }
+  .hero .kecil a { color: var(--kuning); font-weight: 700; }
+  /* ilustrasi kod */
+  .kod-art { background: #12102A; border-radius: 16px; border: 1px solid rgba(255,255,255,.18); box-shadow: 0 18px 40px rgba(0,0,0,.35);
+             transform: rotate(-2deg); max-width: 380px; margin-left: auto; width: 100%; }
+  .kod-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.12); font: 600 13px "JetBrains Mono", monospace; color: #CFCBF2; }
+  .kod-bar i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .kod-bar i:nth-child(1) { background: #FF6B8B; } .kod-bar i:nth-child(2) { background: #FFD54F; } .kod-bar i:nth-child(3) { background: #5FD992; }
+  .kod-art pre { padding: 16px 18px 20px; font: 500 14.5px/1.7 "JetBrains Mono", Consolas, monospace; color: #F2F0FF; white-space: pre; overflow-x: auto; }
+  .kw { color: #C8A6FF; } .st { color: #FFD54F; } .fn { color: #7FD8FF; } .cm { color: #8E8AB3; }
+  .output { margin: 0 18px 18px; background: #000; border-radius: 8px; padding: 8px 12px; font: 600 14px "JetBrains Mono", monospace; color: #7CF0A8; }
+
+  /* ================= SEKSYEN ================= */
+  section.blok { margin-top: 36px; }
+  .tajuk-seksyen { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; }
+  h2 { font-size: 24px; font-weight: 800; line-height: 1.25; }
+  .tajuk-seksyen p { color: var(--teks-lembut); font-size: 15px; }
+  .kumpulan { font-size: 14px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--teks-lembut); margin: 20px 0 10px; }
+
+  /* ================= KAD ================= */
+  .grid { display: grid; gap: 14px; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .kad { --bg: var(--k1); --gr: var(--k1g); --ic: var(--k1i);
+         position: relative; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--teks);
+         background: var(--bg); border: 1.5px solid var(--gr); border-radius: 18px; padding: 20px 18px 18px;
+         transition: transform .15s, box-shadow .15s; min-height: 168px; }
+  .kad:hover { transform: translateY(-4px); box-shadow: 0 12px 26px var(--bayang); }
+  .kad .ikon { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; font-size: 26px; background: var(--permukaan); border: 1.5px solid var(--gr); }
+  .kad h3 { font-size: 18px; font-weight: 800; margin-top: 8px; line-height: 1.3; }
+  .kad p { font-size: 15px; color: var(--teks-lembut); line-height: 1.5; }
+  .kad .tag { position: absolute; top: 16px; right: 16px; font-size: 12px; font-weight: 800; letter-spacing: .04em; color: var(--ic);
+              background: var(--permukaan); border: 1.5px solid var(--gr); border-radius: 999px; padding: 3px 10px; }
+  .kad .pergi { margin-top: auto; padding-top: 8px; font-size: 14.5px; font-weight: 800; color: var(--ic); }
+  .c1 { --bg: var(--k1); --gr: var(--k1g); --ic: var(--k1i); }
+  .c2 { --bg: var(--k2); --gr: var(--k2g); --ic: var(--k2i); }
+  .c3 { --bg: var(--k3); --gr: var(--k3g); --ic: var(--k3i); }
+  .c4 { --bg: var(--k4); --gr: var(--k4g); --ic: var(--k4i); }
+  .c5 { --bg: var(--k5); --gr: var(--k5g); --ic: var(--k5i); }
+  .c6 { --bg: var(--k6); --gr: var(--k6g); --ic: var(--k6i); }
+  .c7 { --bg: var(--k7); --gr: var(--k7g); --ic: var(--k7i); }
+
+  /* ================= LANGKAH PW ================= */
+  .langkah { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .langkah li { background: var(--permukaan); border: 1px solid var(--garis); border-radius: 16px; padding: 18px; }
+  .langkah .no { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; color: #fff;
+                 background: linear-gradient(135deg, var(--hero-1), var(--hero-2)); }
+  .langkah h3 { font-size: 17px; margin: 10px 0 4px; }
+  .langkah p { font-size: 15px; color: var(--teks-lembut); }
+  .nota { margin-top: 14px; background: var(--nota-latar); border: 1.5px solid var(--nota-garis); border-radius: 16px; padding: 16px 18px; color: var(--nota-teks); font-size: 15.5px; }
+  .nota h3 { font-size: 16.5px; margin-bottom: 6px; }
+  .nota ul { margin-left: 20px; } .nota li { margin: 4px 0; }
+
+  footer { border-top: 1px solid var(--garis); padding: 22px 0; color: var(--teks-lembut); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; }
+
+  /* ================= RESPONSIF ================= */
+  @media (max-width: 920px) {
+    .hero { grid-template-columns: 1fr; padding: 30px; }
+    .kod-art { margin: 6px auto 0; transform: none; }
+    .g4, .langkah { grid-template-columns: repeat(2, 1fr); }
+    .g3 { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .g3 { grid-template-columns: 1fr; }
+    .hero { padding: 24px 20px; border-radius: 20px; }
+    .hero p.desc { font-size: 16px; }
+    .btn { width: 100%; justify-content: center; }
+    .kod-art { display: none; }
+    .jenama small { display: none; }
+    .tema button span.teks { display: none; }
+  }
+  @media (max-width: 440px) {
+    .langkah { grid-template-columns: 1fr; }
+    .g4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .g4 .kad { padding: 16px 12px 14px; min-height: 0; }
+    .g4 .kad .tag { top: 12px; right: 10px; font-size: 11px; padding: 2px 8px; }
+    .g4 .kad h3 { font-size: 16px; }
+    .g4 .kad p { font-size: 13.5px; }
+    .g3 .kad { min-height: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; } .kad:hover, .btn:hover { transform: none; }
+  }
+
+  /* ================= CHATBOT PEMBANTU PORTAL ================= */
+  .kanan { display: flex; align-items: center; gap: 10px; }
+  .bot-btn { display: inline-flex; align-items: center; gap: 7px; border: 0; cursor: pointer; padding: 9px 15px; border-radius: 999px;
+             color: #fff; font: 800 14px "Plus Jakarta Sans", sans-serif; white-space: nowrap;
+             background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); box-shadow: 0 4px 14px rgba(58,44,201,.30); }
+  .bot-btn .bulat { font-size: 17px; line-height: 1; }
+  .bot-btn[aria-expanded="true"] { outline: 3px solid var(--fokus); outline-offset: 2px; }
+  .bot { position: fixed; right: max(16px, calc((100% - 1140px) / 2)); top: 80px; z-index: 2147483000; width: 380px; max-width: calc(100vw - 24px); height: 560px; max-height: calc(100vh - 100px);
+         display: none; flex-direction: column; overflow: hidden; border-radius: 20px; background: var(--permukaan); border: 1px solid var(--garis);
+         box-shadow: 0 20px 50px rgba(0,0,0,.28); }
+  .bot.buka { display: flex; }
+  .bot-kepala { display: flex; align-items: center; gap: 10px; padding: 14px 16px; color: #fff;
+                background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  .bot-kepala .av { width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,.2); display: grid; place-items: center; font-size: 20px; }
+  .bot-kepala b { display: block; font-size: 15.5px; } .bot-kepala small { font-size: 12.5px; opacity: .9; }
+  .bot-kepala button { margin-left: auto; border: 0; background: rgba(255,255,255,.18); color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+  .bot-isi { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: var(--latar); }
+  .msj { max-width: 88%; padding: 10px 13px; border-radius: 16px; font-size: 14.5px; line-height: 1.5; }
+  .msj.bot-m { align-self: flex-start; background: var(--permukaan); border: 1px solid var(--garis); border-bottom-left-radius: 4px; }
+  .msj.saya { align-self: flex-end; background: var(--hero-2); color: #fff; border-bottom-right-radius: 4px; }
+  .msj ol, .msj ul { margin: 6px 0 2px 18px; } .msj li { margin: 2px 0; }
+  .msj .aksi { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .msj .aksi a { text-decoration: none; font-weight: 800; font-size: 13.5px; padding: 7px 12px; border-radius: 999px; background: var(--kuning); color: var(--kuning-teks); }
+  .cip { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-top: 1px solid var(--garis); background: var(--permukaan); max-height: 118px; overflow-y: auto; }
+  .cip button { border: 1.5px solid var(--k4g); background: var(--k4); color: var(--k4i); font: 700 13px "Plus Jakarta Sans", sans-serif; padding: 6px 11px; border-radius: 999px; cursor: pointer; }
+  .bot-taip { display: flex; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--garis); background: var(--permukaan); }
+  .bot-taip input { flex: 1; min-width: 0; padding: 10px 12px; border-radius: 12px; border: 1.5px solid var(--garis); background: var(--latar); color: var(--teks); font: 500 14.5px "Plus Jakarta Sans", sans-serif; }
+  .bot-taip button { border: 0; border-radius: 12px; padding: 0 14px; font-weight: 800; cursor: pointer; background: var(--hero-2); color: #fff; }
+  .bot-nota { font-size: 11.5px; color: var(--teks-lembut); text-align: center; padding: 0 12px 8px; background: var(--permukaan); }
+  @media (max-width: 640px) {
+    .bot { right: 0; left: 0; top: 0; bottom: 0; width: 100vw; max-width: 100vw; height: 100dvh; max-height: 100dvh; border-radius: 0; }
+    .bot-btn { padding: 9px 11px; }
+    .bot-btn .teks { display: none; }
+    .kanan { gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="atas">
+  <div class="wrap">
+    <a class="jenama" href="./" aria-label="C Programming Learning Lab, laman utama">
+      <span class="logo mono" aria-hidden="true">C</span>
+      <span><b>C Programming Learning Lab</b><small>DEC20313 · Politeknik Kota Bharu</small></span>
+    </a>
+    <div class="kanan">
+    <button class="bot-btn" id="bot-btn" type="button" aria-expanded="false" aria-controls="bot">
+      <span class="bulat" aria-hidden="true">💬</span><span class="teks">Ada soalan?</span>
+    </button>
+    <div class="tema" role="group" aria-label="Pilih tema paparan">
+      <button type="button" data-tema="light" aria-pressed="false">☀️ <span class="teks">Light</span></button>
+      <button type="button" data-tema="dark" aria-pressed="false">🌙 <span class="teks">Dark</span></button>
+    </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero" aria-labelledby="tajuk">
+    <div>
+      <span class="label">DEC20313 · Jabatan Kejuruteraan Elektrik</span>
+      <h1 id="tajuk">C Programming <span>Learning Lab</span></h1>
+      <p class="desc">Tanda kehadiran, hantar jawapan Practical Work (PW), dan belajar C dengan Modul 5P, AI Tutor serta Games — semuanya di sini.</p>
+      <div class="butang">
+        <a class="btn btn-putih" href="https://calm-genie-10a241.netlify.app/" target="_blank" rel="noopener">✅ Tanda Kehadiran</a>
+        <a class="btn btn-utama" href="https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec" target="_blank" rel="noopener">📤 Hantar Practical Work</a>
+      </div>
+      <p class="kecil">Tidak hadir atau terlupa tanda kehadiran?
+        <a href="https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec" target="_blank" rel="noopener">Hantar rayuan kehadiran →</a></p>
+    </div>
+    <div class="kod-art" aria-hidden="true">
+      <div class="kod-bar"><i></i><i></i><i></i>&nbsp; hello.c</div>
+<pre><span class="kw">#include</span> <span class="st">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    <span class="fn">printf</span>(<span class="st">"Hello, PKB!\n"</span>);
+    <span class="kw">return</span> 0;
+}</pre>
+      <div class="output">&gt; Hello, PKB!</div>
+    </div>
+  </section>
+
+  <!-- ================= AKSES ================= -->
+  <section class="blok" aria-labelledby="akses">
+    <div class="tajuk-seksyen">
+      <h2 id="akses">🚀 Akses Learning Lab</h2>
+      <p>Semua pautan dibuka dalam tab baharu.</p>
+    </div>
+
+    <p class="kumpulan">📋 Urusan kelas</p>
+    <div class="grid g3">
+      <a class="kad c1" href="https://calm-genie-10a241.netlify.app/" target="_blank" rel="noopener">
+        <span class="tag">AKTIF</span><span class="ikon" aria-hidden="true">✅</span>
+        <h3>Kehadiran</h3><p>Tanda kehadiran untuk setiap kelas dan amali.</p><span class="pergi">Buka →</span></a>
+      <a class="kad c2" href="https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec" target="_blank" rel="noopener">
+        <span class="tag">AKTIF</span><span class="ikon" aria-hidden="true">📨</span>
+        <h3>Rayuan Kehadiran</h3><p>Tidak hadir (MC / urusan rasmi) atau terlupa tanda kehadiran.</p><span class="pergi">Buka →</span></a>
+      <a class="kad c3" href="https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec" target="_blank" rel="noopener">
+        <span class="tag">AKTIF</span><span class="ikon" aria-hidden="true">📤</span>
+        <h3>Hantar PW</h3><p>Hantar jawapan, semak status dan cetak Lab Report.</p><span class="pergi">Buka →</span></a>
+    </div>
+
+    <p class="kumpulan">🧠 Belajar &amp; berlatih</p>
+    <div class="grid g4">
+      <a class="kad c4" href="https://golden-shortbread-13093b.netlify.app/" target="_blank" rel="noopener">
+        <span class="tag">5P</span><span class="ikon" aria-hidden="true">💻</span>
+        <h3>Learn C</h3><p>Topik 1–7: faham, fikir, jangka, surih kod dan terangkan.</p><span class="pergi">Mula belajar →</span></a>
+      <a class="kad c5" href="https://padlet.com/fazliniayu/c-programming-hq1aqds8atdjir2a" target="_blank" rel="noopener">
+        <span class="tag">NOTA</span><span class="ikon" aria-hidden="true">📚</span>
+        <h3>Bahan Kursus</h3><p>Nota, slaid, video dan rujukan di Padlet.</p><span class="pergi">Buka →</span></a>
+      <a class="kad c6" href="https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20" target="_blank" rel="noopener">
+        <span class="tag">AI</span><span class="ikon" aria-hidden="true">🤖</span>
+        <h3>AI Tutor</h3><p>Tanya dalam BM atau English. Perlu log masuk akaun Google.</p><span class="pergi">Tanya →</span></a>
+      <a class="kad c7" href="https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec" target="_blank" rel="noopener">
+        <span class="tag">BAHARU</span><span class="ikon" aria-hidden="true">🎮</span>
+        <h3>Games</h3><p>Uji kefahaman C Programming sambil bermain.</p><span class="pergi">Main →</span></a>
+    </div>
+  </section>
+
+  <!-- ================= CARA HANTAR PW ================= -->
+  <section class="blok" aria-labelledby="cara">
+    <div class="tajuk-seksyen"><h2 id="cara">🧭 Cara menghantar jawapan PW</h2></div>
+    <ol class="langkah">
+      <li><span class="no">1</span><h3>Log masuk</h3><p>Masukkan No. Pendaftaran dan PIN 4 digit yang diberi oleh pensyarah.</p></li>
+      <li><span class="no">2</span><h3>Pilih PW</h3><p>Pilih Practical Work (PW1 – PW5) yang hendak dihantar.</p></li>
+      <li><span class="no">3</span><h3>Upload screenshot</h3><p>Klik <b>Upload Jawapan</b> bagi setiap soalan dan pilih screenshot jawapan anda.</p></li>
+      <li><span class="no">4</span><h3>Semak status</h3><p>Soalan bertukar hijau ✓ apabila berjaya. Cetak Lab Report bila semua lengkap.</p></li>
+    </ol>
+    <div class="nota" role="note">
+      <h3>⚠️ Penting</h3>
+      <ul>
+        <li>Tersalah hantar? Klik <b>🗑 Padam &amp; hantar semula</b>. Masa hantar baharu akan direkod.</li>
+        <li><b>Lupa PIN?</b> Hubungi pensyarah. Jangan kongsi PIN anda dengan rakan.</li>
+        <li>Masuk sistem <b>hanya melalui laman ini</b>. Jangan masukkan PIN di pautan lain.</li>
+        <li>Markah dikira berdasarkan masa hantar — hantar pada hari amali kelas anda.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu</span>
+    <span>Jabatan Kejuruteraan Elektrik · Politeknik Kota Bharu</span>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var butang = document.querySelectorAll(".tema button");
+    function pasang(t) {
+      document.documentElement.setAttribute("data-theme", t);
+      butang.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-tema") === t)); });
+    }
+    butang.forEach(function (b) {
+      b.addEventListener("click", function () {
+        var t = b.getAttribute("data-tema");
+        try { localStorage.setItem("clab-tema", t); } catch (e) {}
+        pasang(t);
+      });
+    });
+    pasang(document.documentElement.getAttribute("data-theme") || "light");
+  })();
+</script>
+<!-- ================= CHATBOT PEMBANTU PORTAL (tanpa AI) ================= -->
+<section class="bot" id="bot" role="dialog" aria-label="Pembantu Learning Lab">
+  <div class="bot-kepala">
+    <span class="av" aria-hidden="true">🤖</span>
+    <span><b>Pembantu Learning Lab</b><small>Jawapan pantas tentang portal</small></span>
+    <button type="button" id="bot-tutup" aria-label="Tutup pembantu">✕</button>
+  </div>
+  <div class="bot-isi" id="bot-isi" aria-live="polite"></div>
+  <div class="cip" id="bot-cip"></div>
+  <form class="bot-taip" id="bot-borang" autocomplete="off">
+    <input id="bot-input" type="text" placeholder="Taip soalan… cth: lupa PIN" aria-label="Taip soalan anda" maxlength="200">
+    <button type="submit" aria-label="Hantar">➤</button>
+  </form>
+  <p class="bot-nota">Pembantu automatik. Untuk soalan kod C, guna AI Tutor atau Learn C.</p>
+</section>
+
+<script>
+/* ================================================================
+   PEMBANTU LEARNING LAB — chatbot soalan lazim (tiada AI, tiada data dihantar)
+   Untuk tambah/ubah jawapan: edit senarai JAWAPAN di bawah.
+   ================================================================ */
+(function () {
+  var URL = {
+    hadir:  "https://calm-genie-10a241.netlify.app/",
+    rayuan: "https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec",
+    pw:     "https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec",
+    learnc: "https://golden-shortbread-13093b.netlify.app/",
+    padlet: "https://padlet.com/fazliniayu/c-programming-hq1aqds8atdjir2a",
+    tutor:  "https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20",
+    games:  "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec"
+  };
+
+  // id, label butang cepat, kata kunci, jawapan (HTML), pautan [label, url]
+  var JAWAPAN = [
+    { id: "pw", cip: "📤 Cara hantar PW",
+      kk: ["hantar pw", "hantar jawapan", "upload", "muat naik", "practical work", "pw", "jawapan", "screenshot", "submit"],
+      j: "Cara hantar jawapan PW:<ol><li>Buka <b>Hantar PW</b>.</li><li>Log masuk dengan <b>No. Pendaftaran</b> dan <b>PIN 4 digit</b>.</li><li>Pilih PW (PW1 – PW5).</li><li>Klik <b>Upload Jawapan</b> bagi setiap soalan dan pilih screenshot.</li><li>Soalan bertukar <b>hijau ✓</b> apabila berjaya.</li></ol>",
+      a: [["📤 Buka Hantar PW", "pw"]] },
+    { id: "pin", cip: "🔑 Lupa PIN",
+      kk: ["lupa pin", "pin", "kata laluan", "password", "tak ingat pin", "pin salah"],
+      j: "PIN ialah <b>4 digit</b> yang diberi oleh pensyarah.<ul><li><b>Lupa PIN?</b> Hubungi pensyarah (contohnya melalui WhatsApp). Pensyarah akan beri PIN anda semula.</li><li>Jangan kongsi PIN dengan rakan.</li></ul>" },
+    { id: "kunci", cip: "⛔ Akaun dikunci",
+      kk: ["dikunci", "kunci", "terkunci", "locked", "banyak kali", "cubaan", "15 minit"],
+      j: "Selepas <b>5 kali PIN salah</b>, log masuk dikunci <b>15 minit</b> untuk keselamatan. Tunggu 15 minit dan cuba semula dengan PIN yang betul. Jika masih gagal, hubungi pensyarah." },
+    { id: "rayuan", cip: "📨 Tak hadir / lupa tanda",
+      kk: ["tak hadir", "tidak hadir", "ponteng", "mc", "sakit", "cuti", "lupa tanda", "lupa isi", "rayuan", "kecemasan", "urusan rasmi", "absent"],
+      j: "Jika anda <b>tidak hadir</b> (MC / urusan rasmi / kecemasan) atau <b>terlupa tanda kehadiran</b>, hantar <b>Rayuan Kehadiran</b>. Sediakan bukti (contohnya surat MC) jika diminta.",
+      a: [["📨 Buka Rayuan Kehadiran", "rayuan"]] },
+    { id: "hadir", cip: "✅ Tanda kehadiran",
+      kk: ["kehadiran", "hadir", "attendance", "tanda hadir", "scan"],
+      j: "Tanda kehadiran melalui pautan <b>Kehadiran</b> semasa kelas atau amali.",
+      a: [["✅ Buka Kehadiran", "hadir"]] },
+    { id: "salah", cip: "🗑 Tersalah upload",
+      kk: ["salah upload", "tersalah", "salah hantar", "padam", "delete", "tukar jawapan", "hantar semula", "ganti"],
+      j: "Dalam <b>Hantar PW</b>, klik <b>🗑 Padam &amp; hantar semula</b> di bawah jawapan itu, kemudian upload jawapan baharu.<ul><li>Masa hantar <b>baharu</b> akan direkod.</li><li>Jika butang Padam tiada, upload mungkin telah ditutup. Hubungi pensyarah.</li></ul>",
+      a: [["📤 Buka Hantar PW", "pw"]] },
+    { id: "cetak", cip: "🖨 Cetak Lab Report",
+      kk: ["cetak", "print", "lab report", "laporan", "pdf"],
+      j: "Selepas <b>semua soalan</b> bagi satu PW bertukar hijau, klik <b>Print Lab Report</b> dalam sistem Hantar PW untuk menjana PDF.",
+      a: [["📤 Buka Hantar PW", "pw"]] },
+    { id: "markah", cip: "📊 Markah PW",
+      kk: ["markah", "mark", "lewat", "late", "masa hantar", "tarikh akhir", "due"],
+      j: "Markah PW dikira berdasarkan <b>masa hantar</b> berbanding rakan sekelas yang paling awal menghantar. Hantar <b>pada hari amali kelas anda</b> untuk markah terbaik. Markah akhir ditentukan oleh pensyarah." },
+    { id: "gagal", cip: "⚠️ Upload gagal",
+      kk: ["gagal", "error", "ralat", "tak boleh", "tidak boleh", "tak jadi", "masalah", "loading", "lambat", "stuck"],
+      j: "Cuba langkah ini:<ol><li>Semak sambungan internet.</li><li>Muat semula halaman (refresh) dan log masuk semula.</li><li>Pastikan fail ialah gambar (JPG/PNG).</li><li>Jika muncul mesej merah, ambil screenshot mesej itu dan hantar kepada pensyarah.</li></ol>" },
+    { id: "belajar", cip: "💻 Belajar kod C",
+      kk: ["belajar", "faham", "loop", "for", "while", "if", "array", "function", "fungsi", "pointer", "kod", "coding", "c programming", "topik", "nota topik", "5p"],
+      j: "Untuk belajar dan memahami kod C:<ul><li><b>Learn C (Modul 5P)</b> — Topik 1–7 dengan Code Tracer langkah demi langkah.</li><li><b>AI Tutor</b> — tanya soalan C dalam BM atau English.</li></ul>",
+      a: [["💻 Learn C", "learnc"], ["🤖 AI Tutor", "tutor"]] },
+    { id: "tutor", cip: "🤖 AI Tutor",
+      kk: ["ai tutor", "tutor", "ai", "notebook", "tanya ai", "chatgpt"],
+      j: "AI Tutor menjawab soalan C Programming berdasarkan nota kursus. Anda perlu <b>log masuk akaun Google</b>. AI boleh tersilap — semak dengan nota atau pensyarah.",
+      a: [["🤖 Buka AI Tutor", "tutor"]] },
+    { id: "nota", cip: "📚 Nota & slaid",
+      kk: ["nota", "slaid", "slide", "bahan", "video", "rujukan", "padlet", "notes"],
+      j: "Nota, slaid, video dan rujukan kursus ada di <b>Bahan Kursus (Padlet)</b>.",
+      a: [["📚 Buka Bahan Kursus", "padlet"]] },
+    { id: "games", cip: "🎮 Games",
+      kk: ["game", "games", "main", "permainan", "kuiz", "quiz"],
+      j: "Uji kefahaman C Programming sambil bermain di <b>Games</b>.",
+      a: [["🎮 Buka Games", "games"]] },
+    { id: "tema", cip: "🌙 Tukar Light/Dark",
+      kk: ["dark", "light", "gelap", "cerah", "tema", "warna", "theme"],
+      j: "Klik butang <b>☀️ Light</b> atau <b>🌙 Dark</b> di bahagian atas kanan laman. Pilihan anda disimpan dalam pelayar ini." },
+    { id: "salam", cip: null,
+      kk: ["hai", "hi", "hello", "helo", "salam", "assalamualaikum", "selamat pagi", "selamat petang", "terima kasih", "thanks"],
+      j: "Hai! 👋 Saya Pembantu Learning Lab. Pilih soalan di bawah atau taip soalan anda." }
+  ];
+
+  var btn = document.getElementById("bot-btn"), bot = document.getElementById("bot"),
+      isi = document.getElementById("bot-isi"), cip = document.getElementById("bot-cip"),
+      borang = document.getElementById("bot-borang"), input = document.getElementById("bot-input");
+  var mula = false;
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function tambah(html, siapa) {
+    var d = document.createElement("div"); d.className = "msj " + (siapa === "saya" ? "saya" : "bot-m"); d.innerHTML = html;
+    isi.appendChild(d); isi.scrollTop = isi.scrollHeight;
+  }
+  function jawab(item) {
+    var html = item.j;
+    if (item.a && item.a.length) {
+      html += '<div class="aksi">' + item.a.map(function (x) { return '<a href="' + URL[x[1]] + '" target="_blank" rel="noopener">' + x[0] + "</a>"; }).join("") + "</div>";
+    }
+    setTimeout(function () { tambah(html, "bot"); }, 250);
+  }
+  function normal(s) { return " " + String(s).toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim() + " "; }
+  function cari(teks) {
+    var t = normal(teks), terbaik = null, skor = 0;
+    JAWAPAN.forEach(function (item) {
+      var s = 0;
+      item.kk.forEach(function (k) { if (t.indexOf(" " + k + " ") > -1) s += k.split(" ").length * 2; else if (k.length > 4 && t.indexOf(k) > -1) s += 1; });
+      if (s > skor) { skor = s; terbaik = item; }
+    });
+    return terbaik;
+  }
+  function soal(teks) {
+    teks = String(teks || "").trim(); if (!teks) return;
+    tambah(esc(teks), "saya");
+    var item = cari(teks);
+    if (item) jawab(item);
+    else setTimeout(function () {
+      tambah("Maaf, saya belum faham soalan itu. 🙏 Cuba pilih salah satu butang di bawah, atau hubungi pensyarah anda. Untuk soalan kod C, cuba <b>AI Tutor</b>." +
+        '<div class="aksi"><a href="' + URL.tutor + '" target="_blank" rel="noopener">🤖 AI Tutor</a></div>', "bot");
+    }, 250);
+  }
+  function binaCip() {
+    cip.innerHTML = "";
+    JAWAPAN.forEach(function (item) {
+      if (!item.cip) return;
+      var b = document.createElement("button"); b.type = "button"; b.textContent = item.cip;
+      b.addEventListener("click", function () { tambah(esc(item.cip), "saya"); jawab(item); });
+      cip.appendChild(b);
+    });
+  }
+  function buka() {
+    bot.classList.add("buka"); btn.setAttribute("aria-expanded", "true");
+    if (!mula) { mula = true; binaCip(); tambah("Hai! 👋 Saya <b>Pembantu Learning Lab</b>. Saya boleh bantu tentang kehadiran, Hantar PW, PIN dan bahan pembelajaran. Pilih soalan di bawah atau taip soalan anda.", "bot"); }
+    setTimeout(function () { input.focus(); }, 50);
+  }
+  function tutup() { bot.classList.remove("buka"); btn.setAttribute("aria-expanded", "false"); btn.focus(); }
+  btn.addEventListener("click", function () { bot.classList.contains("buka") ? tutup() : buka(); });
+  document.getElementById("bot-tutup").addEventListener("click", tutup);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && bot.classList.contains("buka")) tutup(); });
+  borang.addEventListener("submit", function (e) { e.preventDefault(); soal(input.value); input.value = ""; });
+})();
+</script>
+</body>
+</html>
