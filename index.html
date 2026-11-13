@@ -296,7 +296,7 @@
 
     <p class="kumpulan">🧠 Belajar &amp; berlatih</p>
     <div class="grid g4">
-      <a class="kad c4" href="learn-c/" target="_blank" rel="noopener">
+      <a class="kad c4" href="learn-c/">
         <span class="tag">5P</span><span class="ikon" aria-hidden="true">💻</span>
         <h3>Learn C</h3><p>Topik 1–7: faham, fikir, jangka, surih kod dan terangkan.</p><span class="pergi">Mula belajar →</span></a>
       <a class="kad c5" href="https://padlet.com/fazliniayu/c-programming-hq1aqds8atdjir2a" target="_blank" rel="noopener">
@@ -387,6 +387,8 @@
     tutor:  "https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20",
     games:  "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec"
   };
+  // Laman dalam repo ini (GitHub Pages) dibuka di tab yang sama; laman ini ada butang "⌂ Laman Utama"
+  var TAB_SAMA = ["learnc"];
 
   // id, label butang cepat, kata kunci, jawapan (HTML), pautan [label, url]
   var JAWAPAN = [
@@ -459,7 +461,7 @@
   function jawab(item) {
     var html = item.j;
     if (item.a && item.a.length) {
-      html += '<div class="aksi">' + item.a.map(function (x) { return '<a href="' + URL[x[1]] + '" target="_blank" rel="noopener">' + x[0] + "</a>"; }).join("") + "</div>";
+      html += '<div class="aksi">' + item.a.map(function (x) { return '<a href="' + URL[x[1]] + '"' + (TAB_SAMA.indexOf(x[1]) > -1 ? '' : ' target="_blank" rel="noopener"') + '>' + x[0] + "</a>"; }).join("") + "</div>";
     }
     setTimeout(function () { tambah(html, "bot"); }, 250);
   }

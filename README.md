@@ -17,6 +17,11 @@ clab-pkb/
 
 Sistem yang memerlukan Google Sheet kekal di Google Apps Script: Rayuan Kehadiran, Hantar PW (Sistem Lab) dan Games.
 
+## Peraturan pautan
+- Laman dalam repo ini (Learn C, dan Kehadiran selepas dipindah) dibuka di **tab yang sama** dan mesti ada butang **⌂ Laman Utama**.
+- Sistem luar (Apps Script, Padlet, AI Tutor) dibuka di **tab baharu**.
+- Pembantu Learning Lab: senarai `TAB_SAMA` dalam `index.html` menentukan pautan yang dibuka di tab sama.
+
 ## Cara kemas kini
 Ubah fail dalam repo ini (atau minta Claude ubah). GitHub Pages mengemas kini laman secara automatik dalam 1–2 minit. Tiada kredit atau kos.
 
