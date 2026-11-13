@@ -4,13 +4,14 @@ Portal kursus **DEC20313 C Programming**, Jabatan Kejuruteraan Elektrik (JKE), P
 Dihoskan percuma dengan **GitHub Pages**.
 
 **Laman langsung:** https://ayuwafa.github.io/clab-pkb/
+**Learn C:** https://ayuwafa.github.io/clab-pkb/learn-c/
 
 ## Struktur
 
 ```
 clab-pkb/
 ├── index.html      → Laman Utama
-├── learn-c/        → Learn C (Modul 5P)      [akan dipindah dari Netlify]
+├── learn-c/        → Learn C (Modul 5P) + Program & Flowchart Studio
 └── kehadiran/      → Tanda Kehadiran          [akan dipindah dari Netlify]
 ```
 
@@ -20,6 +21,7 @@ Sistem yang memerlukan Google Sheet kekal di Google Apps Script: Rayuan Kehadira
 Ubah fail dalam repo ini (atau minta Claude ubah). GitHub Pages mengemas kini laman secara automatik dalam 1–2 minit. Tiada kredit atau kos.
 
 ## Sejarah
+- **13 Nov 2026:** Learn C (Studio v4, flowchart I/O fixed) dipindah dari Netlify (golden-shortbread-13093b) ke `learn-c/`. Kad Learn C di Laman Utama kini `learn-c/`; butang ⌂ Laman Utama dalam Learn C kini `../`.
 - **13 Nov 2026:** Laman Utama v4.1 dipindah dari Netlify (stately-crumble-3c7799) ke GitHub Pages. Sumber asal: repo `C_Programming_Learning_Lab`.
 
 ---
