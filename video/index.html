@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Video pembelajaran DEC20313 C Programming: Practical Work (PW1–PW5), Topik 1–7 dan tip tambahan.">
+<title>Video Pembelajaran · C Programming Learning Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+  // Tema dikongsi dengan Laman Utama (kunci "clab-tema").
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("clab-tema"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<style>
+  :root {
+    --latar: #F4F6FC; --permukaan: #FFFFFF; --teks: #1B1F3B; --teks-lembut: #4A5070; --garis: #E3E6F2;
+    --bayang: rgba(27, 31, 59, .08); --fokus: #5B4BDB;
+    --hero-1: #3A2CC9; --hero-2: #7B3FE4; --hero-3: #E2508C;
+    --kuning: #FFD54F; --kuning-teks: #2B2100;
+    --pw: #FFF0E8; --pwg: #F8D2BF; --pwi: #B5461A;
+    --tp: #F1ECFF; --tpg: #D9CCFB; --tpi: #5631C2;
+    --tb: #E6F7F8; --tbg: #BDE6E9; --tbi: #0B6C78;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --latar: #0F1222; --permukaan: #181C33; --teks: #EEF0FF; --teks-lembut: #B6BBD9; --garis: #2B3152;
+    --bayang: rgba(0, 0, 0, .35); --fokus: #A99CFF;
+    --hero-1: #2A1F8F; --hero-2: #5A2BB0; --hero-3: #A83270;
+    --pw: #2E1B13; --pwg: #5C3422; --pwi: #FF9C6E;
+    --tp: #211A3D; --tpg: #3F3375; --tpi: #B9A3FF;
+    --tb: #112A2D; --tbg: #22545A; --tbi: #5ED6E2;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.6;
+         background: var(--latar); color: var(--teks); transition: background .25s, color .25s; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1140px, 100% - 32px); margin-inline: auto; }
+
+  /* HEADER */
+  header.atas { background: var(--permukaan); border-bottom: 1px solid var(--garis); position: sticky; top: 0; z-index: 10; }
+  header.atas .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; }
+  .jenama { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #fff; font: 800 17px "JetBrains Mono", monospace;
+          background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  .jenama b { display: block; font-size: 16px; line-height: 1.2; }
+  .jenama small { display: block; font-size: 12.5px; color: var(--teks-lembut); font-weight: 600; }
+  .kanan { display: flex; align-items: center; gap: 10px; }
+  .btn-home { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 800; font-size: 14px; white-space: nowrap;
+              padding: 9px 15px; border-radius: 999px; color: #fff; background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3));
+              box-shadow: 0 4px 14px rgba(58,44,201,.30); }
+  .tema { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--latar); border: 1px solid var(--garis); }
+  .tema button { border: 0; background: transparent; color: var(--teks-lembut); font: 700 14px "Plus Jakarta Sans", sans-serif;
+                 padding: 7px 14px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .tema button[aria-pressed="true"] { background: var(--permukaan); color: var(--teks); box-shadow: 0 2px 8px var(--bayang); }
+
+  /* HERO */
+  main { padding: 24px 0 40px; }
+  .hero { position: relative; overflow: hidden; border-radius: 24px; color: #fff; padding: 32px 36px;
+          background: linear-gradient(130deg, var(--hero-1) 0%, var(--hero-2) 55%, var(--hero-3) 100%); }
+  .hero::before { content: ""; position: absolute; width: 320px; height: 320px; border-radius: 50%; right: -100px; top: -140px; background: rgba(255,255,255,.08); }
+  .hero > * { position: relative; }
+  .label { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 5px 14px; font-size: 13.5px; font-weight: 600; }
+  .hero h1 { font-size: clamp(28px, 4.2vw, 40px); line-height: 1.15; font-weight: 800; margin: 12px 0 8px; }
+  .hero h1 span { color: var(--kuning); }
+  .hero p { font-size: 16.5px; max-width: 620px; color: rgba(255,255,255,.92); }
+  .lompat { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .lompat a { text-decoration: none; font-weight: 800; font-size: 14.5px; padding: 9px 16px; border-radius: 999px; background: rgba(255,255,255,.16); border: 1px solid rgba(255,255,255,.35); }
+  .lompat a:hover { background: rgba(255,255,255,.26); }
+
+  /* SEKSYEN */
+  section.blok { margin-top: 34px; scroll-margin-top: 84px; }
+  .tajuk-seksyen { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; }
+  h2 { font-size: 23px; font-weight: 800; line-height: 1.25; }
+  .tajuk-seksyen p { color: var(--teks-lembut); font-size: 15px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+
+  /* KAD VIDEO */
+  .vid { --bg: var(--tp); --gr: var(--tpg); --ic: var(--tpi);
+         display: flex; flex-direction: column; background: var(--permukaan); border: 1.5px solid var(--gr); border-radius: 18px; overflow: hidden;
+         transition: transform .15s, box-shadow .15s; }
+  .vid:hover { transform: translateY(-3px); box-shadow: 0 12px 26px var(--bayang); }
+  .vid.pw { --bg: var(--pw); --gr: var(--pwg); --ic: var(--pwi); }
+  .vid.tb { --bg: var(--tb); --gr: var(--tbg); --ic: var(--tbi); }
+  .skrin { position: relative; aspect-ratio: 16 / 9; background: #000; }
+  .skrin button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer; background: #000; }
+  .skrin img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .92; transition: opacity .15s; }
+  .skrin button:hover img { opacity: 1; }
+  .main-ikon { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 66px; height: 46px; border-radius: 14px;
+               background: rgba(220, 20, 40, .92); display: grid; place-items: center; box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+  .main-ikon::after { content: ""; border-left: 18px solid #fff; border-top: 11px solid transparent; border-bottom: 11px solid transparent; margin-left: 4px; }
+  .skrin iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .badan { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 4px; flex: 1; background: var(--bg); }
+  .badan .tag { align-self: flex-start; font-size: 12px; font-weight: 800; letter-spacing: .04em; color: var(--ic);
+                background: var(--permukaan); border: 1.5px solid var(--gr); border-radius: 999px; padding: 2px 10px; }
+  .badan h3 { font-size: 17px; font-weight: 800; line-height: 1.3; margin-top: 4px; }
+  .badan p { font-size: 14.5px; color: var(--teks-lembut); }
+  .badan .yt { margin-top: auto; padding-top: 6px; font-size: 14px; font-weight: 800; color: var(--ic); text-decoration: none; }
+  .badan .yt:hover { text-decoration: underline; }
+
+  /* AKAN DATANG */
+  .vid.kosong { border-style: dashed; opacity: .78; }
+  .vid.kosong:hover { transform: none; box-shadow: none; }
+  .vid.kosong .skrin { background: var(--bg); display: grid; place-items: center; text-align: center; color: var(--teks-lembut); font-weight: 700; font-size: 15px; }
+  .vid.kosong .skrin span { display: block; font-size: 34px; margin-bottom: 4px; }
+
+  .nota { margin-top: 30px; background: var(--permukaan); border: 1px solid var(--garis); border-radius: 16px; padding: 14px 18px; color: var(--teks-lembut); font-size: 14.5px; }
+  footer { border-top: 1px solid var(--garis); padding: 22px 0; color: var(--teks-lembut); font-size: 14px; margin-top: 10px; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; }
+
+  @media (max-width: 920px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero { padding: 24px 20px; border-radius: 20px; }
+    .jenama small { display: none; }
+    .tema button span.teks, .btn-home .teks { display: none; }
+    .kanan { gap: 6px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .vid:hover { transform: none; } }
+</style>
+</head>
+<body>
+
+<header class="atas">
+  <div class="wrap">
+    <a class="jenama" href="../" aria-label="C Programming Learning Lab, laman utama">
+      <span class="logo" aria-hidden="true">C</span>
+      <span><b>C Programming Learning Lab</b><small>DEC20313 · Politeknik Kota Bharu</small></span>
+    </a>
+    <div class="kanan">
+      <a class="btn-home" href="../">⌂ <span class="teks">Laman Utama</span></a>
+      <div class="tema" role="group" aria-label="Pilih tema paparan">
+        <button type="button" data-tema="light" aria-pressed="false">☀️ <span class="teks">Light</span></button>
+        <button type="button" data-tema="dark" aria-pressed="false">🌙 <span class="teks">Dark</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero" aria-labelledby="tajuk">
+    <span class="label">DEC20313 · Video YouTube</span>
+    <h1 id="tajuk">Video <span>Pembelajaran</span></h1>
+    <p>Tonton semula demonstrasi Practical Work dan penerangan topik C Programming. Klik video untuk main terus di sini.</p>
+    <nav class="lompat" aria-label="Lompat ke bahagian">
+      <a href="#pw">🧪 Practical Work</a>
+      <a href="#topik">📘 Topik 1–7</a>
+      <a href="#tip">✨ Tip &amp; Alat</a>
+    </nav>
+  </section>
+
+  <section class="blok" id="pw" aria-labelledby="h-pw">
+    <div class="tajuk-seksyen"><h2 id="h-pw">🧪 Practical Work (PW1 – PW5)</h2><p>Tonton sebelum atau selepas amali.</p></div>
+    <div class="grid" data-kumpulan="pw"></div>
+  </section>
+
+  <section class="blok" id="topik" aria-labelledby="h-topik">
+    <div class="tajuk-seksyen"><h2 id="h-topik">📘 Topik 1 – 7</h2><p>Penerangan konsep mengikut topik silibus.</p></div>
+    <div class="grid" data-kumpulan="topik"></div>
+  </section>
+
+  <section class="blok" id="tip" aria-labelledby="h-tip">
+    <div class="tajuk-seksyen"><h2 id="h-tip">✨ Tip &amp; Alat</h2><p>Kemahiran tambahan untuk tugasan.</p></div>
+    <div class="grid" data-kumpulan="tip"></div>
+  </section>
+
+  <p class="nota">💡 Video ditambah dari semasa ke semasa. Kad bertanda <b>Akan datang</b> belum ada video lagi.</p>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu</span>
+    <span>Jabatan Kejuruteraan Elektrik · Politeknik Kota Bharu</span>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   SENARAI VIDEO — untuk tambah video, isi "id" dengan kod YouTube.
+   Kod YouTube = huruf selepas "watch?v=" dalam pautan.
+   Contoh: https://www.youtube.com/watch?v=8BZ57Sb7GnY  →  id: "8BZ57Sb7GnY"
+   id kosong ("") = kad "Akan datang".
+   ================================================================ */
+var VIDEO = [
+  // ---------- Practical Work ----------
+  { k: "pw", tag: "PW1", tajuk: "Practical Work 1", id: "8BZ57Sb7GnY" },
+  { k: "pw", tag: "PW2", tajuk: "Practical Work 2", id: "ZOAvh61WUjg" },
+  { k: "pw", tag: "PW3", tajuk: "Practical Work 3", nota: "Rakaman 6.8.2026", id: "eKRZrbEn-X0" },
+  { k: "pw", tag: "PW3", tajuk: "Practical Work 3", nota: "Rakaman 16.2.2026", id: "czB_gdF1JKQ" },
+  { k: "pw", tag: "PW4", tajuk: "Practical Work 4", id: "84lxb6gGxig" },
+  { k: "pw", tag: "PW5", tajuk: "Practical Work 5", id: "" },
+
+  // ---------- Topik ----------
+  { k: "topik", tag: "TOPIC 1", tajuk: "Introduction to Programming", id: "" },
+  { k: "topik", tag: "TOPIC 2", tajuk: "Fundamentals of C Language", id: "" },
+  { k: "topik", tag: "TOPIC 3", tajuk: "Selection Structure", id: "" },
+  { k: "topik", tag: "TOPIC 4", tajuk: "Looping Statements", id: "" },
+  { k: "topik", tag: "TOPIC 5", tajuk: "Function Statements", id: "H7J22RdfQUo" },
+  { k: "topik", tag: "TOPIC 6", tajuk: "Array Statements", id: "" },
+  { k: "topik", tag: "TOPIC 7", tajuk: "Pointers and Structures", id: "8pF2H1yI8Ik" },
+
+  // ---------- Tip & Alat ----------
+  { k: "tip", tag: "TIP", tajuk: "Cara buat flowchart guna AI", id: "sY9Ue1rLUsw" }
+];
+
+(function () {
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  var kelas = { pw: "pw", topik: "", tip: "tb" };
+
+  VIDEO.forEach(function (v) {
+    var grid = document.querySelector('[data-kumpulan="' + v.k + '"]');
+    if (!grid) return;
+    var kad = document.createElement("article");
+    kad.className = "vid " + (kelas[v.k] || "") + (v.id ? "" : " kosong");
+    var sub = v.nota ? "<p>" + esc(v.nota) + "</p>" : "";
+    if (v.id) {
+      var id = encodeURIComponent(v.id);
+      kad.innerHTML =
+        '<div class="skrin"><button type="button" aria-label="Main video: ' + esc(v.tajuk + (v.nota ? " (" + v.nota + ")" : "")) + '">' +
+          '<img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="main-ikon" aria-hidden="true"></span></button></div>' +
+        '<div class="badan"><span class="tag">' + esc(v.tag) + '</span><h3>' + esc(v.tajuk) + '</h3>' + sub +
+          '<a class="yt" href="https://www.youtube.com/watch?v=' + id + '" target="_blank" rel="noopener">Buka di YouTube ↗</a></div>';
+      kad.querySelector("button").addEventListener("click", function () {
+        var f = document.createElement("iframe");
+        f.src = "https://www.youtube-nocookie.com/embed/" + id + "?autoplay=1&rel=0";
+        f.title = v.tajuk;
+        f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+        f.allowFullscreen = true;
+        f.referrerPolicy = "strict-origin-when-cross-origin";
+        this.parentNode.replaceChild(f, this);
+      });
+    } else {
+      kad.innerHTML =
+        '<div class="skrin"><div><span aria-hidden="true">🎬</span>Akan datang</div></div>' +
+        '<div class="badan"><span class="tag">' + esc(v.tag) + '</span><h3>' + esc(v.tajuk) + '</h3>' + sub +
+          '<p>Video sedang disediakan.</p></div>';
+    }
+    grid.appendChild(kad);
+  });
+
+  // Tema
+  var butang = document.querySelectorAll(".tema button");
+  function pasang(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    butang.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-tema") === t)); });
+  }
+  butang.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var t = b.getAttribute("data-tema");
+      try { localStorage.setItem("clab-tema", t); } catch (e) {}
+      pasang(t);
+    });
+  });
+  pasang(document.documentElement.getAttribute("data-theme") || "light");
+})();
+</script>
+</body>
+</html>

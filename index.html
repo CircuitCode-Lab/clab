@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), bahan kursus, AI Tutor dan Games.">
+<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), video pembelajaran, AI Tutor dan Games.">
 <title>C Programming Learning Lab · DEC20313</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
     --k2: #EAF2FF; --k2g: #C6DBFB; --k2i: #2557B8;   /* Rayuan */
     --k3: #FFF0E8; --k3g: #F8D2BF; --k3i: #B5461A;   /* Hantar PW */
     --k4: #F1ECFF; --k4g: #D9CCFB; --k4i: #5631C2;   /* Learn C */
-    --k5: #E6F7F8; --k5g: #BDE6E9; --k5i: #0B6C78;   /* Bahan */
+    --k5: #E6F7F8; --k5g: #BDE6E9; --k5i: #0B6C78;   /* Video */
     --k6: #FDEBF6; --k6g: #F5C8E3; --k6i: #A0276E;   /* AI Tutor */
     --k7: #FFF7DD; --k7g: #F3DE95; --k7i: #855A00;   /* Games */
     color-scheme: light;
@@ -299,9 +299,9 @@
       <a class="kad c4" href="learn-c/">
         <span class="tag">5P</span><span class="ikon" aria-hidden="true">💻</span>
         <h3>Learn C</h3><p>Topik 1–7: faham, fikir, jangka, surih kod dan terangkan.</p><span class="pergi">Mula belajar →</span></a>
-      <a class="kad c5" href="https://padlet.com/fazliniayu/c-programming-hq1aqds8atdjir2a" target="_blank" rel="noopener">
-        <span class="tag">NOTA</span><span class="ikon" aria-hidden="true">📚</span>
-        <h3>Bahan Kursus</h3><p>Nota, slaid, video dan rujukan di Padlet.</p><span class="pergi">Buka →</span></a>
+      <a class="kad c5" href="video/">
+        <span class="tag">VIDEO</span><span class="ikon" aria-hidden="true">🎬</span>
+        <h3>Video Pembelajaran</h3><p>Video YouTube Practical Work dan Topik 1–7.</p><span class="pergi">Tonton →</span></a>
       <a class="kad c6" href="https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20" target="_blank" rel="noopener">
         <span class="tag">AI</span><span class="ikon" aria-hidden="true">🤖</span>
         <h3>AI Tutor</h3><p>Tanya dalam BM atau English. Perlu log masuk akaun Google.</p><span class="pergi">Tanya →</span></a>
@@ -383,12 +383,12 @@
     rayuan: "https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec",
     pw:     "https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec",
     learnc: "learn-c/",
-    padlet: "https://padlet.com/fazliniayu/c-programming-hq1aqds8atdjir2a",
+    video:  "video/",
     tutor:  "https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20",
     games:  "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec"
   };
   // Laman dalam repo ini (GitHub Pages) dibuka di tab yang sama; laman ini ada butang "⌂ Laman Utama"
-  var TAB_SAMA = ["learnc"];
+  var TAB_SAMA = ["learnc", "video"];
 
   // id, label butang cepat, kata kunci, jawapan (HTML), pautan [label, url]
   var JAWAPAN = [
@@ -432,10 +432,10 @@
       kk: ["ai tutor", "tutor", "ai", "notebook", "tanya ai", "chatgpt"],
       j: "AI Tutor menjawab soalan C Programming berdasarkan nota kursus. Anda perlu <b>log masuk akaun Google</b>. AI boleh tersilap — semak dengan nota atau pensyarah.",
       a: [["🤖 Buka AI Tutor", "tutor"]] },
-    { id: "nota", cip: "📚 Nota & slaid",
-      kk: ["nota", "slaid", "slide", "bahan", "video", "rujukan", "padlet", "notes"],
-      j: "Nota, slaid, video dan rujukan kursus ada di <b>Bahan Kursus (Padlet)</b>.",
-      a: [["📚 Buka Bahan Kursus", "padlet"]] },
+    { id: "video", cip: "🎬 Video pembelajaran",
+      kk: ["video", "youtube", "tonton", "rakaman", "demo", "nota", "slaid", "slide", "bahan", "rujukan", "notes"],
+      j: "Video YouTube untuk <b>Practical Work (PW1–PW5)</b> dan <b>Topik 1–7</b> ada di <b>Video Pembelajaran</b>. Untuk nota dan slaid, rujuk pensyarah anda.",
+      a: [["🎬 Buka Video Pembelajaran", "video"]] },
     { id: "games", cip: "🎮 Games",
       kk: ["game", "games", "main", "permainan", "kuiz", "quiz"],
       j: "Uji kefahaman C Programming sambil bermain di <b>Games</b>.",
