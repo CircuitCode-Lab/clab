@@ -21,7 +21,8 @@ Sistem yang memerlukan Google Sheet kekal di Google Apps Script: Rayuan Kehadira
 
 ## Peraturan pautan
 - Laman dalam repo ini (Learn C, Video, dan Kehadiran selepas dipindah) dibuka di **tab yang sama** dan mesti ada butang **⌂ Laman Utama**.
-- Sistem luar (Apps Script, AI Tutor, YouTube) dibuka di **tab baharu**.
+- Sistem luar (Apps Script, AI Tutor) dibuka di **tab baharu**.
+- Video YouTube di `video/` dibuka di **tab yang sama** (pautan biasa, tanpa tab baharu) supaya berfungsi dalam semua pelayar dan aplikasi; di telefon ia membuka aplikasi YouTube.
 - Pembantu Learning Lab: senarai `TAB_SAMA` dalam `index.html` menentukan pautan yang dibuka di tab sama.
 
 ## Cara kemas kini
@@ -31,6 +32,7 @@ Ubah fail dalam repo ini (atau minta Claude ubah). GitHub Pages mengemas kini la
 
 ## Sejarah
 - **14 Nov 2026:** Kad Bahan Kursus (Padlet) dibuang dari Laman Utama (Padlet mengandungi data pelajar). Diganti dengan kad **Video Pembelajaran** → `video/`.
+- **14 Nov 2026:** Video kini dibuka terus di YouTube (pemain terbenam dan tab baharu dibuang kerana tidak berfungsi pada sesetengah peranti).
 - **13 Nov 2026:** Repo dipindah dari `ayuwafa/clab-pkb` ke organization **CircuitCode-Lab** dan dinamakan semula `clab`. Alamat laman baharu: https://circuitcode-lab.github.io/clab/ (alamat lama `ayuwafa.github.io/clab-pkb/` tidak lagi berfungsi).
 - **13 Nov 2026:** Learn C (Studio v4, flowchart I/O fixed) dipindah dari Netlify (golden-shortbread-13093b) ke `learn-c/`. Kad Learn C di Laman Utama kini `learn-c/`; butang ⌂ Laman Utama dalam Learn C kini `../`.
 - **13 Nov 2026:** Laman Utama v4.1 dipindah dari Netlify (stately-crumble-3c7799) ke GitHub Pages. Sumber asal: repo `CircuitCode-Lab/C_Programming_Learning_Lab` (diarkibkan).
