@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Video pembelajaran DEC20313 C Programming: Practical Work (PW1–PW5), Topik 1–7 dan tip tambahan.">
-<title>Video Pembelajaran · C Programming Learning Lab</title>
+<meta name="description" content="Video DEC20313 C Programming: panduan Learning Lab, Practical Work (PW1–PW5), Topik 1–7 dan tip tambahan.">
+<title>Video · C Programming Learning Lab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
@@ -26,6 +26,7 @@
     --pw: #FFF0E8; --pwg: #F8D2BF; --pwi: #B5461A;
     --tp: #F1ECFF; --tpg: #D9CCFB; --tpi: #5631C2;
     --tb: #E6F7F8; --tbg: #BDE6E9; --tbi: #0B6C78;
+    --gd: #EAF6EC; --gdg: #C3E4C9; --gdi: #1E7A34;
     color-scheme: light;
   }
   :root[data-theme="dark"] {
@@ -35,6 +36,7 @@
     --pw: #2E1B13; --pwg: #5C3422; --pwi: #FF9C6E;
     --tp: #211A3D; --tpg: #3F3375; --tpi: #B9A3FF;
     --tb: #112A2D; --tbg: #22545A; --tbi: #5ED6E2;
+    --gd: #13281A; --gdg: #2A5535; --gdi: #7FD993;
     color-scheme: dark;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -90,6 +92,7 @@
   .vid:hover { transform: translateY(-3px); box-shadow: 0 12px 26px var(--bayang); }
   .vid.pw { --bg: var(--pw); --gr: var(--pwg); --ic: var(--pwi); }
   .vid.tb { --bg: var(--tb); --gr: var(--tbg); --ic: var(--tbi); }
+  .vid.gd { --bg: var(--gd); --gr: var(--gdg); --ic: var(--gdi); }
   .skrin { position: relative; aspect-ratio: 16 / 9; background: #000; }
   a.skrin { display: block; }
   .skrin img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .92; transition: opacity .15s; }
@@ -147,13 +150,19 @@
 <main class="wrap">
   <section class="hero" aria-labelledby="tajuk">
     <span class="label">DEC20313 · Video YouTube</span>
-    <h1 id="tajuk">Video <span>Pembelajaran</span></h1>
-    <p>Tonton semula demonstrasi Practical Work dan penerangan topik C Programming. Klik video untuk tonton di YouTube.</p>
+    <h1 id="tajuk">Galeri <span>Video</span></h1>
+    <p>Panduan menggunakan Learning Lab, demonstrasi Practical Work dan penerangan topik C Programming. Klik video untuk tonton di YouTube.</p>
     <nav class="lompat" aria-label="Lompat ke bahagian">
+      <a href="#panduan">🧭 Panduan Lab</a>
       <a href="#pw">🧪 Practical Work</a>
       <a href="#topik">📘 Topik 1–7</a>
       <a href="#tip">✨ Tip &amp; Alat</a>
     </nav>
+  </section>
+
+  <section class="blok" id="panduan" aria-labelledby="h-panduan">
+    <div class="tajuk-seksyen"><h2 id="h-panduan">🧭 Panduan Learning Lab</h2><p>Kenali portal, sistem dan games sebelum mula.</p></div>
+    <div class="grid" data-kumpulan="panduan"></div>
   </section>
 
   <section class="blok" id="pw" aria-labelledby="h-pw">
@@ -189,6 +198,11 @@
    id kosong ("") = kad "Akan datang".
    ================================================================ */
 var VIDEO = [
+  // ---------- Panduan Learning Lab ----------
+  { k: "panduan", tag: "TOUR", tajuk: "Video Tour C Programming Learning Lab", id: "EXtuhYb9qjs" },
+  { k: "panduan", tag: "PANDUAN", tajuk: "Panduan Sistem Upload Jawapan Pelajar", id: "MKqLhtChTfg" },
+  { k: "panduan", tag: "TOUR", tajuk: "Video Tour Games C Programming", id: "UMM1VGoTpaQ" },
+
   // ---------- Practical Work ----------
   { k: "pw", tag: "PW1", tajuk: "Practical Work 1", id: "8BZ57Sb7GnY" },
   { k: "pw", tag: "PW2", tajuk: "Practical Work 2", id: "ZOAvh61WUjg" },
@@ -212,7 +226,7 @@ var VIDEO = [
 
 (function () {
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  var kelas = { pw: "pw", topik: "", tip: "tb" };
+  var kelas = { panduan: "gd", pw: "pw", topik: "", tip: "tb" };
 
   VIDEO.forEach(function (v) {
     var grid = document.querySelector('[data-kumpulan="' + v.k + '"]');
