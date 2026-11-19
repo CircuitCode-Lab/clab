@@ -14,6 +14,7 @@ clab/
 ├── index.html      → Laman Utama
 ├── learn-c/        → Learn C (Modul 5P) + Program & Flowchart Studio
 ├── video/          → Video (YouTube Panduan Lab, PW1–PW5, Topik 1–7, Tip)
+├── download/       → Fail muat turun (Dev-C++ 5.11 + TDM-GCC 4.9.2 installer)
 └── kehadiran/      → Tanda Kehadiran          [akan dipindah dari Netlify]
 ```
 
@@ -31,6 +32,7 @@ Sistem yang memerlukan Google Sheet kekal di Google Apps Script: Rayuan Kehadira
 Ubah fail dalam repo ini (atau minta Claude ubah). GitHub Pages mengemas kini laman secara automatik dalam 1–2 minit. Tiada kredit atau kos.
 
 ## Sejarah
+- **19 Nov 2026:** Kad **Download Dev-C++** ditambah di bahagian 🛠️ Perisian. Fail: `download/Dev-Cpp_5_11_TDM-GCC_4_9_2_Setup.exe` (48 MB, SHA-256 `faad96bb…c9c0f1f`).
 - **14 Nov 2026:** Kad Bahan Kursus (Padlet) dibuang dari Laman Utama (Padlet mengandungi data pelajar). Diganti dengan kad **Video Pembelajaran** → `video/`.
 - **14 Nov 2026:** Video kini dibuka terus di YouTube (pemain terbenam dan tab baharu dibuang kerana tidak berfungsi pada sesetengah peranti).
 - **15 Nov 2026:** Kad "Video Pembelajaran" dinamakan semula **Video**. Bahagian baharu **🧭 Panduan Learning Lab** di `video/`: Video Tour Learning Lab, Panduan Sistem Upload Jawapan Pelajar, Video Tour Games.
