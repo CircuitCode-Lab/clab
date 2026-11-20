@@ -1,5 +1,5 @@
 // C Lab Compiler — service worker (cache semua fail supaya boleh guna offline)
-const CACHE = 'clab-compiler-v1';   // tukar nombor versi setiap kali index.html dikemas kini
+const CACHE = 'clab-compiler-v2';   // tukar nombor versi setiap kali index.html dikemas kini
 const FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
