@@ -232,8 +232,13 @@
     pilih.value = c; muatSekitar(c);
   }
   pf.on("flip", kemas); pf.on("changeOrientation", kemas); kemas();
-  document.getElementById("prev").onclick = function () { pf.flipPrev(); };
-  document.getElementById("next").onclick = function () { pf.flipNext(); };
+  // Butang/kekunci: benarkan belek sekejap (disableFlipByClick menyekat flipPrev dalam mod potret)
+  function belek(arah) {
+    var st = pf.getSettings(); st.disableFlipByClick = false;
+    try { arah < 0 ? pf.flipPrev("top") : pf.flipNext("top"); } finally { st.disableFlipByClick = true; }
+  }
+  document.getElementById("prev").onclick = function () { belek(-1); };
+  document.getElementById("next").onclick = function () { belek(1); };
   document.getElementById("awal").onclick = function () { muatSekitar(0); pf.turnToPage(0); kemas(); };
   document.getElementById("akhir").onclick = function () { muatSekitar(JUMLAH - 1); pf.turnToPage(JUMLAH - 1); kemas(); };
   pilih.onchange = function () { var n = +pilih.value; muatSekitar(n); pf.turnToPage(n); kemas(); };
@@ -334,8 +339,8 @@
     if (zBuka && k === "escape") { tutupZoom(); return; }
     if (zBuka && (k === "+" || k === "=")) { zoomDi(1.4); return; }
     if (zBuka && k === "-") { zoomDi(1 / 1.4); return; }
-    if (k === "arrowright") { zBuka ? paparZoom(zHal + 1) : pf.flipNext(); return; }
-    if (k === "arrowleft") { zBuka ? paparZoom(zHal - 1) : pf.flipPrev(); return; }
+    if (k === "arrowright") { zBuka ? paparZoom(zHal + 1) : belek(1); return; }
+    if (k === "arrowleft") { zBuka ? paparZoom(zHal - 1) : belek(-1); return; }
     if (!zBuka && k === "z" && !ctrl) { bukaZoom(); return; }
     if ((ctrl && ["p", "s", "u", "c", "a"].indexOf(k) > -1) ||
         (ctrl && e.shiftKey && ["i", "j", "c", "s"].indexOf(k) > -1) || k === "f12") {
