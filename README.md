@@ -6,6 +6,7 @@ Dihoskan percuma dengan **GitHub Pages**.
 **Laman langsung:** https://circuitcode-lab.github.io/clab/
 **Learn C:** https://circuitcode-lab.github.io/clab/learn-c/
 **Video:** https://circuitcode-lab.github.io/clab/video/
+**C Lab Compiler:** https://circuitcode-lab.github.io/clab/compiler/
 
 ## Struktur
 
@@ -15,6 +16,7 @@ clab/
 ├── learn-c/        → Learn C (Modul 5P) + Program & Flowchart Studio
 ├── video/          → Video (YouTube Panduan Lab, PW1–PW5, Topik 1–7, Tip)
 ├── ebook/          → E-Book flipbook "C Programming Made Easy" (95 halaman, imej JPG bertanda air)
+├── compiler/     → C Lab Compiler (run kod C dalam pelayar, boleh offline / Add to Home Screen)
 ├── download/       → Fail muat turun (Dev-C++ 5.11 + TDM-GCC 4.9.2 installer)
 └── kehadiran/      → Tanda Kehadiran          [akan dipindah dari Netlify]
 ```
@@ -33,6 +35,7 @@ Sistem yang memerlukan Google Sheet kekal di Google Apps Script: Rayuan Kehadira
 Ubah fail dalam repo ini (atau minta Claude ubah). GitHub Pages mengemas kini laman secara automatik dalam 1–2 minit. Tiada kredit atau kos.
 
 ## Sejarah
+- **20 Nov 2026:** **C Lab Compiler** `compiler/` ditambah (kad 📱 di bahagian 🛠️ Perisian + jawapan Pembantu). Interpreter PicoC (WebAssembly, lesen BSD) dibenamkan dalam `compiler/index.html` dan dijalankan dalam Web Worker — tiada server. PWA sendiri (`compiler/manifest.json`, `compiler/sw.js`) supaya boleh dipasang dan digunakan offline. Input `scanf` diisi dalam kotak Input; `%f` ditukar automatik kepada `%lf` (float = double dalam PicoC); `conio.h`, `getch()`, `system("pause")` diabaikan; had masa 8 saat. Bila mengemas kini `compiler/index.html`, naikkan nombor `CACHE` dalam `compiler/sw.js` (cth. `clab-compiler-v2`).
 - **20 Nov 2026:** E-Book: ciri **🔍 Zoom** (butang, klik dua kali pada halaman, kekunci Z; tatal/cubit untuk zoom sehingga 6×, seret untuk alih). Imej halaman dinaikkan ke 150 dpi (1241×1755 px) supaya teks kecil jelas. Belek dengan klik dimatikan (seret bucu / butang / ← →) supaya klik dua kali tidak membelek halaman.
 - **20 Nov 2026:** **E-Book** `ebook/` ditambah (kad baharu 📚 Bahan bacaan + jawapan Pembantu). Flipbook StPageFlip daripada PDF Canva "textbook C Program for DET" (95 hal.). PDF asal **tidak** dimasukkan ke repo; halaman disimpan sebagai `ebook/hal/001–095.jpg` (kini 150 dpi) dengan watermark "© Wan Fazlini Idayu – PKB". Penghalang: klik kanan/seret/pilih teks dimatikan, Ctrl+P/S/U/C dan F12 disekat, cetakan kosong, paparan dikaburkan bila tetingkap hilang fokus. Untuk kemas kini: ganti imej dalam `hal/` dan ubah `JUMLAH` dalam `ebook/index.html`.
 - **19 Nov 2026:** Kad **Download Dev-C++** ditambah di bahagian 🛠️ Perisian. Fail: `download/Dev-Cpp_5_11_TDM-GCC_4_9_2_Setup.exe` (48 MB, SHA-256 `faad96bb…c9c0f1f`).
