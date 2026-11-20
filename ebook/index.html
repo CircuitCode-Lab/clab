@@ -83,6 +83,22 @@
   .kawalan button.utama { color: #fff; border: 0; background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
   #info { min-width: 92px; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
 
+  /* ZOOM */
+  #zoom { position: fixed; inset: 0; z-index: 90; display: none; flex-direction: column; background: #0B0D1A; }
+  #zoom.buka { display: flex; }
+  #zoom .bar { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px; }
+  #zoom .bar button { border: 0; background: rgba(255,255,255,.14); color: #fff; font: 800 15px "Plus Jakarta Sans", sans-serif;
+                      min-width: 44px; padding: 9px 14px; border-radius: 999px; cursor: pointer; }
+  #zoom .bar button:hover { background: rgba(255,255,255,.26); }
+  #zoom .bar #ztutup { background: #E2508C; }
+  #zoom .bar span { color: #fff; font-weight: 800; min-width: 120px; text-align: center; font-variant-numeric: tabular-nums; }
+  #zkanvas { flex: 1; overflow: hidden; position: relative; touch-action: none; cursor: grab; }
+  #zkanvas.seret { cursor: grabbing; }
+  #zimg { position: absolute; left: 0; top: 0; transform-origin: 0 0; max-width: none; pointer-events: none;
+          -webkit-user-drag: none; user-select: none; box-shadow: 0 10px 40px rgba(0,0,0,.5); background: #fff; }
+  #zoom .tip { color: rgba(255,255,255,.7); font-size: 13px; text-align: center; padding: 6px 10px 10px; }
+  body.sorok #zkanvas { filter: blur(24px); }
+
   footer { border-top: 1px solid var(--garis); padding: 16px 0; color: var(--teks-lembut); font-size: 13.5px; text-align: center; }
 
   /* PERLINDUNGAN */
@@ -128,7 +144,7 @@
 <main class="wrap">
   <div class="tajuk">
     <h1>📘 C Programming Made Easy</h1>
-    <p>Klik atau seret bucu halaman untuk membelek. Guna kekunci ← → pada papan kekunci.</p>
+    <p>Seret bucu halaman, tekan Seterus/Sebelum atau kekunci ← → untuk membelek. Klik dua kali pada halaman atau tekan 🔍 Zoom untuk besarkan tulisan.</p>
   </div>
 
   <div class="kawalan" id="kawalan" hidden>
@@ -138,6 +154,7 @@
     <button type="button" class="utama" id="next">Seterus ▶</button>
     <button type="button" class="kecil" id="akhir" aria-label="Halaman terakhir">⏭</button>
     <select id="lompat" aria-label="Lompat ke halaman"></select>
+    <button type="button" class="utama" id="bukaZoom">🔍 Zoom</button>
     <button type="button" id="penuh">⛶ Skrin penuh</button>
   </div>
 
@@ -148,6 +165,20 @@
 </main>
 
 <footer>Hak Cipta © 2026 Wan Fazlini Idayu · Jabatan Kejuruteraan Elektrik, Politeknik Kota Bharu · Untuk kegunaan pelajar sahaja. Dilarang menyalin, mencetak atau mengedar.</footer>
+
+<div id="zoom" role="dialog" aria-modal="true" aria-label="Paparan zoom halaman">
+  <div class="bar">
+    <button type="button" id="zprev" aria-label="Halaman sebelum">◀</button>
+    <span id="zinfo">Hal. 1</span>
+    <button type="button" id="znext" aria-label="Halaman seterusnya">▶</button>
+    <button type="button" id="zkecil" aria-label="Zoom keluar">－</button>
+    <button type="button" id="zmuat" aria-label="Muat skrin">⤢ Muat</button>
+    <button type="button" id="zbesar" aria-label="Zoom masuk">＋</button>
+    <button type="button" id="ztutup" aria-label="Tutup zoom">✕ Tutup</button>
+  </div>
+  <div id="zkanvas"><img id="zimg" alt="" draggable="false"></div>
+  <div class="tip">Tatal tetikus atau cubit (2 jari) untuk zoom · Seret untuk alih · Klik dua kali untuk zoom pantas · Esc untuk tutup</div>
+</div>
 
 <div id="tirai" aria-hidden="true"><div>🔒 Paparan dijeda<small>Klik di sini untuk sambung membaca.</small></div></div>
 <div id="toast" role="status"></div>
@@ -184,7 +215,7 @@
   var pf = new St.PageFlip(book, {
     width: LEBAR, height: TINGGI, size: "stretch",
     minWidth: 280, maxWidth: 1000, minHeight: 396, maxHeight: 1414,
-    showCover: true, maxShadowOpacity: 0.45, mobileScrollSupport: false, usePortrait: true
+    showCover: true, maxShadowOpacity: 0.45, disableFlipByClick: true, mobileScrollSupport: false, usePortrait: true
   });
   pf.loadFromHTML(book.querySelectorAll(".page"));
   document.getElementById("muat").remove();
@@ -211,6 +242,86 @@
     else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
   };
 
+
+  /* ====== ZOOM ====== */
+  var zoom = document.getElementById("zoom"), kanvas = document.getElementById("zkanvas"), zimg = document.getElementById("zimg"),
+      zinfo = document.getElementById("zinfo");
+  var zHal = 0, sk = 1, skMin = 1, tx = 0, ty = 0;
+  function terap() { zimg.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + sk + ")"; }
+  function had() {
+    var W = kanvas.clientWidth, H = kanvas.clientHeight, iw = zimg.naturalWidth * sk, ih = zimg.naturalHeight * sk;
+    tx = iw <= W ? (W - iw) / 2 : Math.min(0, Math.max(W - iw, tx));
+    ty = ih <= H ? (H - ih) / 2 : Math.min(0, Math.max(H - ih, ty));
+  }
+  function muatSkrin() {
+    if (!zimg.naturalWidth) return;
+    skMin = Math.min(kanvas.clientWidth / zimg.naturalWidth, kanvas.clientHeight / zimg.naturalHeight) * 0.96;
+    sk = skMin; had(); terap();
+  }
+  function zoomDi(faktor, cx, cy) {
+    var baru = Math.min(skMin * 6, Math.max(skMin, sk * faktor));
+    if (cx === undefined) { cx = kanvas.clientWidth / 2; cy = kanvas.clientHeight / 2; }
+    tx = cx - (cx - tx) * (baru / sk); ty = cy - (cy - ty) * (baru / sk); sk = baru; had(); terap();
+  }
+  function paparZoom(i) {
+    zHal = Math.max(0, Math.min(JUMLAH - 1, i));
+    zinfo.textContent = "Hal. " + (zHal + 1) + " / " + JUMLAH;
+    zimg.onload = muatSkrin; zimg.src = fail(zHal + 1);
+    if (zimg.complete) muatSkrin();
+  }
+  function bukaZoom(i) {
+    if (i === undefined) i = +pilih.value;
+    zoom.classList.add("buka"); paparZoom(i);
+  }
+  function tutupZoom() { zoom.classList.remove("buka"); muatSekitar(zHal); pf.turnToPage(zHal); kemas(); }
+  document.getElementById("bukaZoom").onclick = function () { bukaZoom(); };
+  document.getElementById("ztutup").onclick = tutupZoom;
+  document.getElementById("zprev").onclick = function () { paparZoom(zHal - 1); };
+  document.getElementById("znext").onclick = function () { paparZoom(zHal + 1); };
+  document.getElementById("zbesar").onclick = function () { zoomDi(1.4); };
+  document.getElementById("zkecil").onclick = function () { zoomDi(1 / 1.4); };
+  document.getElementById("zmuat").onclick = muatSkrin;
+  window.addEventListener("resize", function () { if (zoom.classList.contains("buka")) muatSkrin(); });
+
+  // Klik dua kali pada buku = zoom halaman yang diklik
+  book.addEventListener("dblclick", function (e) {
+    var c = +pilih.value, r = book.getBoundingClientRect();
+    var kanan = pf.getOrientation() === "landscape" && c > 0 && e.clientX > r.left + r.width / 2;
+    bukaZoom(kanan ? c + 1 : c);
+  });
+
+  kanvas.addEventListener("wheel", function (e) {
+    e.preventDefault(); var r = kanvas.getBoundingClientRect();
+    zoomDi(e.deltaY < 0 ? 1.15 : 1 / 1.15, e.clientX - r.left, e.clientY - r.top);
+  }, { passive: false });
+  kanvas.addEventListener("dblclick", function (e) {
+    var r = kanvas.getBoundingClientRect();
+    if (sk > skMin * 1.05) muatSkrin(); else zoomDi(2.5, e.clientX - r.left, e.clientY - r.top);
+  });
+
+  // Seret & cubit (tetikus / sentuhan)
+  var jari = {}, mula = null;
+  function senarai() { return Object.keys(jari).map(function (k) { return jari[k]; }); }
+  kanvas.addEventListener("pointerdown", function (e) {
+    kanvas.setPointerCapture(e.pointerId); jari[e.pointerId] = { x: e.clientX, y: e.clientY };
+    kanvas.classList.add("seret"); mula = null;
+  });
+  kanvas.addEventListener("pointermove", function (e) {
+    if (!jari[e.pointerId]) return;
+    var lama = jari[e.pointerId]; jari[e.pointerId] = { x: e.clientX, y: e.clientY };
+    var j = senarai(), r = kanvas.getBoundingClientRect();
+    if (j.length === 1) { tx += e.clientX - lama.x; ty += e.clientY - lama.y; had(); terap(); }
+    else if (j.length === 2) {
+      var d = Math.hypot(j[0].x - j[1].x, j[0].y - j[1].y);
+      var cx = (j[0].x + j[1].x) / 2 - r.left, cy = (j[0].y + j[1].y) / 2 - r.top;
+      if (mula) zoomDi(d / mula, cx, cy);
+      mula = d;
+    }
+  });
+  function lepas(e) { delete jari[e.pointerId]; mula = null; if (!senarai().length) kanvas.classList.remove("seret"); }
+  kanvas.addEventListener("pointerup", lepas); kanvas.addEventListener("pointercancel", lepas);
+  kanvas.addEventListener("contextmenu", function (e) { e.preventDefault(); });
+
   /* ====== PERLINDUNGAN (penghalang, bukan jaminan) ====== */
   var toast = document.getElementById("toast"), tt;
   function mesej(t) { toast.textContent = t; toast.classList.add("on"); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove("on"); }, 2200); }
@@ -219,8 +330,13 @@
 
   document.addEventListener("keydown", function (e) {
     var k = (e.key || "").toLowerCase(), ctrl = e.ctrlKey || e.metaKey;
-    if (k === "arrowright") { pf.flipNext(); return; }
-    if (k === "arrowleft") { pf.flipPrev(); return; }
+    var zBuka = zoom.classList.contains("buka");
+    if (zBuka && k === "escape") { tutupZoom(); return; }
+    if (zBuka && (k === "+" || k === "=")) { zoomDi(1.4); return; }
+    if (zBuka && k === "-") { zoomDi(1 / 1.4); return; }
+    if (k === "arrowright") { zBuka ? paparZoom(zHal + 1) : pf.flipNext(); return; }
+    if (k === "arrowleft") { zBuka ? paparZoom(zHal - 1) : pf.flipPrev(); return; }
+    if (!zBuka && k === "z" && !ctrl) { bukaZoom(); return; }
     if ((ctrl && ["p", "s", "u", "c", "a"].indexOf(k) > -1) ||
         (ctrl && e.shiftKey && ["i", "j", "c", "s"].indexOf(k) > -1) || k === "f12") {
       e.preventDefault(); e.stopPropagation(); mesej("🔒 Fungsi ini tidak dibenarkan untuk e-book ini."); return false;
