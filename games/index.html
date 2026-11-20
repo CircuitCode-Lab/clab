@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Games — C Programming Learning Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Fail ini DIJANA oleh tools/ke_github_pages.py (repo C_Programming_Game_Hub). Jangan edit terus. -->
+<style>
+body{--sk1:#4fb6f2;--sk2:#bfe9ff;--card:#fff8ea;--fg:#3b2414;--line:#e2c79a;--tile:#fff;--tsh:#d4b483;--soft:#fff1d6;--wood:#8b5a2b;--woodD:#5a3416;--h1:#8fd36a;--h2:#6cc04a;
+ margin:0;min-height:100vh;font-family:"Fredoka","Segoe UI",Roboto,Arial,sans-serif;color:var(--fg);background:linear-gradient(var(--sk1),var(--sk2) 70%);background-attachment:fixed;padding:18px 14px 40px}
+body.dark{--sk1:#0d1b3d;--sk2:#2b3f78;--card:#2a2236;--fg:#f6ead8;--line:#5b4a6e;--tile:#3a3048;--tsh:#1c1626;--soft:#3a3048;--h1:#1f3d4a;--h2:#1d4a35}
+*{box-sizing:border-box}
+.bukit{position:fixed;left:0;right:0;bottom:0;height:34vh;z-index:-1;pointer-events:none}
+.bukit svg{width:100%;height:100%;display:block}
+.top{max-width:760px;margin:0 auto 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.pil{background:var(--card);color:var(--fg);text-decoration:none;padding:8px 14px;border-radius:999px;font-weight:700;font-size:15px;border:3px solid var(--line);box-shadow:0 4px 0 var(--tsh)}
+.tm{display:flex;gap:6px}
+.tm button{font-family:inherit;background:var(--tile);color:var(--fg);border:3px solid var(--line);border-radius:14px;padding:6px 12px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 3px 0 var(--tsh);min-height:40px}
+.tm button.on{background:#ffe9b0;border-color:#f4a300;color:#3b2414}
+body.dark .tm button.on{background:#5a4220;color:#ffe9b0}
+.kepala{text-align:center;margin:6px 0 18px}
+.sign{display:inline-block;background:linear-gradient(#c98a4b,#9c6230);border:4px solid #5a3416;border-radius:16px;padding:6px 24px 8px;box-shadow:0 6px 0 #5a3416,inset 0 3px 0 rgba(255,255,255,.25);transform:rotate(-1.5deg)}
+.sign h1{margin:0;font-size:clamp(1.8rem,7vw,2.6rem);font-weight:700;color:#ffd84a;-webkit-text-stroke:3px #7a3b00;paint-order:stroke fill;text-shadow:0 4px 0 #7a3b00;line-height:1.1}
+.rib{display:inline-block;margin-top:12px;background:#e9504f;color:#fff;font-weight:700;padding:5px 14px;border-radius:10px;box-shadow:0 4px 0 #a8302f;font-size:15px}
+.g{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:14px;max-width:760px;margin:0 auto}
+.k{position:relative;background:var(--card);color:var(--fg);border:3px solid var(--wood);border-radius:20px;padding:14px 10px 12px;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;box-shadow:0 5px 0 var(--woodD);text-align:center;transition:transform .1s}
+.k:active{transform:translateY(4px);box-shadow:0 1px 0 var(--woodD)}
+.k:focus-visible{outline:3px solid #2f8fe0;outline-offset:3px}
+.i{font-size:42px;line-height:1.1}
+.k b{font-size:17px}
+.k small{font-size:13px;opacity:.8;line-height:1.3}
+.k em{font-style:normal;font-size:12px;font-weight:700;margin-top:4px;background:var(--soft);border:2px solid var(--line);border-radius:999px;padding:1px 9px}
+.k .b{position:absolute;top:-10px;right:-6px;background:#34b74a;color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;box-shadow:0 3px 0 #1f7a2e;transform:rotate(6deg)}
+.pp{max-width:760px;margin:22px auto 0;background:var(--card);border:3px solid var(--wood);border-radius:22px;padding:14px;box-shadow:0 5px 0 var(--woodD)}
+.pp h2{margin:0 0 10px;font-size:21px;text-align:center}
+.pl{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:7px}
+.w{display:flex;align-items:center;gap:8px;background:var(--tile);border:2px solid var(--line);border-radius:14px;padding:7px 10px;font-size:14px}
+.w .gi{font-size:20px}.w .gn{font-weight:700;min-width:96px}
+.w .sn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.w .sn small{opacity:.7;margin-left:6px;font-size:12px}
+.w.bl{grid-column:1/-1;line-height:1.6}.w .kosong{flex:1;opacity:.7}
+.w .mt{font-weight:700;background:#ffd166;color:#4a2a00;border-radius:999px;padding:2px 9px;white-space:nowrap;box-shadow:0 2px 0 #c98400}
+.nt{font-size:12px;opacity:.75;text-align:center;margin-top:8px}
+.note{max-width:760px;margin:16px auto 0;text-align:center;font-weight:600;font-size:14px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px}
+.foot{max-width:760px;margin:16px auto 0;font-size:12px;text-align:center;line-height:1.6;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+</style>
+</head>
+<body>
+<div class="bukit"><svg viewBox="0 0 1200 300" preserveAspectRatio="none"><path d="M0 170 Q200 40 420 170 T840 160 T1200 150 V300 H0Z" fill="var(--h1)"/><path d="M0 230 Q260 120 520 220 T1000 210 T1200 200 V300 H0Z" fill="var(--h2)"/></svg></div>
+<div class="top"><a class="pil" href="https://circuitcode-lab.github.io/clab/">⌂ Laman Utama</a><div class="tm"><button type="button" data-tema="light">☀️ Cerah</button><button type="button" data-tema="dark">🌙 Gelap</button></div></div>
+<div class="kepala"><div class="sign"><h1>🎮 Games C Programming</h1></div><br><div class="rib">Kursus DEC20313 · Pilih permainan</div></div>
+<div class="g"><a class="k" href="flappy-c/"><span class="i">🐦</span><span class=b>BAHARU</span><b>Flappy C</b><small>Game bonus — kutip perkataan C, elak perangkap</small><em>Bonus</em></a><a class="k" href="crush.html"><span class="i">🏃</span><b>C Rush</b><small>Larian 3D — pilih lorong jawapan</small><em>Topik 1–7</em></a><a class="k" href="bughunter.html"><span class="i">🐞</span><b>Pemburu Bug</b><small>Cari & betulkan ralat kod C</small><em>Topik 2–7</em></a><a class="k" href="susunkod.html"><span class="i">🧩</span><b>Susun Kod</b><small>Susun baris kod ke susunan betul</small><em>Topik 2–7</em></a><a class="k" href="tekaoutput.html"><span class="i">🔮</span><b>Teka Output</b><small>Ramal output printf</small><em>Topik 2–7</em></a><a class="k" href="tracetable.html"><span class="i">📊</span><b>Trace Table</b><small>Jejak nilai dalam gelung</small><em>Topik 4–7</em></a><a class="k" href="padankad.html"><span class="i">🃏</span><b>Padan Kad</b><small>Padankan jenis data, operator & penuding</small><em>Topik 2, 5, 7</em></a><a class="k" href="penembak.html"><span class="i">🚀</span><b>Penembak Array</b><small>Tembak jawapan indeks tatasusunan</small><em>Topik 6, 7</em></a><a class="k" href="escaperoom.html"><span class="i">🔐</span><b>Escape Room C</b><small>Selesaikan teka-teki, keluar bilik</small><em>Ulang kaji</em></a><a class="k" href="codedefender.html"><span class="i">🤖</span><b>Code Defender</b><small>Pertahan markas daripada robot</small><em>Topik 1–7</em></a><a class="k" href="coderunner.html"><span class="i">🏃‍♂️</span><b>Code Runner</b><small>Lari, lompat & jawab di checkpoint</small><em>Topik 1–7</em></a><a class="k" href="codemaster.html"><span class="i">⚔️</span><b>Code Master</b><small>Lawan 3 boss dengan kod C</small><em>Topik 1–6</em></a><a class="k" href="codefarm.html"><span class="i">🌱</span><b>Code Farm</b><small>Susun kod robot ladang</small><em>Topik 1, 3–6</em></a><a class="k" href="codekitchen.html"><span class="i">🍳</span><b>Code Kitchen</b><small>Susun kod resipi dapur</small><em>Topik 1, 3–6</em></a><a class="k" href="coderacing.html"><span class="i">🏎️</span><b>Code Racing</b><small>Susun arahan kereta lumba</small><em>Topik 1–6</em></a></div>
+<div class="pp"><h2>🏆 Papan Pemenang</h2><div class="pl" id="pemenang"><div class="w"><span class="kosong">Memuatkan pemenang…</span></div></div>
+  <div class="nt">Jumlah markah = mata terbaik setiap peringkat dicampurkan (Flappy C: skor terbaik satu pusingan) · dikemas kini setiap 2 minit</div></div>
+<div class="note">Markah anda direkodkan untuk pensyarah. Isi nama penuh dan kelas yang sama setiap kali bermain.</div>
+<div class="foot">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+<script>
+{
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function papar(senarai){
+  const ada=senarai.filter(o=>o.nama).sort((a,b)=>b.mata-a.mata), belum=senarai.filter(o=>!o.nama);
+  let h=ada.map(o=>'<div class="w"><span class="gi">'+o.ikon+'</span><span class="gn">'+esc(o.game)+'</span><span class="sn">🥇 '+esc(o.nama)+'<small>'+esc(o.kelas)+'</small></span><span class="mt">⭐ '+o.mata+'</span></div>').join("");
+  if(belum.length)h+='<div class="w bl"><span class="kosong">'+(ada.length?'Belum ada pemenang: ':'Belum ada pemenang lagi: ')+belum.map(o=>o.ikon+' '+esc(o.game)).join(" · ")+' — jadilah yang pertama!</span></div>';
+  document.getElementById("pemenang").innerHTML=h;
+}
+fetch("https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec?api=pemenang").then(r=>r.json()).then(papar)
+  .catch(()=>{document.getElementById("pemenang").innerHTML='<div class="w"><span class="kosong">Papan pemenang tidak dapat dimuatkan.</span></div>'});
+function temaSet(t){document.body.classList.toggle("dark",t==="dark");
+  document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on",b.dataset.tema===t));
+  try{localStorage.setItem("cgame-tema",t)}catch(e){}}
+document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>temaSet(b.dataset.tema));
+let t=null;try{t=localStorage.getItem("cgame-tema")}catch(e){}
+temaSet(t||"light");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CODE RACING — C Programming Learning Lab</title>
+<!--
+  CODE RACING (DEC20313 C Programming) — teka-teki susun blok kod
+  © 2026 Wan Fazlini Idayu · JKE, Politeknik Kota Bharu
+  Asal: versi standalone (ChatGPT), disesuaikan untuk C Programming Game Hub:
+  nama & kelas, 3 peringkat × 4 teka-teki, semakan baris, tema cerah/gelap, markah ke Google Sheet.
+  Tambah teka-teki: edit bahagian "2) BANK TEKA-TEKI" sahaja.
+  PENTING: setiap teka-teki mesti ada SATU susunan betul sahaja (gabungkan baris yang boleh ditukar ganti).
+-->
+<style>
+:root{--accent:#f97316}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top,#22335c,#090e1c 65%);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:#fff;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}
+.wrap{max-width:900px;margin:auto;padding:18px}
+h1{font-size:clamp(26px,5vw,42px);margin:6px 0}h2{font-size:clamp(17px,3vw,21px);margin:4px 0 6px}
+.sub{color:#cbd5e1}
+.top{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.pill{background:#1e293b;border:1px solid #475569;padding:9px 14px;border-radius:30px;color:inherit;text-decoration:none;font-size:14px}
+.scene{color:#fff;border:2px solid #475569;border-radius:22px;background:linear-gradient(160deg,#172554,#111827);padding:18px 22px;position:relative;overflow:hidden;margin:14px 0}
+.lane{display:flex;justify-content:space-between;align-items:center;margin-top:12px;position:relative;height:72px}
+.actor{font-size:56px;position:absolute;left:0;transition:left 1.2s ease}
+.goal{font-size:46px;position:absolute;right:0}
+.track{height:10px;background:#334155;border-radius:20px;margin-top:10px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width 1.2s}
+.panel{background:#111827d9;border:1px solid #334155;border-radius:18px;padding:18px;margin:12px 0}
+.misi{background:#0b1222;border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;margin:8px 0 12px;line-height:1.5}
+.zone{border:2px dashed #475569;border-radius:14px;padding:10px;min-height:64px;display:grid;gap:8px;align-content:start}
+.zone.prog{border-color:var(--accent);background:#0b1222}
+.zlabel{font-size:13px;font-weight:700;margin:12px 0 6px;display:flex;justify-content:space-between;gap:8px}
+.kosong{color:#94a3b8;font-size:13px;text-align:center;padding:12px 4px}
+.tile{font-family:ui-monospace,Consolas,monospace;font-size:14px;text-align:left;display:flex;gap:10px;align-items:center;width:100%;background:#25334d;color:#fff;border:2px solid #50607a;border-radius:12px;padding:12px;min-height:52px;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none;transition:transform .08s}
+.tile:active{transform:scale(.98)}
+.tile .ic{opacity:.6;font-family:system-ui;font-size:13px}
+.tile .kod{flex:1;white-space:pre-wrap;overflow-wrap:anywhere}
+.tile:disabled{cursor:default}.tile.ok{border-color:#22c55e}.tile.no{border-color:#ef4444}
+.tile:focus-visible{outline:3px solid #facc15}
+.num{color:#93c5fd;min-width:24px}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.action{border:0;border-radius:12px;background:var(--accent);color:#08111f;font-weight:800;padding:12px 17px}
+.secondary{background:#334155;color:#fff}
+.action:disabled{opacity:.4;cursor:default}
+.feedback{min-height:42px;margin-top:12px;color:#fcd34d;font-weight:600;line-height:1.5}
+.small{color:#94a3b8;font-size:13px}
+.celebrate{animation:pulse .6s 2}@keyframes pulse{50%{filter:brightness(1.6)}}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.form input,.form select{padding:11px 12px;border-radius:10px;border:1px solid #475569;background:#0f172a;color:inherit;min-width:0}
+.form select{grid-column:1/-1}
+.tema{display:flex;gap:6px;margin-top:12px}
+.tema button{padding:7px 12px;border-radius:10px;border:2px solid #475569;background:transparent;color:inherit;font-weight:700;font-size:12px}
+.tema button.on{border-color:var(--accent)}
+.hakcipta{color:#94a3b8;text-align:center;font-size:12px;margin-top:16px;line-height:1.6}
+.hidden{display:none!important}
+body.light{background:linear-gradient(160deg,#f1f5ff,#e6ecfa);color:#14203d}
+body.light .sub,body.light .small,body.light .hakcipta{color:#4d5d80}
+body.light .pill,body.light .secondary{background:#fff;color:#14203d;border:1px solid #c3cde6}
+body.light .panel{background:#fff;border-color:#c9d3ec;box-shadow:0 2px 10px #1b27541a}
+body.light .misi{background:#f4f7ff}
+body.light .tile{background:#f1f5ff;color:#14203d;border-color:#b8c6e6}
+body.light .zone{border-color:#b8c6e6}body.light .zone.prog{background:#f7f9ff;border-color:var(--accent)}
+body.light .tile.ok{border-color:#16a34a}body.light .tile.no{border-color:#dc2626}
+body.light .num{color:#3b5bdb}
+body.light .feedback{color:#9a5b00}
+body.light .form input,body.light .form select{background:#f7f9ff;border-color:#b8c6e6}
+body.light .tema button{border-color:#c3cde6}
+@media(max-width:520px){.wrap{padding:11px}.tile{font-size:12px;padding:9px}.form{grid-template-columns:1fr}.actor{font-size:44px}.goal{font-size:38px}}
+</style>
+<!--KARTUN:CSS-->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style id="tema-kartun">
+/* Tema Kartun — dijana oleh tools/tema_kartun.py; jangan edit di sini */
+body.k{
+  --sk1:#0d1b3d;--sk2:#2b3f78;--hill1:#1f3d4a;--hill2:#1d4a35;--hill3:#235c2f;
+  --leaf:#1e5a2c;--leaf2:#2a6e36;--trunk:#4a3020;--grass:#2f7a2a;--grass2:#3c8f33;
+  --dirt:#6b3f1d;--dirt2:#57321a;--stone:#4a3a2c;--cloud:#5a6a92;
+  --card:#2a2236;--cardfg:#f6ead8;--line:#5b4a6e;--tile:#3a3048;--tileSh:#1c1626;--soft:#3a3048;--softfg:#f0dcc0;
+  --wood:#8b5a2b;--woodD:#5a3416;
+  --ui:"Fredoka","Baloo 2","Segoe UI",Roboto,Arial,sans-serif;--mono:Consolas,"Courier New",monospace;
+  font-family:var(--ui);background:var(--sk1);color:var(--cardfg)}
+body.k.light{
+  --sk1:#4fb6f2;--sk2:#bfe9ff;--hill1:#8fd36a;--hill2:#6cc04a;--hill3:#58b03c;
+  --leaf:#3f9a35;--leaf2:#58b84a;--trunk:#7a4a26;--grass:#4fae2f;--grass2:#6ccb43;
+  --dirt:#b8692c;--dirt2:#9c5622;--stone:#7a4f2e;--cloud:#fff;
+  --card:#fff8ea;--cardfg:#3b2414;--line:#e2c79a;--tile:#fff;--tileSh:#d4b483;--soft:#fff1d6;--softfg:#5a3a1e;
+  background:var(--sk1);color:var(--cardfg)}
+.kscene{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.kscene svg{width:100%;height:100%;display:block}
+.ksk1{stop-color:var(--sk1)}.ksk2{stop-color:var(--sk2)}
+.kh1{fill:var(--hill1)}.kh2{fill:var(--hill2)}.kh3{fill:var(--hill3)}
+.klf{fill:var(--leaf)}.klf2{fill:var(--leaf2)}.ktr{fill:var(--trunk)}
+.kgr{fill:var(--grass)}.kgr2{fill:var(--grass2)}.kdt{fill:var(--dirt)}.kdt2{fill:var(--dirt2)}.kstn{fill:var(--stone)}
+.kcl{fill:var(--cloud);opacity:.95}
+.kcA{animation:kdrift 70s linear infinite}.kcB{animation:kdrift 95s linear infinite;animation-delay:-40s}
+@keyframes kdrift{from{transform:translateX(-400px)}to{transform:translateX(1500px)}}
+.ksun,.kmoon,.kstars,.kffly{transition:opacity .6s}
+body.k.light .kmoon,body.k.light .kstars,body.k.light .kffly{opacity:0}
+body.k:not(.light) .ksun{opacity:0}
+.kstars circle{animation:ktw 3s ease-in-out infinite}.kstars circle:nth-child(3n){animation-delay:-1s}
+@keyframes ktw{50%{opacity:.25}}
+.kffly circle{fill:#fff59a;filter:drop-shadow(0 0 6px #fff59a);animation:kfl 6s ease-in-out infinite}
+.kffly circle:nth-child(2){animation-delay:-2s}.kffly circle:nth-child(3){animation-delay:-4s}
+@keyframes kfl{50%{transform:translate(30px,-40px);opacity:.3}}
+.ksunr{transform-origin:1010px 130px;animation:kspin 40s linear infinite}@keyframes kspin{to{transform:rotate(360deg)}}
+
+/* komponen kartun yang dikongsi */
+body.k .hakcipta{color:inherit;opacity:.8}
+body.k .tema button{font-family:var(--ui);background:var(--tile);color:var(--cardfg);border:2px solid var(--line);border-radius:12px;box-shadow:0 3px 0 var(--tileSh);font-weight:700}
+body.k .tema button.on{border-color:#f4a300;background:#ffe9b0;color:#3b2414}
+body.k:not(.light) .tema button.on{background:#5a4220;color:#ffe9b0}
+body.k input,body.k select{font-family:var(--ui)}
+body.k pre,body.k code,body.k .code,body.k textarea{font-family:var(--mono)}
+
+body.k h1{font-weight:700;color:#ffd84a;-webkit-text-stroke:2px #7a3b00;text-shadow:0 4px 0 #7a3b00;letter-spacing:1px}
+body.k .wrap>.top .sub{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+body.k .pill{background:#fff3e6!important;color:#3b2414!important;border:2px solid rgba(0,0,0,.15)!important;box-shadow:0 3px 0 rgba(0,0,0,.25)!important;font-weight:700}
+body.k .panel{background:var(--card)!important;color:var(--cardfg)!important;border:3px solid var(--wood)!important;border-radius:18px!important;box-shadow:0 5px 0 var(--woodD),0 10px 20px rgba(0,0,0,.18)!important}
+
+body.k .panel .sub,body.k .small{color:inherit!important;opacity:.8}
+body.k .scene{background:linear-gradient(#d39a5c,#a86a32)!important;border:3px solid #6b3f1d!important;color:#fff6e0!important;
+  text-shadow:0 2px 0 rgba(80,40,10,.6);box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 5px 0 #5a3416}
+body.k .track{background:rgba(255,255,255,.55)!important;border:3px solid #6b3f1d;height:16px!important}
+body.k .misi{background:var(--soft)!important;color:var(--softfg);border-left:6px solid #f4a300!important}
+body.k .zone{border:3px dashed var(--line)!important;background:transparent}
+body.k .zone.prog{background:var(--soft)!important;border-color:#f4a300!important}
+body.k .tile{background:var(--tile);color:var(--cardfg);border:2px solid var(--line);border-radius:12px;box-shadow:0 4px 0 var(--tileSh);transition:transform .1s}
+
+body.k .tile.ok{border-color:#3fbf5f!important;background:#e3fbe6;color:#14451f}
+body.k .tile.no{border-color:#e9504f!important;background:#ffe9e6;color:#5a1414}
+body.k .num{color:#c07a00!important}
+body.k .action{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#6fe07a,#34b74a)!important;color:#fff!important;text-shadow:0 2px 0 rgba(0,0,0,.25);box-shadow:0 5px 0 #1f7a2e!important;transition:transform .1s}
+body.k .action:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #1f7a2e!important}
+body.k .action.secondary{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#fff8ea,#f1dfbd)!important;color:#3b2414!important;text-shadow:none;box-shadow:0 5px 0 #c9a46e!important;transition:transform .1s}
+body.k .action.secondary:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #c9a46e!important}
+
+body.k .feedback{color:inherit!important;font-weight:600}
+body.k .form input,body.k .form select{background:var(--tile)!important;color:var(--cardfg)!important;border:3px solid var(--line)!important;border-radius:12px!important;outline:none}
+body.k .form input,body.k .form select:focus{border-color:#f4a300!important}
+
+body.k .wrap>.hakcipta{color:#fff;opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+</style>
+<!--/KARTUN:CSS-->
+</head>
+<body>
+<!--KARTUN:SCENE-->
+<div class="kscene" aria-hidden="true"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+<defs><linearGradient id="ksky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ksk1"/><stop offset="1" class="ksk2"/></linearGradient>
+<radialGradient id="kglow"><stop offset="0" stop-color="#fff7b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff7b0" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="800" fill="url(#ksky)"/>
+<g class="kstars" fill="#fff"><circle cx="80" cy="60" r="2"/><circle cx="210" cy="140" r="1.5"/><circle cx="330" cy="50" r="2.2"/><circle cx="460" cy="120" r="1.4"/><circle cx="560" cy="40" r="2"/><circle cx="700" cy="150" r="1.6"/><circle cx="820" cy="70" r="2"/><circle cx="1120" cy="180" r="1.8"/><circle cx="150" cy="240" r="1.4"/><circle cx="420" cy="230" r="1.8"/><circle cx="640" cy="260" r="1.3"/><circle cx="1150" cy="60" r="2"/></g>
+<g class="ksun"><g class="ksunr" fill="#ffe680" opacity=".55"><path d="M1010 20 l14 60 h-28z"/><path d="M1010 240 l14 -60 h-28z"/><path d="M900 130 l60 14 v-28z"/><path d="M1120 130 l-60 14 v-28z"/><path d="M932 52 l52 34 -20 20z"/><path d="M1088 208 l-52 -34 20 -20z"/><path d="M1088 52 l-34 52 -20 -20z"/><path d="M932 208 l34 -52 20 20z"/></g>
+<circle cx="1010" cy="130" r="95" fill="url(#kglow)"/><circle cx="1010" cy="130" r="52" fill="#ffd93b" stroke="#ffb703" stroke-width="5"/></g>
+<g class="kmoon"><circle cx="1010" cy="130" r="90" fill="url(#kglow)" opacity=".35"/><circle cx="1010" cy="130" r="46" fill="#fff4cf"/><circle cx="995" cy="118" r="9" fill="#ecdca8"/><circle cx="1025" cy="146" r="6" fill="#ecdca8"/><circle cx="1022" cy="112" r="4" fill="#ecdca8"/></g>
+<g class="kcA"><g class="kcl"><ellipse cx="120" cy="120" rx="70" ry="30"/><ellipse cx="170" cy="100" rx="50" ry="36"/><ellipse cx="80" cy="105" rx="40" ry="26"/></g></g>
+<g class="kcB"><g class="kcl"><ellipse cx="300" cy="210" rx="60" ry="24"/><ellipse cx="340" cy="192" rx="42" ry="30"/><ellipse cx="262" cy="198" rx="34" ry="22"/></g></g>
+<path class="kh1" d="M0 520 Q150 380 320 470 T640 450 T960 430 T1200 470 V800 H0Z"/>
+<path class="kh2" d="M0 580 Q200 470 420 560 T820 540 T1200 560 V800 H0Z"/>
+<rect class="ktr" x="92" y="470" width="22" height="120" rx="6"/><circle class="klf" cx="103" cy="450" r="60"/><circle class="klf2" cx="70" cy="470" r="38"/><circle class="klf2" cx="135" cy="430" r="36"/><circle class="klf" cx="110" cy="410" r="40"/>
+<rect class="ktr" x="1060" y="500" width="18" height="100" rx="5"/><circle class="klf" cx="1069" cy="480" r="48"/><circle class="klf2" cx="1040" cy="495" r="30"/><circle class="klf2" cx="1095" cy="470" r="30"/>
+<rect class="ktr" x="760" y="520" width="14" height="70" rx="4"/><circle class="klf2" cx="767" cy="505" r="34"/><circle class="klf" cx="785" cy="520" r="22"/>
+<path class="kh3" d="M0 640 Q300 580 600 630 T1200 620 V800 H0Z"/>
+<g class="klf2"><circle cx="260" cy="650" r="26"/><circle cx="290" cy="640" r="30"/><circle cx="322" cy="652" r="22"/><circle cx="900" cy="645" r="24"/><circle cx="928" cy="636" r="28"/><circle cx="958" cy="648" r="20"/></g>
+<rect class="kdt" x="0" y="690" width="1200" height="110"/>
+<path class="kgr" d="M0 670 H1200 V700 Q1185 715 1170 700 Q1155 715 1140 700 Q1125 715 1110 700 Q1095 715 1080 700 Q1065 715 1050 700 Q1035 715 1020 700 Q1005 715 990 700 Q975 715 960 700 Q945 715 930 700 Q915 715 900 700 Q885 715 870 700 Q855 715 840 700 Q825 715 810 700 Q795 715 780 700 Q765 715 750 700 Q735 715 720 700 Q705 715 690 700 Q675 715 660 700 Q645 715 630 700 Q615 715 600 700 Q585 715 570 700 Q555 715 540 700 Q525 715 510 700 Q495 715 480 700 Q465 715 450 700 Q435 715 420 700 Q405 715 390 700 Q375 715 360 700 Q345 715 330 700 Q315 715 300 700 Q285 715 270 700 Q255 715 240 700 Q225 715 210 700 Q195 715 180 700 Q165 715 150 700 Q135 715 120 700 Q105 715 90 700 Q75 715 60 700 Q45 715 30 700 Q15 715 0 700 Z"/>
+<rect class="kgr2" x="0" y="666" width="1200" height="8"/>
+<g class="kstn"><ellipse cx="80" cy="740" rx="12" ry="6"/><ellipse cx="230" cy="770" rx="8" ry="4"/><ellipse cx="400" cy="735" rx="10" ry="5"/><ellipse cx="560" cy="765" rx="14" ry="6"/><ellipse cx="720" cy="740" rx="9" ry="5"/><ellipse cx="880" cy="772" rx="12" ry="5"/><ellipse cx="1040" cy="738" rx="10" ry="5"/><ellipse cx="1160" cy="768" rx="8" ry="4"/></g>
+<rect class="kdt2" x="0" y="785" width="1200" height="15"/>
+<g class="kffly"><circle cx="300" cy="560" r="4"/><circle cx="650" cy="600" r="3.5"/><circle cx="980" cy="560" r="4"/></g>
+</svg></div><script>document.body.classList.add("k")</script>
+<!--/KARTUN:SCENE-->
+<main class="wrap">
+  <div class="top">
+    <div><h1>🏎️ CODE RACING</h1><div class="sub">Susun arahan untuk mengawal kereta ke garisan penamat.</div></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><a data-hub class="pill" style="display:none">⬅ Semua Game</a><div class="pill" id="score">⭐ 0 XP</div></div>
+  </div>
+
+  <section class="panel" id="startScreen">
+    <h2>🧩 Susun blok kod mengikut susunan yang betul</h2>
+    <p class="sub">Setiap peringkat ada 4 teka-teki. Ketik blok mengikut susunan untuk membina program dari atas ke bawah. Ketik blok dalam program untuk mengeluarkannya. Tekan JALANKAN untuk menguji.<br>⭐ 100 XP jika betul pada cubaan pertama · −25 XP setiap cubaan salah · −20 XP jika guna petunjuk.</p>
+    <div class="form">
+      <input id="inNama" placeholder="Nama penuh" maxlength="60" autocomplete="name">
+      <input id="inKelas" placeholder="Kelas (cth: DEP2A)" maxlength="20">
+      <select id="inLevel"></select>
+    </div>
+    <button class="action" id="btnStart">▶ MULA</button>
+    <div class="tema"><button data-tema="light">☀️ Cerah</button><button data-tema="dark">🌙 Gelap</button></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <section class="scene" id="scene">
+      <div class="top"><strong id="levelName"></strong><span id="levelCount"></span></div>
+      <div class="lane"><span class="actor" id="actor">🏎️</span><span class="goal">🏁</span></div>
+      <div class="track"><div class="fill" id="fill"></div></div>
+    </section>
+    <section class="panel">
+      <h2 id="pTajuk"></h2>
+      <div class="misi" id="pMisi"></div>
+      <div class="zlabel"><span>📝 Program anda</span><span id="bilBaris" class="small"></span></div>
+      <div class="zone prog" id="prog"></div>
+      <div class="zlabel"><span>🧱 Blok tersedia — ketik untuk tambah ke baris seterusnya</span></div>
+      <div class="zone" id="pool"></div>
+      <div class="controls">
+        <button class="action" id="run">▶ JALANKAN</button>
+        <button class="action secondary" id="hint">💡 PETUNJUK</button>
+        <button class="action secondary" id="undo">↩ BUANG BARIS AKHIR</button>
+        <button class="action secondary" id="reset">🗑 KOSONGKAN</button>
+        <button class="action" id="next" hidden>SETERUSNYA →</button>
+      </div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+      <p class="small">Simulasi pembelajaran — susunan disemak berdasarkan aliran logik program, bukan pengkompil C.</p>
+    </section>
+  </section>
+
+  <section class="panel hidden" id="endScreen">
+    <h1 id="eTitle"></h1>
+    <p id="eText"></p>
+    <div class="controls">
+      <button class="action" id="btnAgain">↻ Main Lagi</button>
+      <button class="action secondary" id="btnNext">⏭ Peringkat Seterusnya</button>
+      <button class="action secondary" id="btnMenu">🏠 Menu</button>
+      <a data-hub class="action secondary" style="display:none;text-decoration:none">⬅ Semua Game</a>
+    </div>
+    <div class="small" id="sendStatus" style="margin-top:10px"></div>
+  </section>
+
+  <div class="hakcipta">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+</main>
+
+<script>
+/* ================= 1) TETAPAN ================= */
+const TETAPAN = { NAMA_GAME: "Code Racing", SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec", XP_PENUH: 100, TOLAK_SALAH: 25, TOLAK_PETUNJUK: 20, XP_MIN: 20 };
+
+/* ================= 2) BANK TEKA-TEKI =================
+   tajuk = nama teka-teki, misi = apa yang program perlu buat,
+   baris = susunan BETUL (akan dikocok semasa bermain), petunjuk = bantuan */
+const PERINGKAT = [
+ {
+  "nama": "Algoritma Perlumbaan (Topik 1)",
+  "teka": [
+   {
+    "tajuk": "Pusingan Pemanasan",
+    "misi": "Tulis algoritma memandu dari garisan mula ke penamat.",
+    "baris": [
+     "MULA",
+     "HIDUPKAN ENJIN",
+     "PECUT",
+     "PANDU KE HADAPAN",
+     "TAMAT"
+    ],
+    "petunjuk": "Enjin dihidupkan sebelum memecut."
+   },
+   {
+    "tajuk": "Cabaran Selekoh",
+    "misi": "Pecut, kurangkan laju sebelum membelok, kemudian pecut semula.",
+    "baris": [
+     "MULA",
+     "PECUT",
+     "BREK",
+     "BELOK KIRI",
+     "PECUT",
+     "TAMAT"
+    ],
+    "petunjuk": "Brek SEBELUM membelok."
+   },
+   {
+    "tajuk": "Hentian Pit",
+    "misi": "Jika minyak kurang daripada 20%, masuk pit; kemudian teruskan perlumbaan.",
+    "baris": [
+     "MULA",
+     "BACA minyak",
+     "JIKA minyak < 20 MAKA",
+     "    MASUK PIT DAN ISI MINYAK",
+     "TAMAT JIKA",
+     "TERUSKAN PERLUMBAAN",
+     "TAMAT"
+    ],
+    "petunjuk": "Teruskan perlumbaan selepas TAMAT JIKA — ia berlaku dalam kedua-dua keadaan."
+   },
+   {
+    "tajuk": "Kira Kelajuan",
+    "misi": "Algoritma IPO: input jarak dan masa, kira laju, papar laju.",
+    "baris": [
+     "MULA",
+     "INPUT jarak, masa",
+     "laju = jarak / masa",
+     "PAPAR laju",
+     "TAMAT"
+    ],
+    "petunjuk": "Input → Proses → Output."
+   }
+  ]
+ },
+ {
+  "nama": "Kawalan Kereta (Topik 2–4)",
+  "teka": [
+   {
+    "tajuk": "Litar Logik C",
+    "misi": "Tambah laju 20, kemudian papar GO jika laju sekurang-kurangnya 20.",
+    "baris": [
+     "int laju = 0;",
+     "laju += 20;",
+     "if (laju >= 20) {",
+     "    printf(\"GO\");",
+     "}"
+    ],
+    "petunjuk": "Isytihar → kemas kini nilai → semak syarat → output."
+   },
+   {
+    "tajuk": "Lampu Isyarat",
+    "misi": "Jika lampu hijau (1), papar JALAN; jika tidak, BERHENTI.",
+    "baris": [
+     "int lampu = 1;   // 1 = hijau",
+     "if (lampu == 1)",
+     "    printf(\"JALAN\");",
+     "else",
+     "    printf(\"BERHENTI\");"
+    ],
+    "petunjuk": "Lampu hijau → JALAN."
+   },
+   {
+    "tajuk": "Tiga Pusingan",
+    "misi": "Papar nombor pusingan 1 hingga 3, kemudian 'Tamat!'.",
+    "baris": [
+     "int pusingan;",
+     "for (pusingan = 1; pusingan <= 3; pusingan++) {",
+     "    printf(\"Pusingan %d \", pusingan);",
+     "}",
+     "printf(\"Tamat!\");"
+    ],
+    "petunjuk": "'Tamat!' dipapar sekali sahaja — di luar gelung."
+   },
+   {
+    "tajuk": "Pecut ke 100",
+    "misi": "Tambah laju 30 selagi laju kurang daripada 100, kemudian papar laju.",
+    "baris": [
+     "int laju = 0;",
+     "while (laju < 100) {",
+     "    laju += 30;",
+     "}",
+     "printf(\"Laju maksimum: %d\", laju);"
+    ],
+    "petunjuk": "Kemas kini laju di dalam gelung; papar selepas gelung."
+   }
+  ]
+ },
+ {
+  "nama": "Litar C (Topik 5–6)",
+  "teka": [
+   {
+    "tajuk": "Masa Pusingan",
+    "misi": "Fungsi masaPusingan(jarak, laju) memulangkan jarak / laju; papar dalam main().",
+    "baris": [
+     "int masaPusingan(int jarak, int laju) {",
+     "    return jarak / laju;",
+     "}",
+     "int main() {",
+     "    printf(\"%d saat\", masaPusingan(300, 60));",
+     "    return 0;",
+     "}"
+    ],
+    "petunjuk": "Takrif fungsi dahulu, panggil dalam main()."
+   },
+   {
+    "tajuk": "Purata Masa",
+    "misi": "Kira purata 3 masa pusingan dalam tatasusunan.",
+    "baris": [
+     "int masa[3] = {62, 58, 60}, i, jumlah = 0;",
+     "for (i = 0; i < 3; i++)",
+     "    jumlah += masa[i];",
+     "printf(\"Purata: %d\", jumlah / 3);"
+    ],
+    "petunjuk": "Jumlahkan dalam gelung; bahagi selepas gelung."
+   },
+   {
+    "tajuk": "Pusingan Terpantas",
+    "misi": "Cari masa paling SINGKAT dalam tatasusunan.",
+    "baris": [
+     "int masa[4] = {62, 58, 60, 59}, i, terpantas = masa[0];",
+     "for (i = 1; i < 4; i++)",
+     "    if (masa[i] < terpantas)",
+     "        terpantas = masa[i];",
+     "printf(\"Terpantas: %d\", terpantas);"
+    ],
+    "petunjuk": "Terpantas = nilai terkecil: guna < untuk membandingkan."
+   },
+   {
+    "tajuk": "Mula Perlumbaan",
+    "misi": "Guna prototaip supaya mulaLumba() boleh ditakrif selepas main().",
+    "baris": [
+     "#include <stdio.h>",
+     "void mulaLumba(void);",
+     "int main() {",
+     "    mulaLumba();",
+     "    return 0;",
+     "}",
+     "void mulaLumba(void) {",
+     "    printf(\"3... 2... 1... GO!\");",
+     "}"
+    ],
+    "petunjuk": "Prototaip (berakhir ;) sebelum main(); takrifan (dengan { }) selepas main()."
+   }
+  ]
+ }
+];
+
+/* ================= 3) ENJIN ================= */
+const $=id=>document.getElementById(id);
+const kocok=a=>{let b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+let pemain={},lv=0,pi=0,xp=0,betul=0,prog=[],pool=[],tanda=null,solved=false,salah=0,guna=false,t0=0;
+PERINGKAT.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`Peringkat ${i+1} — ${p.nama}`;$('inLevel').appendChild(o)});
+
+function P(){return PERINGKAT[lv].teka[pi]}
+function mula(l){
+  lv=l;pi=0;xp=0;betul=0;t0=Date.now();$('score').textContent='⭐ 0 XP';
+  $('startScreen').classList.add('hidden');$('endScreen').classList.add('hidden');$('game').classList.remove('hidden');
+  load();
+}
+function progress(n){const tot=PERINGKAT[lv].teka.length;$('fill').style.width=(n/tot*100)+'%';$('actor').style.left=`calc(${n/tot} * (100% - 56px))`;}
+function kocokPool(){const t=P();const idx=t.baris.map((_,i)=>i);do{pool=kocok(idx)}while(t.baris.length>1&&pool.every((v,i)=>t.baris[v]===t.baris[i]));prog=[];tanda=null;}
+function load(){
+  const t=P();solved=false;salah=0;guna=false;kocokPool();
+  $('levelName').textContent=`Peringkat ${lv+1}: ${PERINGKAT[lv].nama}`;
+  $('levelCount').textContent=`Teka-teki ${pi+1}/${PERINGKAT[lv].teka.length}`;
+  $('pTajuk').textContent=`🧩 ${t.tajuk}`;$('pMisi').textContent=`🎯 Misi: ${t.misi}`;
+  $('feedback').textContent='';$('next').hidden=true;['hint','reset','undo'].forEach(id=>$(id).disabled=false);
+  progress(pi);render();
+}
+function blok(teks,no,ikon,kelas,klik){
+  const b=document.createElement('button');b.type='button';b.className='tile'+(kelas?' '+kelas:'');
+  if(no){const n=document.createElement('span');n.className='num';n.textContent=String(no).padStart(2,'0');b.append(n)}
+  const k=document.createElement('span');k.className='kod';k.textContent=teks;b.append(k);
+  if(ikon){const ic=document.createElement('span');ic.className='ic';ic.textContent=ikon;b.append(ic)}
+  b.onclick=klik;b.disabled=solved;return b;
+}
+function render(){
+  const t=P(),pg=$('prog'),pl=$('pool');pg.replaceChildren();pl.replaceChildren();
+  if(!prog.length){const d=document.createElement('div');d.className='kosong';d.textContent='Ketik blok di bawah untuk mula membina program ⬇';pg.append(d)}
+  prog.forEach((id,i)=>pg.append(blok(t.baris[id],i+1,solved?'':'✕',solved?'ok':(tanda?(tanda[i]?'ok':'no'):''),()=>{if(solved)return;prog.splice(i,1);pool.push(id);tanda=null;render()})));
+  if(!pool.length&&!solved){const d=document.createElement('div');d.className='kosong';d.textContent='✔ Semua blok digunakan — tekan JALANKAN';pl.append(d)}
+  pool.forEach((id,i)=>pl.append(blok(t.baris[id],0,'＋','',()=>{if(solved)return;pool.splice(i,1);prog.push(id);tanda=null;render()})));
+  $('bilBaris').textContent=`${prog.length}/${t.baris.length} baris`;
+  $('run').disabled=solved||pool.length>0;$('undo').disabled=solved||!prog.length;
+}
+$('run').onclick=()=>{
+  if(solved||pool.length)return;const t=P();
+  const tepat=prog.map((id,i)=>t.baris[id]===t.baris[i]);
+  const bil=tepat.filter(Boolean).length;
+  if(bil===t.baris.length){
+    solved=true;tanda=null;
+    const dapat=Math.max(TETAPAN.XP_MIN,TETAPAN.XP_PENUH-salah*TETAPAN.TOLAK_SALAH-(guna?TETAPAN.TOLAK_PETUNJUK:0));
+    xp+=dapat;if(salah===0&&!guna)betul++;
+    $('score').textContent=`⭐ ${xp} XP`;
+    $('feedback').textContent=`✅ BERJAYA! Program anda berfungsi. +${dapat} XP${salah===0&&!guna?' 🎯 Cubaan pertama!':''}`;
+    ['hint','reset','undo'].forEach(id=>$(id).disabled=true);$('next').hidden=false;
+    $('next').textContent=pi===PERINGKAT[lv].teka.length-1?'🏆 LIHAT KEPUTUSAN':'TEKA-TEKI SETERUSNYA →';
+    progress(pi+1);$('scene').classList.add('celebrate');setTimeout(()=>$('scene').classList.remove('celebrate'),1200);
+    render();$('next').scrollIntoView({behavior:'smooth',block:'center'});
+  }else{
+    salah++;tanda=tepat;render();
+    $('feedback').textContent=`❌ Belum tepat — ${bil}/${t.baris.length} baris di tempat yang betul (hijau). Ketik baris merah untuk mengeluarkannya, kemudian susun semula.`;
+  }
+};
+$('undo').onclick=()=>{if(solved||!prog.length)return;pool.push(prog.pop());tanda=null;render()};
+$('hint').onclick=()=>{guna=true;$('feedback').textContent='💡 '+P().petunjuk};
+$('reset').onclick=()=>{if(solved)return;pool=pool.concat(prog);prog=[];tanda=null;$('feedback').textContent='';render()};
+$('next').onclick=()=>{if(pi<PERINGKAT[lv].teka.length-1){pi++;load()}else tamat()};
+function tamat(){
+  const n=PERINGKAT[lv].teka.length;
+  $('game').classList.add('hidden');$('endScreen').classList.remove('hidden');
+  $('eTitle').textContent=betul===n?'🏆 Sempurna!':'🎉 Peringkat Selesai!';
+  $('eText').textContent=`${pemain.nama} · ${pemain.kelas} — Peringkat ${lv+1}: ${PERINGKAT[lv].nama}. Betul pada cubaan pertama: ${betul}/${n} · ⭐ ${xp} XP`;
+  $('btnNext').style.display=lv<PERINGKAT.length-1?'inline-block':'none';
+  hantarMarkah({game:TETAPAN.NAMA_GAME,nama:pemain.nama,kelas:pemain.kelas,peringkat:lv+1,betul,jumlah:n,peratus:Math.round(betul/n*100),mata:xp,syiling:0,masa:Math.round((Date.now()-t0)/1000)});
+}
+function hantarMarkah(data){
+  const s=$('sendStatus');s.textContent='Menghantar markah…';
+  const ok=()=>{s.textContent='✅ Markah telah dihantar kepada pensyarah!'};
+  const fail=()=>{s.textContent='⚠️ Mod latihan — markah tidak dihantar.'};
+  if(typeof google!=='undefined'&&google.script&&google.script.run){google.script.run.withSuccessHandler(ok).withFailureHandler(fail).simpanMarkah(data)}
+  else if(TETAPAN.SCRIPT_URL){fetch(TETAPAN.SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)}).then(ok).catch(fail)}
+  else fail();
+}
+$('btnStart').onclick=()=>{
+  const n=$('inNama').value.trim(),k=$('inKelas').value.trim();
+  if(!n||!k){$('inNama').placeholder='⚠️ Sila isi nama';$('inKelas').placeholder='⚠️ Sila isi kelas';return}
+  pemain={nama:n,kelas:k.toUpperCase()};mula(+$('inLevel').value);
+};
+$('btnAgain').onclick=()=>mula(lv);
+$('btnNext').onclick=()=>mula(lv+1);
+$('btnMenu').onclick=()=>{$('endScreen').classList.add('hidden');$('startScreen').classList.remove('hidden');$('inLevel').value=lv};
+
+/* ===== Tema cerah / gelap (dikongsi semua game) ===== */
+function temaSet(t){
+  document.body.classList.toggle("light", t==="light");
+  document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on", b.dataset.tema===t));
+  try{ localStorage.setItem("cgame-tema", t); }catch(e){}
+}
+document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>temaSet(b.dataset.tema));
+(function(){ let t=null; try{ t=localStorage.getItem("cgame-tema"); }catch(e){}
+  if(!t) t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+  temaSet(t); })();
+function pasangHub(url){ document.querySelectorAll("[data-hub]").forEach(a=>{ a.href=url; a.target="_top"; a.style.display="inline-block"; }); }
+</script>
+<script>pasangHub("./");</script>
+</body>
+</html>

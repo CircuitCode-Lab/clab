@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Code Master — C Programming Learning Lab</title>
+<!--
+  CODE MASTER — Boss Battle (DEC20313 C Programming)
+  © 2026 Wan Fazlini Idayu · JKE, Politeknik Kota Bharu
+  Asal: versi standalone (ChatGPT), disesuaikan untuk C Programming Game Hub:
+  nama & kelas, soalan rawak setiap boss, boss hanya cedera bila jawapan betul,
+  tema cerah/gelap, markah ke Google Sheet.
+  Tambah soalan: edit bahagian "2) BANK SOALAN" sahaja.
+-->
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#1b2754,#080f26 65%);color:#eff6ff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}
+main{max-width:900px;margin:auto;padding:16px}
+.top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{background:#192b51;border:1px solid #4262a2;border-radius:99px;padding:8px 13px;font-size:14px;color:inherit;text-decoration:none}
+.panel{background:#101d3b;border:1px solid #344b7c;border-radius:22px;padding:18px;margin:14px 0;box-shadow:0 12px 30px #0004}
+.btn{background:linear-gradient(120deg,#38bdf8,#818cf8);border:0;border-radius:12px;padding:12px 22px;color:#071124;font-weight:800}
+.btn2{background:#192b51;border:1px solid #4262a2;border-radius:12px;padding:10px 16px;color:inherit;font-weight:700}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.answer{padding:13px;border:1px solid #49649c;border-radius:12px;background:#1b3159;color:#fff;text-align:left;font-weight:600}
+.answer:hover:not(:disabled){background:#294a7e}.answer:disabled{opacity:.7;cursor:default}
+.good{background:#145c50!important;border-color:#4bf7b4!important;opacity:1!important}
+.bad{background:#7d293c!important;border-color:#ff6b8b!important;opacity:1!important}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#070e20;padding:16px;border-radius:12px;color:#93f9bd;font:15px/1.55 ui-monospace,Consolas,monospace;margin:10px 0}
+pre:empty{display:none}
+.muted{color:#b6c6e4}.hidden{display:none!important}
+h1{font-size:clamp(25px,5vw,40px);margin:8px 0}h2{font-size:clamp(17px,3vw,22px);margin:6px 0}
+#toast{min-height:27px;font-weight:700;line-height:1.5}
+.meter{height:14px;background:#263a61;border-radius:20px;overflow:hidden}
+.fill{height:100%;background:linear-gradient(90deg,#f43f5e,#fb923c);transition:width .35s}
+.avatar{font-size:70px;text-align:center;margin:8px;transition:transform .15s}
+.avatar.hit{animation:hit .4s}
+@keyframes hit{20%{transform:translateX(-10px) rotate(-8deg)}40%{transform:translateX(10px) rotate(8deg)}60%{transform:translateX(-6px)}100%{transform:none}}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.form input,.form select{padding:11px 12px;border-radius:10px;border:1px solid #435b8e;background:#0f1a36;color:inherit;min-width:0}
+.form select{grid-column:1/-1}
+.bosses{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.bosses span{background:#192b51;border:1px solid #4262a2;border-radius:12px;padding:6px 10px;font-size:13px}
+.bosses span.done{opacity:.45;text-decoration:line-through}
+.tema{display:flex;gap:6px;margin-top:12px}
+.tema button{padding:7px 12px;border-radius:10px;border:2px solid #4262a2;background:transparent;color:inherit;font-weight:700;font-size:12px}
+.tema button.on{border-color:#38bdf8;background:#38bdf822}
+.hakcipta{color:#8597bc;text-align:center;font-size:12px;margin-top:16px;line-height:1.6}
+.send{font-size:13px;margin-top:8px}
+body.light{background:linear-gradient(160deg,#eef4ff,#e3e9ff);color:#14203d}
+body.light .panel{background:#fff;border-color:#c9d3ec;box-shadow:0 2px 10px #1b27541a}
+body.light .pill,body.light .btn2,body.light .bosses span{background:#f1f5ff;border-color:#b8c6e6}
+body.light .answer{background:#f1f5ff;border-color:#b8c6e6;color:#14203d}
+body.light .answer:hover:not(:disabled){background:#e0e9ff}
+body.light .good{background:#c9f5e2!important;border-color:#1aa572!important}
+body.light .bad{background:#ffd9e2!important;border-color:#e0466b!important}
+body.light .muted,body.light .hakcipta{color:#4d5d80}
+body.light .meter{background:#dbe3f5}
+body.light .form input,body.light .form select{background:#f7f9ff;border-color:#b8c6e6}
+body.light .tema button{border-color:#b8c6e6}
+@media(max-width:560px){.answers{grid-template-columns:1fr}main{padding:11px}.panel{padding:14px}.form{grid-template-columns:1fr}}
+</style>
+<!--KARTUN:CSS-->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style id="tema-kartun">
+/* Tema Kartun — dijana oleh tools/tema_kartun.py; jangan edit di sini */
+body.k{
+  --sk1:#0d1b3d;--sk2:#2b3f78;--hill1:#1f3d4a;--hill2:#1d4a35;--hill3:#235c2f;
+  --leaf:#1e5a2c;--leaf2:#2a6e36;--trunk:#4a3020;--grass:#2f7a2a;--grass2:#3c8f33;
+  --dirt:#6b3f1d;--dirt2:#57321a;--stone:#4a3a2c;--cloud:#5a6a92;
+  --card:#2a2236;--cardfg:#f6ead8;--line:#5b4a6e;--tile:#3a3048;--tileSh:#1c1626;--soft:#3a3048;--softfg:#f0dcc0;
+  --wood:#8b5a2b;--woodD:#5a3416;
+  --ui:"Fredoka","Baloo 2","Segoe UI",Roboto,Arial,sans-serif;--mono:Consolas,"Courier New",monospace;
+  font-family:var(--ui);background:var(--sk1);color:var(--cardfg)}
+body.k.light{
+  --sk1:#4fb6f2;--sk2:#bfe9ff;--hill1:#8fd36a;--hill2:#6cc04a;--hill3:#58b03c;
+  --leaf:#3f9a35;--leaf2:#58b84a;--trunk:#7a4a26;--grass:#4fae2f;--grass2:#6ccb43;
+  --dirt:#b8692c;--dirt2:#9c5622;--stone:#7a4f2e;--cloud:#fff;
+  --card:#fff8ea;--cardfg:#3b2414;--line:#e2c79a;--tile:#fff;--tileSh:#d4b483;--soft:#fff1d6;--softfg:#5a3a1e;
+  background:var(--sk1);color:var(--cardfg)}
+.kscene{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.kscene svg{width:100%;height:100%;display:block}
+.ksk1{stop-color:var(--sk1)}.ksk2{stop-color:var(--sk2)}
+.kh1{fill:var(--hill1)}.kh2{fill:var(--hill2)}.kh3{fill:var(--hill3)}
+.klf{fill:var(--leaf)}.klf2{fill:var(--leaf2)}.ktr{fill:var(--trunk)}
+.kgr{fill:var(--grass)}.kgr2{fill:var(--grass2)}.kdt{fill:var(--dirt)}.kdt2{fill:var(--dirt2)}.kstn{fill:var(--stone)}
+.kcl{fill:var(--cloud);opacity:.95}
+.kcA{animation:kdrift 70s linear infinite}.kcB{animation:kdrift 95s linear infinite;animation-delay:-40s}
+@keyframes kdrift{from{transform:translateX(-400px)}to{transform:translateX(1500px)}}
+.ksun,.kmoon,.kstars,.kffly{transition:opacity .6s}
+body.k.light .kmoon,body.k.light .kstars,body.k.light .kffly{opacity:0}
+body.k:not(.light) .ksun{opacity:0}
+.kstars circle{animation:ktw 3s ease-in-out infinite}.kstars circle:nth-child(3n){animation-delay:-1s}
+@keyframes ktw{50%{opacity:.25}}
+.kffly circle{fill:#fff59a;filter:drop-shadow(0 0 6px #fff59a);animation:kfl 6s ease-in-out infinite}
+.kffly circle:nth-child(2){animation-delay:-2s}.kffly circle:nth-child(3){animation-delay:-4s}
+@keyframes kfl{50%{transform:translate(30px,-40px);opacity:.3}}
+.ksunr{transform-origin:1010px 130px;animation:kspin 40s linear infinite}@keyframes kspin{to{transform:rotate(360deg)}}
+
+/* komponen kartun yang dikongsi */
+body.k .hakcipta{color:inherit;opacity:.8}
+body.k .tema button{font-family:var(--ui);background:var(--tile);color:var(--cardfg);border:2px solid var(--line);border-radius:12px;box-shadow:0 3px 0 var(--tileSh);font-weight:700}
+body.k .tema button.on{border-color:#f4a300;background:#ffe9b0;color:#3b2414}
+body.k:not(.light) .tema button.on{background:#5a4220;color:#ffe9b0}
+body.k input,body.k select{font-family:var(--ui)}
+body.k pre,body.k code,body.k .code,body.k textarea{font-family:var(--mono)}
+
+body.k h1{font-weight:700;color:#ffd84a;-webkit-text-stroke:2px #7a3b00;text-shadow:0 4px 0 #7a3b00;letter-spacing:1px}
+body.k .panel h1{color:#ffd84a}
+body.k .pill{background:#fff3e6!important;color:#3b2414!important;border:2px solid rgba(0,0,0,.15)!important;box-shadow:0 3px 0 rgba(0,0,0,.25)!important;font-weight:700}
+body.k .panel{background:var(--card)!important;color:var(--cardfg)!important;border:3px solid var(--wood)!important;border-radius:18px!important;box-shadow:0 5px 0 var(--woodD),0 10px 20px rgba(0,0,0,.18)!important}
+body.k .btn{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#6fe07a,#34b74a)!important;color:#fff!important;text-shadow:0 2px 0 rgba(0,0,0,.25);box-shadow:0 5px 0 #1f7a2e!important;transition:transform .1s}
+body.k .btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #1f7a2e!important}
+body.k .btn2{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#fff8ea,#f1dfbd)!important;color:#3b2414!important;text-shadow:none;box-shadow:0 5px 0 #c9a46e!important;transition:transform .1s}
+body.k .btn2:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #c9a46e!important}
+body.k .answer{background:var(--tile);color:var(--cardfg);border:2px solid var(--line);border-radius:12px;box-shadow:0 4px 0 var(--tileSh);transition:transform .1s}
+
+body.k .answer{font-weight:600}
+body.k .answer:hover:not(:disabled){transform:translateY(-2px);background:var(--tile)}
+body.k .good{background:#3fbf5f!important;border-color:#1f8a3a!important;color:#fff!important;box-shadow:0 4px 0 #1f8a3a!important}
+body.k .bad{background:#e9504f!important;border-color:#a8302f!important;color:#fff!important;box-shadow:0 4px 0 #a8302f!important}
+body.k pre{background:#1b2232!important;color:#e6edf7!important;border:6px solid var(--wood)!important;border-radius:14px!important;box-shadow:inset 0 0 0 2px var(--woodD),0 4px 0 var(--woodD)!important}
+body.k .muted,body.k .hint{color:inherit!important;opacity:.8}
+body.k .meter{background:rgba(0,0,0,.15)!important;border:3px solid #6b3f1d;height:18px!important}
+body.k .form input,body.k .form select{background:var(--tile)!important;color:var(--cardfg)!important;border:3px solid var(--line)!important;border-radius:12px!important;outline:none}
+body.k .form input,body.k .form select:focus{border-color:#f4a300!important}
+
+body.k .bosses span{background:#fff3e6!important;color:#3b2414!important;border:2px solid rgba(0,0,0,.15)!important;box-shadow:0 3px 0 rgba(0,0,0,.25)!important;font-weight:700}
+body.k main>.hakcipta,body.k main>.top{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+body.k canvas{border:6px solid var(--wood);border-radius:18px!important;box-shadow:0 5px 0 var(--woodD)}
+body.k .control{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#6cc4ff,#2f8fe0)!important;color:#fff!important;text-shadow:0 2px 0 rgba(0,0,0,.25);box-shadow:0 5px 0 #1d5f9e!important;transition:transform .1s}
+body.k .control:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #1d5f9e!important}
+
+body.k #quiz{background:rgba(10,20,40,.55)!important}
+body.k .send{color:inherit}
+</style>
+<!--/KARTUN:CSS-->
+</head>
+<body>
+<!--KARTUN:SCENE-->
+<div class="kscene" aria-hidden="true"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+<defs><linearGradient id="ksky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ksk1"/><stop offset="1" class="ksk2"/></linearGradient>
+<radialGradient id="kglow"><stop offset="0" stop-color="#fff7b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff7b0" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="800" fill="url(#ksky)"/>
+<g class="kstars" fill="#fff"><circle cx="80" cy="60" r="2"/><circle cx="210" cy="140" r="1.5"/><circle cx="330" cy="50" r="2.2"/><circle cx="460" cy="120" r="1.4"/><circle cx="560" cy="40" r="2"/><circle cx="700" cy="150" r="1.6"/><circle cx="820" cy="70" r="2"/><circle cx="1120" cy="180" r="1.8"/><circle cx="150" cy="240" r="1.4"/><circle cx="420" cy="230" r="1.8"/><circle cx="640" cy="260" r="1.3"/><circle cx="1150" cy="60" r="2"/></g>
+<g class="ksun"><g class="ksunr" fill="#ffe680" opacity=".55"><path d="M1010 20 l14 60 h-28z"/><path d="M1010 240 l14 -60 h-28z"/><path d="M900 130 l60 14 v-28z"/><path d="M1120 130 l-60 14 v-28z"/><path d="M932 52 l52 34 -20 20z"/><path d="M1088 208 l-52 -34 20 -20z"/><path d="M1088 52 l-34 52 -20 -20z"/><path d="M932 208 l34 -52 20 20z"/></g>
+<circle cx="1010" cy="130" r="95" fill="url(#kglow)"/><circle cx="1010" cy="130" r="52" fill="#ffd93b" stroke="#ffb703" stroke-width="5"/></g>
+<g class="kmoon"><circle cx="1010" cy="130" r="90" fill="url(#kglow)" opacity=".35"/><circle cx="1010" cy="130" r="46" fill="#fff4cf"/><circle cx="995" cy="118" r="9" fill="#ecdca8"/><circle cx="1025" cy="146" r="6" fill="#ecdca8"/><circle cx="1022" cy="112" r="4" fill="#ecdca8"/></g>
+<g class="kcA"><g class="kcl"><ellipse cx="120" cy="120" rx="70" ry="30"/><ellipse cx="170" cy="100" rx="50" ry="36"/><ellipse cx="80" cy="105" rx="40" ry="26"/></g></g>
+<g class="kcB"><g class="kcl"><ellipse cx="300" cy="210" rx="60" ry="24"/><ellipse cx="340" cy="192" rx="42" ry="30"/><ellipse cx="262" cy="198" rx="34" ry="22"/></g></g>
+<path class="kh1" d="M0 520 Q150 380 320 470 T640 450 T960 430 T1200 470 V800 H0Z"/>
+<path class="kh2" d="M0 580 Q200 470 420 560 T820 540 T1200 560 V800 H0Z"/>
+<rect class="ktr" x="92" y="470" width="22" height="120" rx="6"/><circle class="klf" cx="103" cy="450" r="60"/><circle class="klf2" cx="70" cy="470" r="38"/><circle class="klf2" cx="135" cy="430" r="36"/><circle class="klf" cx="110" cy="410" r="40"/>
+<rect class="ktr" x="1060" y="500" width="18" height="100" rx="5"/><circle class="klf" cx="1069" cy="480" r="48"/><circle class="klf2" cx="1040" cy="495" r="30"/><circle class="klf2" cx="1095" cy="470" r="30"/>
+<rect class="ktr" x="760" y="520" width="14" height="70" rx="4"/><circle class="klf2" cx="767" cy="505" r="34"/><circle class="klf" cx="785" cy="520" r="22"/>
+<path class="kh3" d="M0 640 Q300 580 600 630 T1200 620 V800 H0Z"/>
+<g class="klf2"><circle cx="260" cy="650" r="26"/><circle cx="290" cy="640" r="30"/><circle cx="322" cy="652" r="22"/><circle cx="900" cy="645" r="24"/><circle cx="928" cy="636" r="28"/><circle cx="958" cy="648" r="20"/></g>
+<rect class="kdt" x="0" y="690" width="1200" height="110"/>
+<path class="kgr" d="M0 670 H1200 V700 Q1185 715 1170 700 Q1155 715 1140 700 Q1125 715 1110 700 Q1095 715 1080 700 Q1065 715 1050 700 Q1035 715 1020 700 Q1005 715 990 700 Q975 715 960 700 Q945 715 930 700 Q915 715 900 700 Q885 715 870 700 Q855 715 840 700 Q825 715 810 700 Q795 715 780 700 Q765 715 750 700 Q735 715 720 700 Q705 715 690 700 Q675 715 660 700 Q645 715 630 700 Q615 715 600 700 Q585 715 570 700 Q555 715 540 700 Q525 715 510 700 Q495 715 480 700 Q465 715 450 700 Q435 715 420 700 Q405 715 390 700 Q375 715 360 700 Q345 715 330 700 Q315 715 300 700 Q285 715 270 700 Q255 715 240 700 Q225 715 210 700 Q195 715 180 700 Q165 715 150 700 Q135 715 120 700 Q105 715 90 700 Q75 715 60 700 Q45 715 30 700 Q15 715 0 700 Z"/>
+<rect class="kgr2" x="0" y="666" width="1200" height="8"/>
+<g class="kstn"><ellipse cx="80" cy="740" rx="12" ry="6"/><ellipse cx="230" cy="770" rx="8" ry="4"/><ellipse cx="400" cy="735" rx="10" ry="5"/><ellipse cx="560" cy="765" rx="14" ry="6"/><ellipse cx="720" cy="740" rx="9" ry="5"/><ellipse cx="880" cy="772" rx="12" ry="5"/><ellipse cx="1040" cy="738" rx="10" ry="5"/><ellipse cx="1160" cy="768" rx="8" ry="4"/></g>
+<rect class="kdt2" x="0" y="785" width="1200" height="15"/>
+<g class="kffly"><circle cx="300" cy="560" r="4"/><circle cx="650" cy="600" r="3.5"/><circle cx="980" cy="560" r="4"/></g>
+</svg></div><script>document.body.classList.add("k")</script>
+<!--/KARTUN:SCENE-->
+<main>
+  <div class="top">
+    <span class="pill">⚔️ CODE MASTER · BOSS BATTLE</span>
+    <span style="display:flex;gap:6px;flex-wrap:wrap"><a data-hub class="pill" style="display:none">⬅ Semua Game</a><span class="pill" id="stats">⭐ 0 XP · ❤️ 3</span></span>
+  </div>
+
+  <section class="panel" id="intro">
+    <h1>Kalahkan Boss Kod!</h1>
+    <p class="muted">Lawan 3 boss dengan cabaran C Programming. Setiap boss ada 4 HP — setiap jawapan betul mencederakan boss. Jawapan salah = hilang 1 ❤️ (anda ada 3). Kalahkan ketiga-tiga boss untuk menang!</p>
+    <div class="bosses" id="bossList"></div>
+    <div class="form">
+      <input id="inNama" placeholder="Nama penuh" maxlength="60" autocomplete="name">
+      <input id="inKelas" placeholder="Kelas (cth: DEP2A)" maxlength="20">
+      <select id="inLevel"></select>
+    </div>
+    <button class="btn" id="btnStart">▶ MULA PERTARUNGAN</button>
+    <div class="tema"><button data-tema="light">☀️ Cerah</button><button data-tema="dark">🌙 Gelap</button></div>
+  </section>
+
+  <section id="game" class="hidden">
+    <div class="panel">
+      <div class="top"><strong id="bossname"></strong><span id="round" class="muted"></span></div>
+      <div class="avatar" id="avatar">🤖</div>
+      <div class="meter"><div class="fill" id="bossbar" style="width:100%"></div></div>
+      <p class="muted" id="bosshp"></p>
+    </div>
+    <section class="panel">
+      <div class="top"><h2 id="question"></h2><span class="pill" id="combo"></span></div>
+      <pre id="code"></pre>
+      <div class="answers" id="answers"></div>
+      <p id="toast" aria-live="polite"></p>
+      <button class="btn hidden" id="next">TERUSKAN ➜</button>
+    </section>
+  </section>
+
+  <section class="panel hidden" id="finish">
+    <h1 id="result"></h1>
+    <p id="summary"></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="btnAgain">↻ Main Lagi</button>
+      <button class="btn2" id="btnMenu">🏠 Menu</button>
+      <a data-hub class="btn2" style="display:none;text-decoration:none">⬅ Semua Game</a>
+    </div>
+    <div class="send" id="sendStatus"></div>
+  </section>
+
+  <div class="hakcipta">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+</main>
+
+<script>
+/* ================= 1) TETAPAN ================= */
+const TETAPAN = { NAMA_GAME: "Code Master", SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec", HP_BOSS: 4, NYAWA: 3 };
+
+/* ================= 2) BANK SOALAN =================
+   Setiap boss ada kolam soalan (sekurang-kurangnya HP_BOSS + NYAWA soalan).
+   q = soalan, c = kod (boleh ''), a = 4 pilihan, k = indeks jawapan betul (0–3), e = penerangan */
+const PERINGKAT = [
+ { nama:"Kempen 1: Tiga Boss (Topik 1–6)", boss:[
+  { nama:"Syntax Sentinel", emoji:"🤖", topik:"Asas C", soalan:[
+   {q:'Apakah output?',c:'#include <stdio.h>\nint main() {\n    int x = 4;\n    printf("%d", x + 3);\n    return 0;\n}',a:['7','43','4','3'],k:0,e:'Ungkapan x + 3 bernilai 7.'},
+   {q:'Penentu format manakah untuk memaparkan integer?',c:'int skor = 10;',a:['%f','%c','%d','%s'],k:2,e:'%d digunakan untuk int.'},
+   {q:'Apakah output?',c:'int x = 5;\nif (x > 3) printf("YES");\nelse printf("NO");',a:['NO','5','YES','Error'],k:2,e:'5 lebih besar daripada 3, jadi cabang if dilaksanakan.'},
+   {q:'Apakah output?',c:'int a = 9, b = 2;\nprintf("%d", a / b);',a:['4','4.5','5','2'],k:0,e:'Pembahagian integer membuang bahagian perpuluhan.'},
+   {q:'Apakah output?',c:'int a = 3;\nprintf("%d", a == 3);',a:['0','3','1','Error'],k:2,e:'Perbandingan yang BENAR bernilai 1.'},
+   {q:'Apakah output?',c:'int x = 10;\nx -= 4;\nprintf("%d", x);',a:['14','6','4','10'],k:1,e:'x -= 4 bermaksud x = x − 4.'},
+   {q:'Apakah output?',c:'printf("%d", 2 + 3 * 4);',a:['14','20','24','9'],k:0,e:'Darab dahulu: 3 × 4 = 12, kemudian + 2 = 14.'},
+   {q:'Simbol manakah menamatkan setiap pernyataan C?',c:'',a:[';',':','.','}'],k:0,e:'Setiap pernyataan C diakhiri dengan titik koma (;).'}
+  ]},
+  { nama:"Loop Phantom", emoji:"👾", topik:"Gelung", soalan:[
+   {q:'Berapa kali gelung ini berulang?',c:'int i;\nfor (i = 0; i < 4; i++) {\n    printf("*");\n}',a:['3','4','5','0'],k:1,e:'i bernilai 0, 1, 2, 3 — empat kali.'},
+   {q:'Pernyataan manakah keluar dari gelung serta-merta?',c:'while (1) {\n    /* pilih pernyataan */\n}',a:['continue;','stop;','break;','exit loop;'],k:2,e:'break keluar dari gelung terdekat serta-merta.'},
+   {q:'Apakah output?',c:'int x = 2;\nwhile (x < 5) {\n    x++;\n}\nprintf("%d", x);',a:['2','4','5','6'],k:2,e:'Gelung berhenti apabila x mencapai 5.'},
+   {q:'Apakah output?',c:'int i, s = 0;\nfor (i = 1; i <= 4; i++)\n    s += i;\nprintf("%d", s);',a:['10','4','6','15'],k:0,e:'1 + 2 + 3 + 4 = 10.'},
+   {q:'Apakah output?',c:'int n = 3;\ndo {\n    printf("%d", n);\n    n--;\n} while (n > 0);',a:['321','3210','32','123'],k:0,e:'n dicetak 3, 2, 1; berhenti bila n = 0.'},
+   {q:'Apakah output?',c:'int i;\nfor (i = 0; i < 6; i += 2)\n    printf("%d", i);',a:['024','0246','246','012345'],k:0,e:'i = 0, 2, 4. Bila i = 6, syarat i < 6 palsu.'},
+   {q:'Apakah yang dilakukan continue; dalam gelung?',c:'',a:['Melangkau ke lelaran seterusnya','Keluar dari gelung','Menamatkan program','Mengulang lelaran yang sama'],k:0,e:'continue melangkau baki badan gelung dan terus ke lelaran seterusnya.'},
+   {q:'Apakah output?',c:'int i = 10;\nwhile (i > 1)\n    i /= 2;\nprintf("%d", i);',a:['1','0','2','5'],k:0,e:'i: 10 → 5 → 2 → 1, berhenti bila 1 tidak > 1.'}
+  ]},
+  { nama:"Array Overlord", emoji:"🐉", topik:"Tatasusunan & Fungsi", soalan:[
+   {q:'Apakah output?',c:'int a[3] = {2, 4, 6};\nprintf("%d", a[1]);',a:['2','4','6','1'],k:1,e:'Indeks tatasusunan bermula pada 0, jadi a[1] = 4.'},
+   {q:'Apakah nilai yang dipulangkan?',c:'int square(int x) {\n    return x * x;\n}\nprintf("%d", square(3));',a:['3','6','9','Error'],k:2,e:'square(3) memulangkan 3 × 3 = 9.'},
+   {q:'Pengisytiharan manakah sah untuk tatasusunan 5 integer?',c:'',a:['int a(5);','int a[5];','array int a[5];','int[5] a;'],k:1,e:'Tatasusunan C guna kurungan segi [ ] selepas nama.'},
+   {q:'Apakah output?',c:'int a[] = {7, 3, 9};\nprintf("%d", a[0] + a[2]);',a:['16','10','12','79'],k:0,e:'a[0] = 7 dan a[2] = 9, jadi 7 + 9 = 16.'},
+   {q:'Apakah output?',c:'int a[4] = {1, 2, 3, 4}, i;\nfor (i = 3; i >= 0; i--)\n    printf("%d", a[i]);',a:['4321','1234','321','43210'],k:0,e:'Gelung menurun dari indeks 3 ke 0 — cetak terbalik.'},
+   {q:'Apakah output?',c:'int a[3] = {0};\na[1] = 5;\nprintf("%d%d%d", a[0], a[1], a[2]);',a:['050','500','555','005'],k:0,e:'{0} menjadikan semua elemen 0; hanya a[1] diubah kepada 5.'},
+   {q:'Apakah output?',c:'int tambah(int a, int b) {\n    return a + b;\n}\nprintf("%d", tambah(2, 5) * 2);',a:['14','12','9','7'],k:0,e:'tambah(2, 5) = 7, kemudian 7 × 2 = 14.'},
+   {q:'Fungsi yang tidak memulangkan nilai diisytiharkan dengan jenis…',c:'',a:['void','int','null','return'],k:0,e:'void bermaksud tiada nilai dipulangkan.'}
+  ]}
+ ]}
+];
+
+/* ================= 3) ENJIN ================= */
+const $=id=>document.getElementById(id);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+let pemain={},lv=0,B,bi,bossHP,life,xp,combo,betul,cuba,kalah,locked,q,t0;
+
+PERINGKAT.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`Peringkat ${i+1} — ${p.nama}`;$('inLevel').appendChild(o)});
+function bossList(){const p=PERINGKAT[+$('inLevel').value||0];$('bossList').innerHTML=p.boss.map(b=>`<span>${b.emoji} ${b.nama} · ${b.topik}</span>`).join('');}
+$('inLevel').onchange=bossList;bossList();
+
+function stats(){$('stats').textContent=`⭐ ${xp} XP · ❤️ ${life}`;}
+function mula(l){
+  lv=l;B=PERINGKAT[lv].boss.map(b=>({...b,kolam:shuffle(b.soalan.slice())}));
+  bi=0;bossHP=TETAPAN.HP_BOSS;life=TETAPAN.NYAWA;xp=0;combo=0;betul=0;cuba=0;kalah=0;t0=Date.now();
+  $('intro').classList.add('hidden');$('finish').classList.add('hidden');$('game').classList.remove('hidden');
+  render();
+}
+function render(){
+  if(life<=0||bi>=B.length){end();return}
+  const b=B[bi];
+  if(!b.kolam.length) b.kolam=shuffle(b.soalan.slice());   // jaga-jaga: isi semula kolam
+  q=b.kolam.pop();locked=false;
+  q.pilihan=shuffle(q.a.map((t,i)=>({t,ok:i===q.k})));
+  $('bossname').textContent=`BOSS ${bi+1}/${B.length}: ${b.emoji} ${b.nama}`;
+  $('round').textContent=`Topik: ${b.topik}`;
+  $('avatar').textContent=b.emoji;
+  $('bossbar').style.width=`${bossHP/TETAPAN.HP_BOSS*100}%`;
+  $('bosshp').textContent=`HP Boss: ${bossHP}/${TETAPAN.HP_BOSS} · Setiap jawapan betul menyerang boss`;
+  $('combo').textContent=`🔥 Combo x${combo}`;
+  $('question').textContent=q.q;$('code').textContent=q.c;
+  $('answers').innerHTML='';
+  q.pilihan.forEach((p,i)=>{const btn=document.createElement('button');btn.className='answer';btn.textContent=String.fromCharCode(65+i)+'. '+p.t;btn.onclick=()=>answer(i);$('answers').append(btn)});
+  $('toast').textContent='';$('next').classList.add('hidden');stats();
+}
+function answer(i){
+  if(locked)return;locked=true;cuba++;
+  const kk=q.pilihan.findIndex(p=>p.ok),ok=i===kk;
+  document.querySelectorAll('.answer').forEach((btn,j)=>{btn.disabled=true;if(j===kk)btn.classList.add('good');else if(j===i)btn.classList.add('bad')});
+  if(ok){
+    combo++;betul++;const pts=100+Math.min(combo,5)*20;xp+=pts;bossHP--;
+    const av=$('avatar');av.classList.remove('hit');void av.offsetWidth;av.classList.add('hit');
+    $('bossbar').style.width=`${bossHP/TETAPAN.HP_BOSS*100}%`;
+    $('bosshp').textContent=`HP Boss: ${bossHP}/${TETAPAN.HP_BOSS}`;
+    $('toast').textContent=`⚡ SERANGAN TEPAT! +${pts} XP. ${q.e}`;
+    if(bossHP<=0){kalah++;$('toast').textContent+=' 🏆 BOSS DITUMPASKAN!';}
+  }else{
+    life--;combo=0;$('toast').textContent=`💥 ANDA DISERANG! −1 ❤️. Jawapan: ${q.pilihan[kk].t}. ${q.e}`;
+  }
+  stats();
+  const habis=life<=0||(bossHP<=0&&bi===B.length-1);
+  $('next').textContent=habis?'LIHAT KEPUTUSAN ➜':bossHP<=0?'BOSS SETERUSNYA ➜':'CABARAN SETERUSNYA ➜';
+  $('next').classList.remove('hidden');
+}
+$('next').onclick=()=>{if(bossHP<=0){bi++;bossHP=TETAPAN.HP_BOSS;}render()};
+function end(){
+  $('game').classList.add('hidden');$('finish').classList.remove('hidden');
+  const menang=kalah===B.length;
+  $('result').textContent=menang?'🏆 SEMUA BOSS DITUMPASKAN!':'💔 PERMAINAN TAMAT';
+  $('summary').textContent=`${pemain.nama} · ${pemain.kelas} — XP: ${xp} · Boss ditumpaskan: ${kalah}/${B.length} · Betul: ${betul}/${cuba} · ❤️ baki: ${Math.max(0,life)}`;
+  hantarMarkah({game:TETAPAN.NAMA_GAME,nama:pemain.nama,kelas:pemain.kelas,peringkat:lv+1,betul,jumlah:cuba,peratus:cuba?Math.round(betul/cuba*100):0,mata:xp,syiling:kalah,masa:Math.round((Date.now()-t0)/1000)});
+}
+function hantarMarkah(data){
+  const s=$('sendStatus');s.textContent='Menghantar markah…';
+  const ok=()=>{s.textContent='✅ Markah telah dihantar kepada pensyarah!'};
+  const fail=()=>{s.textContent='⚠️ Mod latihan — markah tidak dihantar.'};
+  if(typeof google!=='undefined'&&google.script&&google.script.run){google.script.run.withSuccessHandler(ok).withFailureHandler(fail).simpanMarkah(data)}
+  else if(TETAPAN.SCRIPT_URL){fetch(TETAPAN.SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)}).then(ok).catch(fail)}
+  else fail();
+}
+$('btnStart').onclick=()=>{
+  const n=$('inNama').value.trim(),k=$('inKelas').value.trim();
+  if(!n||!k){$('inNama').placeholder='⚠️ Sila isi nama';$('inKelas').placeholder='⚠️ Sila isi kelas';return}
+  pemain={nama:n,kelas:k.toUpperCase()};mula(+$('inLevel').value);
+};
+$('btnAgain').onclick=()=>mula(lv);
+$('btnMenu').onclick=()=>{$('finish').classList.add('hidden');$('intro').classList.remove('hidden');};
+
+/* ===== Tema cerah / gelap (dikongsi semua game) ===== */
+function temaSet(t){
+  document.body.classList.toggle("light", t==="light");
+  document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on", b.dataset.tema===t));
+  try{ localStorage.setItem("cgame-tema", t); }catch(e){}
+}
+document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>temaSet(b.dataset.tema));
+(function(){ let t=null; try{ t=localStorage.getItem("cgame-tema"); }catch(e){}
+  if(!t) t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+  temaSet(t); })();
+function pasangHub(url){ document.querySelectorAll("[data-hub]").forEach(a=>{ a.href=url; a.target="_top"; a.style.display="inline-block"; }); }
+</script>
+<script>pasangHub("./");</script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Pemburu Bug C</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ TEMA KARTUN (v4) ============
+   Lalai = malam (Gelap). body.light = siang (Cerah). */
+:root{
+  --sk1:#0d1b3d; --sk2:#2b3f78;
+  --hill1:#1f3d4a; --hill2:#1d4a35; --hill3:#235c2f;
+  --leaf:#1e5a2c; --leaf2:#2a6e36; --trunk:#4a3020;
+  --grass:#2f7a2a; --grass2:#3c8f33; --dirt:#6b3f1d; --dirt2:#57321a; --stone:#4a3a2c;
+  --cloud:#5a6a92;
+  --card:#fff8ea; --cardfg:#3b2414; --line:#e2c79a;
+  --ui:"Fredoka","Baloo 2","Segoe UI",Roboto,Arial,sans-serif;
+  --mono:Consolas,"Courier New",monospace;
+}
+body.light{
+  --sk1:#4fb6f2; --sk2:#bfe9ff;
+  --hill1:#8fd36a; --hill2:#6cc04a; --hill3:#58b03c;
+  --leaf:#3f9a35; --leaf2:#58b84a; --trunk:#7a4a26;
+  --grass:#4fae2f; --grass2:#6ccb43; --dirt:#b8692c; --dirt2:#9c5622; --stone:#7a4f2e;
+  --cloud:#ffffff;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--ui);color:var(--cardfg);min-height:100vh;background:var(--sk1);overflow-x:hidden}
+
+/* ---------- Latar pemandangan ---------- */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none}
+.scene svg{width:100%;height:100%;display:block}
+.sk1{stop-color:var(--sk1)} .sk2{stop-color:var(--sk2)}
+.h1{fill:var(--hill1)} .h2{fill:var(--hill2)} .h3{fill:var(--hill3)}
+.lf{fill:var(--leaf)} .lf2{fill:var(--leaf2)} .tr{fill:var(--trunk)}
+.gr{fill:var(--grass)} .gr2{fill:var(--grass2)} .dt{fill:var(--dirt)} .dt2{fill:var(--dirt2)} .stn{fill:var(--stone)}
+.cl{fill:var(--cloud);opacity:.95}
+.cloudA{animation:drift 70s linear infinite}.cloudB{animation:drift 95s linear infinite;animation-delay:-40s}
+@keyframes drift{from{transform:translateX(-400px)}to{transform:translateX(1500px)}}
+.sun{transition:opacity .6s}.moon,.stars,.ffly{transition:opacity .6s}
+body.light .moon,body.light .stars,body.light .ffly{opacity:0}
+body:not(.light) .sun{opacity:0}
+.stars circle{animation:twinkle 3s ease-in-out infinite}
+.stars circle:nth-child(3n){animation-delay:-1s}.stars circle:nth-child(3n+1){animation-delay:-2s}
+@keyframes twinkle{50%{opacity:.25}}
+.ffly circle{fill:#fff59a;filter:drop-shadow(0 0 6px #fff59a);animation:float 6s ease-in-out infinite}
+.ffly circle:nth-child(2){animation-delay:-2s}.ffly circle:nth-child(3){animation-delay:-4s}
+@keyframes float{50%{transform:translate(30px,-40px);opacity:.3}}
+.sunrays{transform-origin:1010px 130px;animation:spin 40s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- Kandungan ---------- */
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:10px 12px 40px}
+.hud{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px;background:rgba(40,22,8,.55);backdrop-filter:blur(4px);border:2px solid rgba(255,255,255,.18);border-radius:16px;padding:7px}
+.logo{font-weight:700;font-size:17px;color:#ffd84a;-webkit-text-stroke:1px #7a3b00;text-shadow:0 2px 0 #7a3b00;letter-spacing:.5px;padding:0 4px}
+.pill{border-radius:999px;padding:5px 11px;font-weight:700;font-size:13px;border:2px solid rgba(0,0,0,.18);box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.p-name{background:#5ccf6a;color:#103d16}
+.p-score{background:linear-gradient(#ffe266,#ffb703);color:#5a3200}
+.p-combo{background:linear-gradient(#ffb36b,#ff7a2e);color:#4a1a00}
+.p-life{background:#fff3e6;color:#000;letter-spacing:1px}
+.mute{background:#fff3e6;border:2px solid rgba(0,0,0,.18);border-radius:999px;width:32px;height:32px;font-size:15px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.sp{flex:1}
+
+.timer{position:relative;height:16px;background:rgba(255,255,255,.55);border:3px solid #6b3f1d;border-radius:12px;margin:4px 0 14px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.timer i{display:block;height:100%;border-radius:8px;width:100%;transition:width .2s linear,background .4s;background:#4fd36a;
+  background-image:repeating-linear-gradient(-45deg,rgba(255,255,255,.25) 0 8px,transparent 8px 16px)}
+.timer .rider{position:absolute;top:-13px;width:34px;height:34px;margin-left:-17px;transition:left .2s linear;filter:drop-shadow(0 2px 0 rgba(0,0,0,.3))}
+
+/* Papan tanda kayu */
+.task{position:relative;background:linear-gradient(#d39a5c,#b07038);border:3px solid #6b3f1d;border-radius:14px;padding:10px 14px 11px;margin-bottom:12px;color:#fff6e0;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 4px 0 #5a3416;text-shadow:0 2px 0 rgba(80,40,10,.6)}
+.task:before,.task:after{content:"";position:absolute;top:8px;width:8px;height:8px;border-radius:50%;background:#5a3416;box-shadow:inset 0 1px 1px rgba(255,255,255,.4)}
+.task:before{left:8px}.task:after{right:8px}
+.task .meta{font-size:12px;opacity:.9;display:flex;justify-content:space-between;margin:0 10px 3px;font-weight:600}
+.task #tText{font-size:17px;font-weight:600;text-align:center}
+.task b{color:#ffe266}
+
+/* Papan kod (bingkai kayu) */
+.board{position:relative;margin-top:22px}
+.crawler{position:absolute;top:-30px;left:0;width:40px;height:40px;z-index:2;animation:crawl 14s linear infinite}
+.crawler svg{width:100%;height:100%;animation:wob .35s ease-in-out infinite alternate}
+@keyframes crawl{0%{left:2%;transform:scaleX(1)}48%{left:calc(98% - 40px);transform:scaleX(1)}50%{left:calc(98% - 40px);transform:scaleX(-1)}98%{left:2%;transform:scaleX(-1)}100%{left:2%;transform:scaleX(1)}}
+@keyframes wob{to{transform:translateY(-2px) rotate(4deg)}}
+.code{background:#1b2232;border:7px solid #8b5a2b;border-radius:16px;overflow:hidden;font-family:var(--mono);font-size:14px;
+  box-shadow:inset 0 0 0 2px #5a3416,0 6px 0 #5a3416,0 10px 18px rgba(0,0,0,.3)}
+.ln{display:flex;cursor:pointer;border-bottom:1px dashed #2a3347;transition:background .15s,transform .15s}
+.ln:hover{background:#27324a}
+.ln .no{width:36px;text-align:right;padding:8px 8px 8px 0;color:#7c8aa8;user-select:none;flex-shrink:0;background:#151b28}
+.ln pre{padding:8px 10px;white-space:pre;overflow-x:auto;color:#e6edf7;flex:1}
+.ln.hit{background:#7a2323 !important}
+.ln.hit pre{color:#ffd6d6}
+.ln.miss{animation:shake .35s;background:#4a2a2a}
+.ln.fixed{background:#1f6b3a !important}
+.ln.fixed pre{color:#b8ffcf}
+.ln.reveal{outline:3px dashed #ffd84a;outline-offset:-3px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* Kesan tangkap */
+.fx{position:fixed;pointer-events:none;z-index:30}
+.fx.catch{width:56px;height:56px;animation:flyaway 1.1s ease-in forwards}
+@keyframes flyaway{0%{transform:scale(.6)}20%{transform:scale(1.3) rotate(-10deg)}100%{transform:translate(60px,-220px) scale(.4) rotate(220deg);opacity:0}}
+.fx.pop{font-weight:700;font-size:26px;color:#ffd84a;-webkit-text-stroke:1.5px #7a3b00;text-shadow:0 3px 0 #7a3b00;animation:popup .9s ease-out forwards;white-space:nowrap}
+@keyframes popup{0%{transform:translate(-50%,0) scale(.5)}25%{transform:translate(-50%,-10px) scale(1.15)}100%{transform:translate(-50%,-70px) scale(1);opacity:0}}
+.fx.cf{width:9px;height:12px;border-radius:2px;animation:conf 1s ease-out forwards}
+@keyframes conf{to{transform:translate(var(--dx),var(--dy)) rotate(540deg);opacity:0}}
+
+.fixbox{display:none;margin-top:14px;background:var(--card);border:3px solid var(--line);border-radius:16px;padding:12px;box-shadow:0 5px 0 #c9a46e}
+.fixbox p{font-weight:700;margin-bottom:8px;font-size:16px}
+.opt{display:block;width:100%;text-align:left;font-family:var(--mono);font-size:14px;padding:11px 13px;margin-bottom:8px;border-radius:12px;border:2px solid #e0c89a;
+  background:#fff;color:#2a1a0e;cursor:pointer;box-shadow:0 4px 0 #d4b483;transition:transform .1s}
+.opt:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 0 #d4b483}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 #d4b483}
+.opt.ok{background:#3fbf5f;border-color:#1f8a3a;box-shadow:0 4px 0 #1f8a3a;color:#fff !important}
+.opt.no{background:#e9504f;border-color:#a8302f;box-shadow:0 4px 0 #a8302f;color:#fff !important}
+
+.msg{display:none;margin-top:14px;padding:12px 14px;border-radius:16px;font-size:15px;border:3px solid;line-height:1.5}
+.msg.good{background:#e3fbe6;border-color:#3fbf5f;color:#14451f;box-shadow:0 5px 0 #2f9a4a}
+.msg.bad{background:#ffe9e6;border-color:#e9504f;color:#5a1414;box-shadow:0 5px 0 #b33a39}
+.msg code{background:rgba(0,0,0,.08);padding:1px 6px;border-radius:6px;font-family:var(--mono)}
+
+.btn{width:100%;padding:13px;border:none;border-radius:14px;font-family:var(--ui);font-size:18px;font-weight:700;color:#fff;margin-top:10px;cursor:pointer;
+  text-shadow:0 2px 0 rgba(0,0,0,.25);transition:transform .1s}
+.btn:active{transform:translateY(4px)}
+.g{background:linear-gradient(#6fe07a,#34b74a);box-shadow:0 5px 0 #1f7a2e}.g:active{box-shadow:0 1px 0 #1f7a2e}
+.b{background:linear-gradient(#6cc4ff,#2f8fe0);box-shadow:0 5px 0 #1d5f9e}.b:active{box-shadow:0 1px 0 #1d5f9e}
+.o{background:linear-gradient(#ffd166,#f4a300);box-shadow:0 5px 0 #a86a00;color:#4a2a00;text-shadow:none}.o:active{box-shadow:0 1px 0 #a86a00}
+
+/* ---------- Skrin mula / tamat ---------- */
+.screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;z-index:20;overflow-y:auto;background:rgba(10,20,40,.35)}
+body.light .screen{background:rgba(255,255,255,.15)}
+.card{position:relative;background:var(--card);border:4px solid #8b5a2b;border-radius:24px;padding:18px 20px 16px;width:min(430px,100%);text-align:center;margin:auto;
+  box-shadow:0 8px 0 #5a3416,0 14px 30px rgba(0,0,0,.3)}
+.hero{width:130px;height:96px;margin:-62px auto 0;display:block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.2))}
+.sign{display:inline-block;background:linear-gradient(#d39a5c,#a86a32);border:3px solid #6b3f1d;border-radius:14px;padding:4px 18px 6px;margin:4px 0 2px;box-shadow:0 4px 0 #5a3416;transform:rotate(-2deg)}
+.sign h1,.card h2{font-family:var(--ui);font-weight:700;font-size:34px;line-height:1.1;color:#ffd84a;-webkit-text-stroke:2px #7a3b00;text-shadow:0 4px 0 #7a3b00;letter-spacing:1px}
+.card h2{font-size:28px;margin:4px 0 8px}
+.ribbon{display:inline-block;background:#e9504f;color:#fff;font-weight:700;font-size:14px;padding:4px 16px;border-radius:8px;margin:10px 0 12px;box-shadow:0 3px 0 #a8302f}
+.card input,.card select{width:100%;padding:11px 13px;border-radius:12px;border:3px solid var(--line);background:#fff;color:#2a1a0e;font-family:var(--ui);font-size:15px;margin-bottom:9px;outline:none}
+.card input:focus,.card select:focus{border-color:#f4a300}
+.rules{text-align:left;font-size:14px;color:#5a3a1e;margin:4px 0 6px;line-height:1.7;background:#fff1d6;border-radius:12px;padding:8px 12px;border:2px dashed #e0c08a}
+.stat{font-size:17px;margin:5px 0;font-weight:600;background:#fff1d6;border-radius:10px;padding:6px}
+#sendStatus{font-size:13px;margin:10px 0 4px;padding:7px;border-radius:10px;background:#eef6ff;color:#1d3a5f}
+.hublink{display:none;margin-top:12px;color:#2f6fd0;font-weight:700;text-decoration:none;font-size:14px}
+
+.tema{display:flex;gap:6px;justify-content:center;margin:12px 0 4px}
+.tema button{flex:1;padding:8px;border-radius:12px;border:2px solid var(--line);background:#fff;color:#3b2414;font-family:var(--ui);font-weight:700;font-size:13px;cursor:pointer;box-shadow:0 3px 0 #d4b483}
+.tema button.on{border-color:#f4a300;background:#ffe9b0}
+.hakcipta{font-size:11px;opacity:.75;text-align:center;line-height:1.5;margin-top:12px}
+.wrap>.hakcipta{color:#fff;opacity:.9;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+
+/* Tema gelap: kad kekal kayu tetapi lebih gelap */
+body:not(.light){--card:#2a2236;--cardfg:#f6ead8;--line:#5b4a6e}
+body:not(.light) .card input,body:not(.light) .card select,body:not(.light) .opt,body:not(.light) .tema button{background:#3a3048;color:#f6ead8;border-color:#5b4a6e;box-shadow:0 4px 0 #1c1626}
+body:not(.light) .rules,body:not(.light) .stat{background:#3a3048;color:#f0dcc0;border-color:#5b4a6e}
+body:not(.light) .fixbox{box-shadow:0 5px 0 #1c1626}
+body:not(.light) .tema button.on{background:#5a4220;border-color:#f4a300}
+body:not(.light) #sendStatus{background:#22304a;color:#cfe3ff}
+body:not(.light) .hublink{color:#8fc4ff}
+body:not(.light) .p-life,body:not(.light) .mute{background:#3a3048}
+
+@media (max-width:420px){.logo{display:none}.sign h1{font-size:28px}.task #tText{font-size:15px}.code{font-size:13px}}
+</style>
+</head>
+<body>
+<!-- ============ LATAR PEMANDANGAN ============ -->
+<div class="scene" aria-hidden="true">
+<svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="sk1"/><stop offset="1" class="sk2"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#fff7b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff7b0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#sky)"/>
+  <g class="stars" fill="#fff">
+    <circle cx="80" cy="60" r="2"/><circle cx="210" cy="140" r="1.5"/><circle cx="330" cy="50" r="2.2"/><circle cx="460" cy="120" r="1.4"/>
+    <circle cx="560" cy="40" r="2"/><circle cx="700" cy="150" r="1.6"/><circle cx="820" cy="70" r="2"/><circle cx="1120" cy="180" r="1.8"/>
+    <circle cx="150" cy="240" r="1.4"/><circle cx="420" cy="230" r="1.8"/><circle cx="640" cy="260" r="1.3"/><circle cx="1150" cy="60" r="2"/>
+  </g>
+  <g class="sun">
+    <g class="sunrays" fill="#ffe680" opacity=".55">
+      <path d="M1010 20 l14 60 h-28z"/><path d="M1010 240 l14 -60 h-28z"/><path d="M900 130 l60 14 v-28z"/><path d="M1120 130 l-60 14 v-28z"/>
+      <path d="M932 52 l52 34 -20 20z"/><path d="M1088 208 l-52 -34 20 -20z"/><path d="M1088 52 l-34 52 -20 -20z"/><path d="M932 208 l34 -52 20 20z"/>
+    </g>
+    <circle cx="1010" cy="130" r="95" fill="url(#glow)"/>
+    <circle cx="1010" cy="130" r="52" fill="#ffd93b" stroke="#ffb703" stroke-width="5"/>
+  </g>
+  <g class="moon">
+    <circle cx="1010" cy="130" r="90" fill="url(#glow)" opacity=".35"/>
+    <circle cx="1010" cy="130" r="46" fill="#fff4cf"/>
+    <circle cx="995" cy="118" r="9" fill="#ecdca8"/><circle cx="1025" cy="146" r="6" fill="#ecdca8"/><circle cx="1022" cy="112" r="4" fill="#ecdca8"/>
+  </g>
+  <g class="cloudA"><g class="cl"><ellipse cx="120" cy="120" rx="70" ry="30"/><ellipse cx="170" cy="100" rx="50" ry="36"/><ellipse cx="80" cy="105" rx="40" ry="26"/></g></g>
+  <g class="cloudB"><g class="cl"><ellipse cx="300" cy="210" rx="60" ry="24"/><ellipse cx="340" cy="192" rx="42" ry="30"/><ellipse cx="262" cy="198" rx="34" ry="22"/></g></g>
+  <path class="h1" d="M0 520 Q150 380 320 470 T640 450 T960 430 T1200 470 V800 H0Z"/>
+  <path class="h2" d="M0 580 Q200 470 420 560 T820 540 T1200 560 V800 H0Z"/>
+  <!-- pokok -->
+  <g>
+    <rect class="tr" x="92" y="470" width="22" height="120" rx="6"/>
+    <circle class="lf" cx="103" cy="450" r="60"/><circle class="lf2" cx="70" cy="470" r="38"/><circle class="lf2" cx="135" cy="430" r="36"/><circle class="lf" cx="110" cy="410" r="40"/>
+    <rect class="tr" x="1060" y="500" width="18" height="100" rx="5"/>
+    <circle class="lf" cx="1069" cy="480" r="48"/><circle class="lf2" cx="1040" cy="495" r="30"/><circle class="lf2" cx="1095" cy="470" r="30"/>
+    <rect class="tr" x="760" y="520" width="14" height="70" rx="4"/>
+    <circle class="lf2" cx="767" cy="505" r="34"/><circle class="lf" cx="785" cy="520" r="22"/>
+  </g>
+  <path class="h3" d="M0 640 Q300 580 600 630 T1200 620 V800 H0Z"/>
+  <!-- semak -->
+  <g class="lf2"><circle cx="260" cy="650" r="26"/><circle cx="290" cy="640" r="30"/><circle cx="322" cy="652" r="22"/>
+    <circle cx="900" cy="645" r="24"/><circle cx="928" cy="636" r="28"/><circle cx="958" cy="648" r="20"/></g>
+  <!-- tanah: rumput + tanah -->
+  <rect class="dt" x="0" y="690" width="1200" height="110"/>
+  <path class="gr" d="M0 670 H1200 V700 Q1185 715 1170 700 Q1155 715 1140 700 Q1125 715 1110 700 Q1095 715 1080 700 Q1065 715 1050 700 Q1035 715 1020 700 Q1005 715 990 700 Q975 715 960 700 Q945 715 930 700 Q915 715 900 700 Q885 715 870 700 Q855 715 840 700 Q825 715 810 700 Q795 715 780 700 Q765 715 750 700 Q735 715 720 700 Q705 715 690 700 Q675 715 660 700 Q645 715 630 700 Q615 715 600 700 Q585 715 570 700 Q555 715 540 700 Q525 715 510 700 Q495 715 480 700 Q465 715 450 700 Q435 715 420 700 Q405 715 390 700 Q375 715 360 700 Q345 715 330 700 Q315 715 300 700 Q285 715 270 700 Q255 715 240 700 Q225 715 210 700 Q195 715 180 700 Q165 715 150 700 Q135 715 120 700 Q105 715 90 700 Q75 715 60 700 Q45 715 30 700 Q15 715 0 700Z"/>
+  <rect class="gr2" x="0" y="666" width="1200" height="8"/>
+  <g class="stn"><ellipse cx="80" cy="740" rx="12" ry="6"/><ellipse cx="230" cy="770" rx="8" ry="4"/><ellipse cx="400" cy="735" rx="10" ry="5"/><ellipse cx="560" cy="765" rx="14" ry="6"/>
+    <ellipse cx="720" cy="740" rx="9" ry="5"/><ellipse cx="880" cy="772" rx="12" ry="5"/><ellipse cx="1040" cy="738" rx="10" ry="5"/><ellipse cx="1160" cy="768" rx="8" ry="4"/></g>
+  <g class="dt2"><rect x="0" y="785" width="1200" height="15"/></g>
+  <g class="ffly"><circle cx="300" cy="560" r="4"/><circle cx="650" cy="600" r="3.5"/><circle cx="980" cy="560" r="4"/></g>
+</svg>
+</div>
+
+<div class="wrap">
+  <div class="hud">
+    <div class="logo">🐞 PEMBURU BUG</div>
+    <div class="pill p-name" id="hName">-</div>
+    <div class="sp"></div>
+    <div class="pill p-score">⭐ SKOR: <span id="hScore">0</span></div>
+    <div class="pill p-combo">🔥 <span id="hCombo">0</span></div>
+    <div class="pill p-life" id="hLife">❤️❤️❤️</div>
+    <button class="mute" id="btnMute" title="Bunyi">🔊</button>
+  </div>
+  <div class="timer"><i id="bar"></i><span class="rider" id="rider"></span></div>
+  <div class="task">
+    <div class="meta"><span id="tLevel">Peringkat 1</span><span id="tNum">Bug 1/5</span></div>
+    <div id="tText"><b>Langkah 1:</b> Ketik baris yang ada BUG 🐞</div>
+  </div>
+  <div class="board">
+    <div class="crawler" id="crawler"></div>
+    <div class="code" id="code"></div>
+  </div>
+  <div class="fixbox" id="fixbox">
+    <p>🔧 Langkah 2: Pilih pembetulan yang betul</p>
+    <div id="opts"></div>
+  </div>
+  <div class="msg" id="msg"></div>
+  <div class="hakcipta" style="margin-top:18px">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+</div>
+
+<div class="screen" id="startScreen">
+  <div class="card" style="margin-top:60px">
+    <span class="hero" id="hero"></span>
+    <div class="sign"><h1>PEMBURU BUG</h1></div><br>
+    <div class="ribbon">Cari · Tangkap · Betulkan!</div>
+    <input id="inNama" placeholder="Nama penuh" maxlength="60">
+    <input id="inKelas" placeholder="Kelas (cth: DEP2A)" maxlength="20">
+    <select id="inLevel"></select>
+    <div class="rules">
+      🐞 Ketik baris yang ada ralat → <b>+10</b><br>
+      🔧 Pilih pembetulan yang betul → <b>+5</b><br>
+      ⚡ Cepat = bonus masa · 🔥 Combo = bonus berganda<br>
+      ❤️ Salah ketik atau masa tamat = hilang nyawa
+    </div>
+    <button class="btn g" id="btnStart">▶ MULA MEMBURU</button>
+    <a data-hub class="hublink">⬅ Semua Game</a>
+    <div class="tema"><button data-tema="light">☀️ Cerah</button><button data-tema="dark">🌙 Gelap</button></div>
+    <div class="hakcipta">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+  </div>
+</div>
+
+<div class="screen" id="endScreen" style="display:none">
+  <div class="card" style="margin-top:60px">
+    <span class="hero" id="hero2"></span>
+    <h2 id="eTitle">Tamat!</h2>
+    <div class="stat" id="eLevel"></div>
+    <div class="stat" id="eBetul"></div>
+    <div class="stat" id="eMata"></div>
+    <div id="sendStatus">Menghantar markah…</div>
+    <button class="btn g" id="btnAgain">↻ Main Lagi</button>
+    <button class="btn b" id="btnNext">⏭ Peringkat Seterusnya</button>
+    <button class="btn o" id="btnMenu">🏠 Menu</button>
+    <a data-hub class="hublink">⬅ Semua Game</a>
+    <div class="tema"><button data-tema="light">☀️ Cerah</button><button data-tema="dark">🌙 Gelap</button></div>
+    <div class="hakcipta">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+  </div>
+</div>
+
+<script>
+/* ============ 1) TETAPAN ============ */
+const TETAPAN = { NAMA_GAME:"Pemburu Bug", SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec", MASA:30, NYAWA:3, BIL_SOALAN:8 };   // BIL_SOALAN = bilangan bug rawak setiap pusingan
+
+/* ============ 2) BANK BUG ============
+   kod  : baris-baris kod
+   bug  : nombor baris yang salah (mula dari 0)
+   fix  : [pembetulan BETUL, salah, salah]
+   ex   : penerangan                                  */
+const PERINGKAT = [
+ { nama:"Sintaks Asas", bug:[
+  { kod:['#include <stdio.h>','','int main() {','    printf("Hello")','    return 0;','}'], bug:3,
+    fix:['printf("Hello");','printf(Hello);','print("Hello");'], ex:"Setiap pernyataan mesti diakhiri dengan titik koma (;)." },
+  { kod:['#include <stdio.h>','','int main() {','    int umur = 18;','    printf("%f", umur);','    return 0;','}'], bug:4,
+    fix:['printf("%d", umur);','printf("%c", umur);','printf(%d, umur);'], ex:"int dipaparkan dengan %d, bukan %f." },
+  { kod:['#include <stdio.h>','','int main() {','    int x;','    scanf("%d", x);','    return 0;','}'], bug:4,
+    fix:['scanf("%d", &x);','scanf("%d", *x);','scanf(%d, x);'], ex:"scanf memerlukan alamat pembolehubah — guna &x." },
+  { kod:['#include <stdio.h>','','int main() {','    float harga = 2.50;','    Printf("%.2f", harga);','    return 0;','}'], bug:4,
+    fix:['printf("%.2f", harga);','PRINTF("%.2f", harga);','print("%.2f", harga);'], ex:"C sensitif huruf besar/kecil — printf bukan Printf." },
+  { kod:['#include <stdio.h>','','int main() {','    char gred = "A";','    printf("%c", gred);','    return 0;','}'], bug:3,
+    fix:["char gred = 'A';",'char gred = A;','string gred = "A";'], ex:"Aksara tunggal guna petikan tunggal 'A'." },
+  { kod:['#include <stdio.h>','','int main() {','    int a = 5, b = 3','    printf("%d", a + b);','    return 0;','}'], bug:3,
+    fix:['int a = 5, b = 3;','int a = 5; b = 3','int a = 5: b = 3;'], ex:"Pengisytiharan juga pernyataan — perlu ; di hujung." },
+  { kod:['#include <stdio.h>','','int main() {','    float jejari;','    scanf("%d", &jejari);','    return 0;','}'], bug:4,
+    fix:['scanf("%f", &jejari);','scanf("%d", jejari);','scanf("%c", &jejari);'], ex:"float dibaca dengan %f, bukan %d." },
+  { kod:['#include <stdio.h>','','int main() {','    printf("Selamat datang);','    return 0;','}'], bug:3,
+    fix:['printf("Selamat datang");','printf(Selamat datang);',"printf('Selamat datang');"], ex:"Rentetan mesti dibuka DAN ditutup dengan petikan berganda \"...\"." },
+  { kod:['#include <stdio.h>','','int main() {','    int jumlah;','    jumlah = 10 + 5;','    printf("%d", Jumlah);','    return 0;','}'], bug:5,
+    fix:['printf("%d", jumlah);','printf("%s", Jumlah);','printf(%d, jumlah);'], ex:"jumlah dan Jumlah ialah dua nama berbeza — C sensitif huruf besar/kecil." },
+  { kod:['#include <stdio.h>','','int main {','    printf("Hai");','    return 0;','}'], bug:2,
+    fix:['int main() {','int main[] {','main int() {'], ex:"main ialah fungsi — mesti ada kurungan ()." },
+  { kod:['#include <stdio.h>','#define PI 3.142;','','int main() {','    float luas = PI * 2 * 2;','    printf("%.2f", luas);','    return 0;','}'], bug:1,
+    fix:['#define PI 3.142','#define PI = 3.142','define PI 3.142'], ex:"#define tidak menggunakan = atau ; — nilainya disalin terus ke dalam kod." }
+ ]},
+ { nama:"Logik & Kawalan", bug:[
+  { kod:['int markah = 75;','','if (markah = 50) {','    printf("Lulus");','}'], bug:2,
+    fix:['if (markah >= 50) {','if (markah => 50) {','if markah >= 50 {'], ex:"= ialah umpukan. Untuk perbandingan guna >=, ==, dll." },
+  { kod:['int i;','','for (i = 0; i < 5; i++);','{','    printf("%d ", i);','}'], bug:2,
+    fix:['for (i = 0; i < 5; i++)','for (i = 0, i < 5, i++)','for (i = 0; i < 5; i--)'], ex:"; selepas for() menjadikan gelung kosong — badan hanya jalan sekali." },
+  { kod:['int arr[3] = {10, 20, 30};','int i;','for (i = 0; i <= 3; i++) {','    printf("%d ", arr[i]);','}'], bug:2,
+    fix:['for (i = 0; i < 3; i++) {','for (i = 1; i <= 3; i++) {','for (i = 0; i <= 2; i--) {'], ex:"Indeks sah 0–2. i <= 3 mencapai arr[3] (luar sempadan)." },
+  { kod:['int pilihan = 1;','switch (pilihan) {','    case 1: printf("Satu");','    case 2: printf("Dua");','            break;','}'], bug:2,
+    fix:['case 1: printf("Satu"); break;','case 1; printf("Satu");','case (1): printf("Satu");'], ex:"Tanpa break, case 1 'jatuh' ke case 2 dan cetak SatuDua." },
+  { kod:['int n = 5;','while (n > 0) {','    printf("%d ", n);','    n++;','}'], bug:3,
+    fix:['n--;','n = n + 1;','n == n - 1;'], ex:"n++ menyebabkan gelung tak berpenghujung. Mesti kurangkan n." },
+  { kod:['int umur = 20;','if (umur >= 18)','    printf("Dewasa");','else (umur < 18)','    printf("Remaja");'], bug:3,
+    fix:['else','else if umur < 18','elseif (umur < 18)'], ex:"else tidak menerima syarat. Jika perlu syarat, guna else if (...)." },
+  { kod:['int n;','int jumlah;','for (n = 1; n <= 10; n++)','    jumlah += n;','printf("%d", jumlah);'], bug:1,
+    fix:['int jumlah = 0;','int jumlah = 1;','int jumlah[];'], ex:"Pembolehubah pengumpul mesti diberi nilai awal 0; jika tidak, nilainya sampah." },
+  { kod:["char gred = 'B';",'switch (gred) {','    case "A": printf("Cemerlang"); break;',"    case 'B': printf(\"Baik\"); break;",'}'], bug:2,
+    fix:["case 'A': printf(\"Cemerlang\"); break;",'case A: printf("Cemerlang"); break;','case "A"; printf("Cemerlang"); break;'], ex:"case bagi char guna petikan tunggal 'A', bukan rentetan \"A\"." },
+  { kod:['int x = 15;','if (x > 5 || x < 10)','    printf("Dalam julat 6-9");'], bug:1,
+    fix:['if (x > 5 && x < 10)','if (x > 5 | x < 10)','if (5 < x < 10)'], ex:"|| benar jika SALAH SATU syarat benar, jadi 15 pun lulus. Julat perlukan &&." },
+  { kod:['int a[5];','int i;','for (i = 1; i <= 5; i++)','    a[i] = 0;'], bug:2,
+    fix:['for (i = 0; i < 5; i++)','for (i = 1; i < 5; i++)','for (i = 0; i <= 5; i++)'], ex:"Indeks sah a[5] ialah 0–4. i = 5 menulis di luar sempadan." },
+  { kod:['int i;','for (i = 10; i > 0; i++)','    printf("%d ", i);   // kira detik 10 ke 1'], bug:1,
+    fix:['for (i = 10; i > 0; i--)','for (i = 10; i < 0; i--)','for (i = 10; i > 0; i + 1)'], ex:"Kira detik perlu i-- supaya i akhirnya tidak > 0." },
+  { kod:['float purata;','int jumlah = 7, n = 2;','purata = jumlah / n;','printf("%.1f", purata);   // mahu 3.5'], bug:2,
+    fix:['purata = (float)jumlah / n;','purata = jumlah / n * 1.0;','purata = (int)jumlah / n;'], ex:"int / int membuang perpuluhan (3). Cast (float) dahulu supaya hasil 3.5." }
+ ]},
+ { nama:"Fungsi & Penuding", bug:[
+  { kod:['#include <stdio.h>','','int luas(int p, int l)','','int main() {','    printf("%d", luas(4, 5));','    return 0;','}','','int luas(int p, int l) {','    return p * l;','}'], bug:2,
+    fix:['int luas(int p, int l);','int luas(int p, int l):','int luas(p, l);'], ex:"Prototaip fungsi ialah pernyataan — mesti diakhiri dengan titik koma (;)." },
+  { kod:['void kira(int n) {','    return n * 2;','}','','int main() {','    int h = kira(5);','    return 0;','}'], bug:0,
+    fix:['int kira(int n) {','void kira(int n);','kira(int n) {'], ex:"Fungsi yang memulangkan nilai mesti ada jenis pulangan (int), bukan void." },
+  { kod:['int x = 10;','int *p;','p = x;','printf("%d", *p);'], bug:2,
+    fix:['p = &x;','p = *x;','*p = &x;'], ex:"Penuding menyimpan ALAMAT — guna &x untuk mendapatkan alamat x." },
+  { kod:['int x = 5;','int *p = &x;','printf("%d", p);   // mahu papar 5'], bug:2,
+    fix:['printf("%d", *p);','printf("%d", &p);','printf("%d", &x);'], ex:"p ialah alamat. *p (dereference) memberi nilai yang ditunjuk, iaitu 5." },
+  { kod:['void tukar(int *a, int *b) {','    int t = *a;','    *a = *b;','    *b = t;','}','','int x = 1, y = 2;','tukar(x, y);'], bug:7,
+    fix:['tukar(&x, &y);','tukar(*x, *y);','tukar(x&, y&);'], ex:"Parameter ialah penuding, jadi hantar alamat pembolehubah: &x dan &y." },
+  { kod:['int kuasa2(int n) {','    return n * n;','}','','int main() {','    printf("%d", kuasa2());','    return 0;','}'], bug:5,
+    fix:['printf("%d", kuasa2(4));','printf("%d", kuasa2);','printf("%d", int kuasa2(4));'], ex:"Fungsi dengan parameter mesti dipanggil bersama argumen." },
+  { kod:['int tambah(int a, b) {','    return a + b;','}'], bug:0,
+    fix:['int tambah(int a, int b) {','int tambah(a, b) {','int tambah(int a; int b) {'], ex:"Setiap parameter perlukan jenis data sendiri, dipisahkan dengan koma." },
+  { kod:['void papar(int n) {','    printf("%d", n);','}','','int main() {','    int x = papar(5);','    return 0;','}'], bug:5,
+    fix:['papar(5);','int x = papar();','return papar(5);'], ex:"Fungsi void tidak memulangkan nilai — panggil sahaja, jangan umpukkan." },
+  { kod:['int cari_maks(int a, int b) {','    if (a > b)','        return a;','    return a;','}'], bug:3,
+    fix:['return b;','return 0;','return a > b;'], ex:"Jika a tidak lebih besar, yang terbesar ialah b." },
+  { kod:['float purata(int a, int b) {','    return (a + b) / 2;','}   // purata(3, 4) mahu 3.5'], bug:1,
+    fix:['return (a + b) / 2.0;','return (a + b) % 2;','return a + b / 2;'], ex:"Bahagi dengan 2.0 supaya pembahagian float, bukan integer." },
+  { kod:['void gandakan(int *n) {','    n = n * 2;','}','','int x = 5;','gandakan(&x);   // mahu x jadi 10'], bug:1,
+    fix:['*n = *n * 2;','&n = &n * 2;','n = *n * 2;'], ex:"n ialah alamat. Guna *n untuk membaca dan mengubah nilai x." }
+ ]},
+ { nama:"Cabaran Nyahpepijat 🔥", bug:[
+  { kod:['int n = 5, f = 0, i;','for (i = 1; i <= n; i++)','    f = f * i;','printf("%d", f);   // mahu 120'], bug:0,
+    fix:['int n = 5, f = 1, i;','int n = 5, f, i;','int n = 5, f = n, i;'], ex:"Faktorial mesti bermula dengan 1 — 0 didarab apa-apa tetap 0." },
+  { kod:['int a[] = {4, 9, 2, 7};','int i, m = 0;','for (i = 0; i < 4; i++)','    if (a[i] < m) m = a[i];','printf("%d", m);   // mahu nilai terkecil (2)'], bug:1,
+    fix:['int i, m = a[0];','int i, m = 1;','int i, m = a[4];'], ex:"Mulakan m dengan elemen pertama. m = 0 lebih kecil daripada semua elemen, jadi tidak berubah." },
+  { kod:['int x = 7;','if (x == 10);','    printf("Sepuluh");'], bug:1,
+    fix:['if (x == 10)','if (x = 10)','if (x == 10):'], ex:"; selepas if menamatkan if — printf sentiasa dilaksanakan." },
+  { kod:['int bil = 0, i;','for (i = 1; i <= 10; i++)','    if (i % 2 = 0) bil++;'], bug:2,
+    fix:['if (i % 2 == 0) bil++;','if (i % 2 => 0) bil++;','if (i / 2 == 0) bil++;'], ex:"Perbandingan guna ==. = ialah umpukan dan menyebabkan ralat di sini." },
+  { kod:['int a[3] = {1, 2, 3, 4};','int i;','for (i = 0; i < 4; i++)','    printf("%d ", a[i]);'], bug:0,
+    fix:['int a[4] = {1, 2, 3, 4};','int a[3] = {1, 2, 3};','int a[] = 1, 2, 3, 4;'], ex:"Saiz tatasusunan mesti cukup untuk semua nilai awal (4 elemen)." },
+  { kod:['int n = 0;','do {','    printf("%d ", n);','    n += 2;','} while (n < 10)'], bug:4,
+    fix:['} while (n < 10);','} while n < 10;','} while (n < 10) {'], ex:"do-while ialah satu-satunya gelung yang diakhiri dengan ; selepas while (...)." },
+  { kod:['int jumlah(int a[], int n) {','    int i, s = 0;','    for (i = 0; i < n; i++)','        s += a[i];','    return i;','}'], bug:4,
+    fix:['return s;','return a[i];','return n;'], ex:"Fungsi sepatutnya memulangkan jumlah yang dikumpul, iaitu s." },
+  { kod:['int x = 3;','switch (x) {','    case 1: printf("Satu"); break;','    case 2: printf("Dua"); break;','    other: printf("Lain");','}'], bug:4,
+    fix:['default: printf("Lain");','else: printf("Lain");','case: printf("Lain");'], ex:"Perangkap! 'other:' dikompil sebagai label biasa, jadi tiada output. Kata kunci yang betul ialah default." }
+ ]}
+];
+
+/* ============ 3) ENJIN (tidak perlu diubah) ============ */
+const $=id=>document.getElementById(id);
+let st={}, pemain={}, tick=null;
+PERINGKAT.forEach((p,i)=>{const o=document.createElement("option");o.value=i;o.textContent=`Peringkat ${i+1}: ${p.nama}`;$("inLevel").appendChild(o);});
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+
+/* ----- Grafik kartun: kumbang (bug) ----- */
+function kumbang(sedih){
+  const mata = sedih
+    ? '<path d="M25 18 q3 3 6 0" stroke="#222" stroke-width="2" fill="none"/><path d="M33 18 q3 3 6 0" stroke="#222" stroke-width="2" fill="none"/>'
+    : '<circle cx="27" cy="17" r="5" fill="#fff"/><circle cx="37" cy="17" r="5" fill="#fff"/><circle cx="28" cy="18" r="2.4" fill="#111"/><circle cx="38" cy="18" r="2.4" fill="#111"/><circle cx="28.8" cy="17" r=".9" fill="#fff"/><circle cx="38.8" cy="17" r=".9" fill="#fff"/>';
+  return `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#2a1a14" stroke-width="3" stroke-linecap="round">
+    <path d="M16 32 L6 28"/><path d="M15 42 L5 44"/><path d="M19 51 L11 57"/>
+    <path d="M48 32 L58 28"/><path d="M49 42 L59 44"/><path d="M45 51 L53 57"/>
+    <path d="M27 9 Q24 2 19 3" fill="none"/><path d="M37 9 Q40 2 45 3" fill="none"/></g>
+  <circle cx="19" cy="3" r="2.5" fill="#2a1a14"/><circle cx="45" cy="3" r="2.5" fill="#2a1a14"/>
+  <ellipse cx="32" cy="40" rx="19" ry="20" fill="#e93b3b" stroke="#7a1414" stroke-width="2.5"/>
+  <path d="M32 21 V59" stroke="#7a1414" stroke-width="2.5"/>
+  <circle cx="23" cy="34" r="4" fill="#2a1a14"/><circle cx="41" cy="34" r="4" fill="#2a1a14"/>
+  <circle cx="22" cy="47" r="3.4" fill="#2a1a14"/><circle cx="42" cy="47" r="3.4" fill="#2a1a14"/>
+  <ellipse cx="25" cy="27" rx="5" ry="2.5" fill="#fff" opacity=".45" transform="rotate(-30 25 27)"/>
+  <circle cx="32" cy="18" r="11" fill="#2a1a14"/>
+  ${mata}
+  <circle cx="23" cy="23" r="2" fill="#ff8a8a" opacity=".7"/><circle cx="41" cy="23" r="2" fill="#ff8a8a" opacity=".7"/>
+</svg>`;
+}
+function wira(){ /* kumbang + kanta pembesar */
+  return `<svg viewBox="0 0 130 96" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(10,18) scale(1.15)">${kumbang().replace(/^<svg[^>]*>|<\/svg>$/g,"")}</g>
+  <g transform="rotate(-25 95 50)">
+    <rect x="88" y="62" width="12" height="34" rx="5" fill="#8b5a2b" stroke="#5a3416" stroke-width="2.5"/>
+    <circle cx="94" cy="44" r="22" fill="#bfe9ff" fill-opacity=".55" stroke="#ffb703" stroke-width="7"/>
+    <path d="M82 36 q6 -9 15 -7" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/>
+  </g></svg>`;
+}
+$("crawler").innerHTML=kumbang();
+$("rider").innerHTML=kumbang();
+$("hero").innerHTML=wira();
+$("hero2").innerHTML=wira();
+
+/* ----- Bunyi ringkas (Web Audio) ----- */
+let bunyi=true, actx=null;
+try{ bunyi = localStorage.getItem("cgame-bunyi")!=="0"; }catch(e){}
+function setMute(){ $("btnMute").textContent=bunyi?"🔊":"🔇"; }
+setMute();
+$("btnMute").onclick=()=>{ bunyi=!bunyi; setMute(); try{localStorage.setItem("cgame-bunyi",bunyi?"1":"0");}catch(e){} };
+function nada(seq){
+  if(!bunyi) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    let t=actx.currentTime;
+    seq.forEach(([f,d,type])=>{
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type=type||"square"; o.frequency.value=f;
+      g.gain.setValueAtTime(.08,t); g.gain.exponentialRampToValueAtTime(.001,t+d);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+d); t+=d*.85;
+    });
+  }catch(e){}
+}
+const SFX={
+  tangkap:()=>nada([[660,.08],[990,.12]]),
+  betul:()=>nada([[523,.1,"triangle"],[659,.1,"triangle"],[784,.18,"triangle"]]),
+  salah:()=>nada([[220,.15,"sawtooth"],[160,.2,"sawtooth"]]),
+  tamat:()=>nada([[392,.12,"triangle"],[523,.12,"triangle"],[659,.12,"triangle"],[1047,.3,"triangle"]])
+};
+
+/* ----- Kesan visual ----- */
+function fx(cls,x,y,html){
+  const d=document.createElement("div"); d.className="fx "+cls; d.style.left=x+"px"; d.style.top=y+"px";
+  if(html) d.innerHTML=html; document.body.appendChild(d); setTimeout(()=>d.remove(),1200); return d;
+}
+function konfeti(x,y){
+  const w=["#ffd84a","#e93b3b","#4fd36a","#4fb6f2","#ff7a2e","#c77dff"];
+  for(let i=0;i<22;i++){
+    const d=fx("cf",x,y); d.style.background=w[i%w.length];
+    const a=Math.random()*Math.PI*2, r=60+Math.random()*90;
+    d.style.setProperty("--dx",Math.cos(a)*r+"px"); d.style.setProperty("--dy",Math.sin(a)*r-40+"px");
+  }
+}
+
+function startLevel(lv){
+  st={lv,idx:0,betul:0,score:0,combo:0,nyawa:TETAPAN.NYAWA,qs:shuffle(PERINGKAT[lv].bug.slice()).slice(0,TETAPAN.BIL_SOALAN||99),t0:Date.now()};
+  $("startScreen").style.display="none";$("endScreen").style.display="none";
+  $("hName").textContent=`${pemain.nama} · ${pemain.kelas}`;
+  hud();show();
+}
+function hud(){
+  $("hScore").textContent=st.score;$("hCombo").textContent=st.combo;
+  $("hLife").textContent="❤️".repeat(Math.max(st.nyawa,0))+"🖤".repeat(TETAPAN.NYAWA-Math.max(st.nyawa,0));
+}
+function bar(){
+  const f=Math.max(0,st.left/TETAPAN.MASA);
+  $("bar").style.width=f*100+"%";
+  $("bar").style.backgroundColor=f>.5?"#4fd36a":f>.25?"#ffc93b":"#ff5c5c";
+  $("rider").style.left=f*100+"%";
+}
+function show(){
+  if(st.idx>=st.qs.length||st.nyawa<=0) return end();
+  const Q=st.qs[st.idx]; st.phase=1; st.left=TETAPAN.MASA;
+  $("tLevel").textContent=`Peringkat ${st.lv+1}: ${PERINGKAT[st.lv].nama}`;
+  $("tNum").textContent=`Bug ${st.idx+1}/${st.qs.length}`;
+  $("tText").innerHTML="<b>Langkah 1:</b> Ketik baris yang ada BUG 🐞";
+  $("fixbox").style.display="none";$("msg").style.display="none";
+  $("crawler").style.display="block";
+  const c=$("code");c.innerHTML="";
+  Q.kod.forEach((line,i)=>{
+    const d=document.createElement("div");d.className="ln";
+    d.innerHTML=`<span class="no">${i+1}</span><pre></pre>`;d.querySelector("pre").textContent=line||" ";
+    d.onclick=e=>pickLine(i,d,e);c.appendChild(d);
+  });
+  clearInterval(tick); bar();
+  tick=setInterval(()=>{st.left-=0.2;bar();if(st.left<=0)timeout();},200);
+}
+function pickLine(i,el,e){
+  if(st.phase!==1) return;
+  const Q=st.qs[st.idx];
+  if(Q.kod[i].trim()===""){return;}
+  if(i===Q.bug){
+    st.phase=2;el.classList.add("hit");
+    $("crawler").style.display="none";
+    fx("catch",e.clientX-28,e.clientY-28,kumbang(true));
+    fx("pop",e.clientX,e.clientY-30,"TANGKAP! +10");
+    SFX.tangkap();
+    st.score+=10;hud();
+    $("tText").innerHTML="<b>Ditangkap!</b> Sekarang betulkan baris itu 🔧";
+    const o=$("opts");o.innerHTML="";
+    shuffle(Q.fix.map((t,k)=>({t,ok:k===0}))).forEach(f=>{
+      const btn=document.createElement("button");btn.className="opt";btn.textContent=f.t;
+      btn.onclick=()=>pickFix(f,btn,el);o.appendChild(btn);
+    });
+    $("fixbox").style.display="block";
+    $("fixbox").scrollIntoView({behavior:"smooth",block:"nearest"});
+  }else{
+    el.classList.remove("miss");void el.offsetWidth;el.classList.add("miss");
+    SFX.salah();
+    st.nyawa--;st.combo=0;hud();
+    if(st.nyawa<=0){reveal(false,"Nyawa habis!");}
+  }
+}
+function pickFix(f,btn,lineEl){
+  if(st.phase!==2) return;
+  st.phase=3;clearInterval(tick);
+  const Q=st.qs[st.idx];
+  document.querySelectorAll(".opt").forEach(b=>{b.disabled=true;if(b.textContent===Q.fix[0])b.classList.add("ok");});
+  if(f.ok){
+    st.combo++;st.betul++;
+    const bonus=5+Math.round(st.left/3)+(st.combo>=3?5:0);
+    st.score+=bonus;
+    lineEl.classList.remove("hit");lineEl.classList.add("fixed");
+    const ind=(Q.kod[Q.bug].match(/^\s*/)||[""])[0];
+    lineEl.querySelector("pre").textContent=ind+Q.fix[0];
+    const r=btn.getBoundingClientRect(); konfeti(r.left+r.width/2,r.top+r.height/2);
+    fx("pop",r.left+r.width/2,r.top-10,st.combo>=3?`COMBO! +${bonus}`:`+${bonus}`);
+    SFX.betul();
+    msg(true,`✔ Bug dihapuskan! +${bonus}${st.combo>=3?" 🔥 COMBO!":""}<br>${Q.ex}`);
+  }else{
+    btn.classList.add("no");st.combo=0;
+    SFX.salah();
+    msg(false,`✘ Pembetulan salah.<br>${Q.ex}`);
+  }
+  hud();
+}
+function timeout(){
+  if(st.phase===3) return;
+  st.nyawa--;st.combo=0;hud();SFX.salah();reveal(false,"⏰ Masa tamat!");
+}
+function reveal(good,head){
+  st.phase=3;clearInterval(tick);
+  const Q=st.qs[st.idx];
+  $("code").children[Q.bug].classList.add("reveal");
+  msg(good,`${head} Bug di baris ${Q.bug+1}. Betulnya: <code>${Q.fix[0].replace(/</g,"&lt;")}</code><br>${Q.ex}`);
+}
+function msg(good,html){
+  const m=$("msg");m.className="msg "+(good?"good":"bad");
+  m.innerHTML=html+`<button class="btn g" id="btnGo">Seterusnya ➜</button>`;m.style.display="block";
+  $("btnGo").onclick=()=>{st.idx++;show();window.scrollTo({top:0,behavior:"smooth"});};
+  m.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+function end(){
+  clearInterval(tick);
+  const n=st.qs.length,peratus=Math.round(st.betul/n*100);
+  $("eTitle").textContent=st.nyawa<=0?"💔 Nyawa habis!":(peratus>=80?"🏆 Pemburu Bug Hebat!":"🎉 Tamat!");
+  $("eLevel").textContent=`Peringkat ${st.lv+1}: ${PERINGKAT[st.lv].nama}`;
+  $("eBetul").textContent=`✅ Bug dibetulkan: ${st.betul} / ${n} (${peratus}%)`;
+  $("eMata").textContent=`⭐ Mata: ${st.score}`;
+  $("btnNext").style.display=st.lv<PERINGKAT.length-1?"block":"none";
+  $("endScreen").style.display="flex";
+  if(st.nyawa>0){ SFX.tamat(); if(peratus>=80) konfeti(innerWidth/2,innerHeight/3); }
+  hantarMarkah({game:TETAPAN.NAMA_GAME,nama:pemain.nama,kelas:pemain.kelas,peringkat:st.lv+1,betul:st.betul,jumlah:n,
+    peratus,mata:st.score,syiling:0,masa:Math.round((Date.now()-st.t0)/1000)});
+}
+function hantarMarkah(data){
+  const s=$("sendStatus");s.textContent="Menghantar markah…";
+  const ok=()=>{s.textContent="✅ Markah telah dihantar kepada pensyarah!";};
+  const fail=()=>{s.textContent="⚠️ Mod latihan — markah tidak dihantar.";};
+  if(typeof google!=="undefined"&&google.script&&google.script.run){
+    google.script.run.withSuccessHandler(ok).withFailureHandler(fail).simpanMarkah(data);
+  }else if(TETAPAN.SCRIPT_URL){
+    fetch(TETAPAN.SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify(data)}).then(ok).catch(fail);
+  }else fail();
+}
+$("btnStart").onclick=()=>{
+  const n=$("inNama").value.trim(),k=$("inKelas").value.trim();
+  if(!n||!k){$("inNama").placeholder="⚠️ Sila isi nama";$("inKelas").placeholder="⚠️ Sila isi kelas";return;}
+  pemain={nama:n,kelas:k.toUpperCase()};startLevel(+$("inLevel").value);
+};
+$("btnAgain").onclick=()=>startLevel(st.lv);
+$("btnNext").onclick=()=>startLevel(st.lv+1);
+$("btnMenu").onclick=()=>{$("endScreen").style.display="none";$("startScreen").style.display="flex";};
+
+/* ===== Tema cerah / gelap (pilihan disimpan dalam pelayar) ===== */
+function temaSet(t){
+  document.body.classList.toggle("light", t==="light");
+  document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on", b.dataset.tema===t));
+  try{ localStorage.setItem("cgame-tema", t); }catch(e){}
+  if (typeof onTema==="function") onTema(t);
+}
+document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>temaSet(b.dataset.tema));
+(function(){ let t=null; try{ t=localStorage.getItem("cgame-tema"); }catch(e){}
+  if(!t) t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+  temaSet(t); })();
+
+function pasangHub(url){ document.querySelectorAll("[data-hub]").forEach(a=>{ a.href=url; a.target="_top"; a.style.display="block"; }); }
+</script>
+<script>pasangHub("./");</script>
+</body>
+</html>

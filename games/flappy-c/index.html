@@ -109,7 +109,7 @@ body.dark .tm button.on{background:#5a4220;color:#ffe9b0}
 
   <div id="start" class="ov">
     <div class="card">
-      <div class="nav"><a href="https://circuitcode-lab.github.io/clab/">⌂ Laman Utama</a><a href="https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec">🎮 Semua Game</a></div>
+      <div class="nav"><a href="https://circuitcode-lab.github.io/clab/">⌂ Laman Utama</a><a href="../">🎮 Semua Game</a></div>
       <div class="sign"><h1>FLAPPY C</h1></div><br>
       <div class="ribbon">Terbang · Kutip · Elak · Juara C!</div>
       <div class="box">
@@ -143,7 +143,7 @@ body.dark .tm button.on{background:#5a4220;color:#ffe9b0}
       <div class="box" id="gotBox"></div>
       <div class="box hidden" id="trapBox" style="background:#fff0ee;border-color:#f3a59c;color:#7a1f1e"></div>
       <button class="btn" id="againBtn" type="button">↻ MAIN SEMULA</button>
-      <a class="link" href="https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec">← Semua Game</a>
+      <a class="link" href="../">← Semua Game</a>
       <div class="tm"><button type="button" data-tema="cerah">☀️ Cerah</button><button type="button" data-tema="gelap">🌙 Gelap</button></div>
       <p class="foot">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</p>
     </div>
@@ -211,7 +211,7 @@ const snd={a:null,muted:false,
 
 /* ---------- KEADAAN ---------- */
 let state="START",score=0,lives=3,best=parseInt(store.get("flappyc_best","0"),10)||0;
-let t=0,shake=0,flash=0,gx=0,light=store.get("flappyc_theme","cerah")!=="gelap";
+let t=0,shake=0,flash=0,gx=0,light=store.get("cgame-tema","light")!=="dark";
 let got=[],trapsHit=[],lastWord="";
 const P={x:115,y:PH*.45,vy:0,rot:0,flap:0};
 let hills2=[],clouds=[],stars=[],hills=[],village=[],pelitas=[],pipes=[],words=[],parts=[],floats=[];
@@ -246,8 +246,8 @@ function resize(){
 
 /* ---------- TEMA ---------- */
 function applyTheme(){document.body.classList.toggle("dark",!light);$("themeBtn2").textContent=light?"🌙":"☀️";document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on",(b.dataset.tema==="cerah")===light))}
-function setTheme(t){light=t==="cerah";store.set("flappyc_theme",t);applyTheme()}
-function toggleTheme(e){if(e)e.stopPropagation();light=!light;store.set("flappyc_theme",light?"cerah":"gelap");applyTheme()}
+function setTheme(t){light=t==="cerah";store.set("cgame-tema",light?"light":"dark");applyTheme()}
+function toggleTheme(e){if(e)e.stopPropagation();light=!light;store.set("cgame-tema",light?"light":"dark");applyTheme()}
 applyTheme();
 
 /* ---------- SPAWN ---------- */

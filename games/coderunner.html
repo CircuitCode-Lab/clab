@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Code Runner — C Programming Learning Lab</title>
+<!--
+  CODE RUNNER — Cyber Escape (DEC20313 C Programming)
+  © 2026 Wan Fazlini Idayu · JKE, Politeknik Kota Bharu
+  Asal: versi standalone (ChatGPT), disesuaikan untuk C Programming Game Hub:
+  nama & kelas, 3 peringkat (kelajuan meningkat), 6 soalan rawak setiap larian (bank khas 36 soalan),
+  tema cerah/gelap, markah ke Google Sheet.
+  Tambah soalan: edit bahagian "2) BANK SOALAN" sahaja.
+-->
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#1b2754,#080f26 65%);color:#eff6ff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+button,input,select{font:inherit}button{cursor:pointer}
+main{max-width:1000px;margin:auto;padding:16px}
+.top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center}
+.pill{background:#192b51;border:1px solid #4262a2;border-radius:99px;padding:8px 13px;font-size:14px;color:inherit;text-decoration:none}
+.panel{background:#101d3b;border:1px solid #344b7c;border-radius:22px;padding:18px;margin:14px 0;box-shadow:0 12px 30px #0004}
+.btn{background:linear-gradient(120deg,#38bdf8,#818cf8);border:0;border-radius:12px;padding:12px 22px;color:#071124;font-weight:800}
+.btn2{background:#192b51;border:1px solid #4262a2;border-radius:12px;padding:10px 16px;color:inherit;font-weight:700}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.answer{padding:13px;border:1px solid #49649c;border-radius:12px;background:#1b3159;color:#fff;text-align:left;font-weight:600}
+.answer:hover:not(:disabled){background:#294a7e}.answer:disabled{opacity:.7;cursor:default}
+.good{background:#145c50!important;border-color:#4bf7b4!important;opacity:1!important}
+.bad{background:#7d293c!important;border-color:#ff6b8b!important;opacity:1!important}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#070e20;padding:16px;border-radius:12px;color:#93f9bd;font:15px/1.55 ui-monospace,Consolas,monospace;margin:10px 0}
+pre:empty{display:none}
+.muted{color:#b6c6e4}.hidden{display:none!important}
+h1{font-size:clamp(25px,5vw,40px);margin:8px 0}h2{font-size:clamp(17px,3vw,22px);margin:10px 0 4px}
+#toast{min-height:27px;font-weight:700;line-height:1.5}
+canvas{width:100%;display:block;background:#07152d;border-radius:14px;touch-action:none}
+.controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+.control{min-width:120px;padding:15px;background:#294c85;border:1px solid #6f9df1;color:#fff;border-radius:15px;font-weight:800;touch-action:manipulation;user-select:none}
+#quiz{position:fixed;inset:0;background:#020918e8;display:flex;align-items:center;justify-content:center;padding:12px;z-index:5}
+#quiz .panel{width:min(680px,100%);max-height:95vh;overflow:auto}
+.hint{font-size:13px;color:#b6c6e4;margin:8px 0 0}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.form input,.form select{padding:11px 12px;border-radius:10px;border:1px solid #435b8e;background:#0f1a36;color:inherit;min-width:0}
+.form select{grid-column:1/-1}
+.tema{display:flex;gap:6px;margin-top:12px}
+.tema button{padding:7px 12px;border-radius:10px;border:2px solid #4262a2;background:transparent;color:inherit;font-weight:700;font-size:12px}
+.tema button.on{border-color:#38bdf8;background:#38bdf822}
+.hakcipta{color:#8597bc;text-align:center;font-size:12px;margin-top:16px;line-height:1.6}
+.send{font-size:13px;margin-top:8px}
+body.light{background:linear-gradient(160deg,#eef4ff,#e3e9ff);color:#14203d}
+body.light .panel{background:#fff;border-color:#c9d3ec;box-shadow:0 2px 10px #1b27541a}
+body.light .pill,body.light .btn2{background:#f1f5ff;border-color:#b8c6e6}
+body.light .answer{background:#f1f5ff;border-color:#b8c6e6;color:#14203d}
+body.light .answer:hover:not(:disabled){background:#e0e9ff}
+body.light .good{background:#c9f5e2!important;border-color:#1aa572!important}
+body.light .bad{background:#ffd9e2!important;border-color:#e0466b!important}
+body.light .muted,body.light .hakcipta,body.light .hint{color:#4d5d80}
+body.light .form input,body.light .form select{background:#f7f9ff;border-color:#b8c6e6}
+body.light .tema button{border-color:#b8c6e6}
+body.light #quiz{background:#1b2754cc}
+@media(max-width:560px){.answers{grid-template-columns:1fr}main{padding:11px}.panel{padding:14px}.form{grid-template-columns:1fr}.control{min-width:140px;padding:18px}}
+</style>
+<!--KARTUN:CSS-->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<style id="tema-kartun">
+/* Tema Kartun — dijana oleh tools/tema_kartun.py; jangan edit di sini */
+body.k{
+  --sk1:#0d1b3d;--sk2:#2b3f78;--hill1:#1f3d4a;--hill2:#1d4a35;--hill3:#235c2f;
+  --leaf:#1e5a2c;--leaf2:#2a6e36;--trunk:#4a3020;--grass:#2f7a2a;--grass2:#3c8f33;
+  --dirt:#6b3f1d;--dirt2:#57321a;--stone:#4a3a2c;--cloud:#5a6a92;
+  --card:#2a2236;--cardfg:#f6ead8;--line:#5b4a6e;--tile:#3a3048;--tileSh:#1c1626;--soft:#3a3048;--softfg:#f0dcc0;
+  --wood:#8b5a2b;--woodD:#5a3416;
+  --ui:"Fredoka","Baloo 2","Segoe UI",Roboto,Arial,sans-serif;--mono:Consolas,"Courier New",monospace;
+  font-family:var(--ui);background:var(--sk1);color:var(--cardfg)}
+body.k.light{
+  --sk1:#4fb6f2;--sk2:#bfe9ff;--hill1:#8fd36a;--hill2:#6cc04a;--hill3:#58b03c;
+  --leaf:#3f9a35;--leaf2:#58b84a;--trunk:#7a4a26;--grass:#4fae2f;--grass2:#6ccb43;
+  --dirt:#b8692c;--dirt2:#9c5622;--stone:#7a4f2e;--cloud:#fff;
+  --card:#fff8ea;--cardfg:#3b2414;--line:#e2c79a;--tile:#fff;--tileSh:#d4b483;--soft:#fff1d6;--softfg:#5a3a1e;
+  background:var(--sk1);color:var(--cardfg)}
+.kscene{position:fixed;inset:0;z-index:-1;pointer-events:none}
+.kscene svg{width:100%;height:100%;display:block}
+.ksk1{stop-color:var(--sk1)}.ksk2{stop-color:var(--sk2)}
+.kh1{fill:var(--hill1)}.kh2{fill:var(--hill2)}.kh3{fill:var(--hill3)}
+.klf{fill:var(--leaf)}.klf2{fill:var(--leaf2)}.ktr{fill:var(--trunk)}
+.kgr{fill:var(--grass)}.kgr2{fill:var(--grass2)}.kdt{fill:var(--dirt)}.kdt2{fill:var(--dirt2)}.kstn{fill:var(--stone)}
+.kcl{fill:var(--cloud);opacity:.95}
+.kcA{animation:kdrift 70s linear infinite}.kcB{animation:kdrift 95s linear infinite;animation-delay:-40s}
+@keyframes kdrift{from{transform:translateX(-400px)}to{transform:translateX(1500px)}}
+.ksun,.kmoon,.kstars,.kffly{transition:opacity .6s}
+body.k.light .kmoon,body.k.light .kstars,body.k.light .kffly{opacity:0}
+body.k:not(.light) .ksun{opacity:0}
+.kstars circle{animation:ktw 3s ease-in-out infinite}.kstars circle:nth-child(3n){animation-delay:-1s}
+@keyframes ktw{50%{opacity:.25}}
+.kffly circle{fill:#fff59a;filter:drop-shadow(0 0 6px #fff59a);animation:kfl 6s ease-in-out infinite}
+.kffly circle:nth-child(2){animation-delay:-2s}.kffly circle:nth-child(3){animation-delay:-4s}
+@keyframes kfl{50%{transform:translate(30px,-40px);opacity:.3}}
+.ksunr{transform-origin:1010px 130px;animation:kspin 40s linear infinite}@keyframes kspin{to{transform:rotate(360deg)}}
+
+/* komponen kartun yang dikongsi */
+body.k .hakcipta{color:inherit;opacity:.8}
+body.k .tema button{font-family:var(--ui);background:var(--tile);color:var(--cardfg);border:2px solid var(--line);border-radius:12px;box-shadow:0 3px 0 var(--tileSh);font-weight:700}
+body.k .tema button.on{border-color:#f4a300;background:#ffe9b0;color:#3b2414}
+body.k:not(.light) .tema button.on{background:#5a4220;color:#ffe9b0}
+body.k input,body.k select{font-family:var(--ui)}
+body.k pre,body.k code,body.k .code,body.k textarea{font-family:var(--mono)}
+
+body.k h1{font-weight:700;color:#ffd84a;-webkit-text-stroke:2px #7a3b00;text-shadow:0 4px 0 #7a3b00;letter-spacing:1px}
+body.k .panel h1{color:#ffd84a}
+body.k .pill{background:#fff3e6!important;color:#3b2414!important;border:2px solid rgba(0,0,0,.15)!important;box-shadow:0 3px 0 rgba(0,0,0,.25)!important;font-weight:700}
+body.k .panel{background:var(--card)!important;color:var(--cardfg)!important;border:3px solid var(--wood)!important;border-radius:18px!important;box-shadow:0 5px 0 var(--woodD),0 10px 20px rgba(0,0,0,.18)!important}
+body.k .btn{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#6fe07a,#34b74a)!important;color:#fff!important;text-shadow:0 2px 0 rgba(0,0,0,.25);box-shadow:0 5px 0 #1f7a2e!important;transition:transform .1s}
+body.k .btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #1f7a2e!important}
+body.k .btn2{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#fff8ea,#f1dfbd)!important;color:#3b2414!important;text-shadow:none;box-shadow:0 5px 0 #c9a46e!important;transition:transform .1s}
+body.k .btn2:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #c9a46e!important}
+body.k .answer{background:var(--tile);color:var(--cardfg);border:2px solid var(--line);border-radius:12px;box-shadow:0 4px 0 var(--tileSh);transition:transform .1s}
+
+body.k .answer{font-weight:600}
+body.k .answer:hover:not(:disabled){transform:translateY(-2px);background:var(--tile)}
+body.k .good{background:#3fbf5f!important;border-color:#1f8a3a!important;color:#fff!important;box-shadow:0 4px 0 #1f8a3a!important}
+body.k .bad{background:#e9504f!important;border-color:#a8302f!important;color:#fff!important;box-shadow:0 4px 0 #a8302f!important}
+body.k pre{background:#1b2232!important;color:#e6edf7!important;border:6px solid var(--wood)!important;border-radius:14px!important;box-shadow:inset 0 0 0 2px var(--woodD),0 4px 0 var(--woodD)!important}
+body.k .muted,body.k .hint{color:inherit!important;opacity:.8}
+body.k .meter{background:rgba(0,0,0,.15)!important;border:3px solid #6b3f1d;height:18px!important}
+body.k .form input,body.k .form select{background:var(--tile)!important;color:var(--cardfg)!important;border:3px solid var(--line)!important;border-radius:12px!important;outline:none}
+body.k .form input,body.k .form select:focus{border-color:#f4a300!important}
+
+body.k .bosses span{background:#fff3e6!important;color:#3b2414!important;border:2px solid rgba(0,0,0,.15)!important;box-shadow:0 3px 0 rgba(0,0,0,.25)!important;font-weight:700}
+body.k main>.hakcipta,body.k main>.top{color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+body.k canvas{border:6px solid var(--wood);border-radius:18px!important;box-shadow:0 5px 0 var(--woodD)}
+body.k .control{font-family:var(--ui);font-weight:700;border:none!important;border-radius:14px;cursor:pointer;background:linear-gradient(#6cc4ff,#2f8fe0)!important;color:#fff!important;text-shadow:0 2px 0 rgba(0,0,0,.25);box-shadow:0 5px 0 #1d5f9e!important;transition:transform .1s}
+body.k .control:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 #1d5f9e!important}
+
+body.k #quiz{background:rgba(10,20,40,.55)!important}
+body.k .send{color:inherit}
+</style>
+<!--/KARTUN:CSS-->
+</head>
+<body>
+<!--KARTUN:SCENE-->
+<div class="kscene" aria-hidden="true"><svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMax slice">
+<defs><linearGradient id="ksky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ksk1"/><stop offset="1" class="ksk2"/></linearGradient>
+<radialGradient id="kglow"><stop offset="0" stop-color="#fff7b0" stop-opacity=".9"/><stop offset="1" stop-color="#fff7b0" stop-opacity="0"/></radialGradient></defs>
+<rect width="1200" height="800" fill="url(#ksky)"/>
+<g class="kstars" fill="#fff"><circle cx="80" cy="60" r="2"/><circle cx="210" cy="140" r="1.5"/><circle cx="330" cy="50" r="2.2"/><circle cx="460" cy="120" r="1.4"/><circle cx="560" cy="40" r="2"/><circle cx="700" cy="150" r="1.6"/><circle cx="820" cy="70" r="2"/><circle cx="1120" cy="180" r="1.8"/><circle cx="150" cy="240" r="1.4"/><circle cx="420" cy="230" r="1.8"/><circle cx="640" cy="260" r="1.3"/><circle cx="1150" cy="60" r="2"/></g>
+<g class="ksun"><g class="ksunr" fill="#ffe680" opacity=".55"><path d="M1010 20 l14 60 h-28z"/><path d="M1010 240 l14 -60 h-28z"/><path d="M900 130 l60 14 v-28z"/><path d="M1120 130 l-60 14 v-28z"/><path d="M932 52 l52 34 -20 20z"/><path d="M1088 208 l-52 -34 20 -20z"/><path d="M1088 52 l-34 52 -20 -20z"/><path d="M932 208 l34 -52 20 20z"/></g>
+<circle cx="1010" cy="130" r="95" fill="url(#kglow)"/><circle cx="1010" cy="130" r="52" fill="#ffd93b" stroke="#ffb703" stroke-width="5"/></g>
+<g class="kmoon"><circle cx="1010" cy="130" r="90" fill="url(#kglow)" opacity=".35"/><circle cx="1010" cy="130" r="46" fill="#fff4cf"/><circle cx="995" cy="118" r="9" fill="#ecdca8"/><circle cx="1025" cy="146" r="6" fill="#ecdca8"/><circle cx="1022" cy="112" r="4" fill="#ecdca8"/></g>
+<g class="kcA"><g class="kcl"><ellipse cx="120" cy="120" rx="70" ry="30"/><ellipse cx="170" cy="100" rx="50" ry="36"/><ellipse cx="80" cy="105" rx="40" ry="26"/></g></g>
+<g class="kcB"><g class="kcl"><ellipse cx="300" cy="210" rx="60" ry="24"/><ellipse cx="340" cy="192" rx="42" ry="30"/><ellipse cx="262" cy="198" rx="34" ry="22"/></g></g>
+<path class="kh1" d="M0 520 Q150 380 320 470 T640 450 T960 430 T1200 470 V800 H0Z"/>
+<path class="kh2" d="M0 580 Q200 470 420 560 T820 540 T1200 560 V800 H0Z"/>
+<rect class="ktr" x="92" y="470" width="22" height="120" rx="6"/><circle class="klf" cx="103" cy="450" r="60"/><circle class="klf2" cx="70" cy="470" r="38"/><circle class="klf2" cx="135" cy="430" r="36"/><circle class="klf" cx="110" cy="410" r="40"/>
+<rect class="ktr" x="1060" y="500" width="18" height="100" rx="5"/><circle class="klf" cx="1069" cy="480" r="48"/><circle class="klf2" cx="1040" cy="495" r="30"/><circle class="klf2" cx="1095" cy="470" r="30"/>
+<rect class="ktr" x="760" y="520" width="14" height="70" rx="4"/><circle class="klf2" cx="767" cy="505" r="34"/><circle class="klf" cx="785" cy="520" r="22"/>
+<path class="kh3" d="M0 640 Q300 580 600 630 T1200 620 V800 H0Z"/>
+<g class="klf2"><circle cx="260" cy="650" r="26"/><circle cx="290" cy="640" r="30"/><circle cx="322" cy="652" r="22"/><circle cx="900" cy="645" r="24"/><circle cx="928" cy="636" r="28"/><circle cx="958" cy="648" r="20"/></g>
+<rect class="kdt" x="0" y="690" width="1200" height="110"/>
+<path class="kgr" d="M0 670 H1200 V700 Q1185 715 1170 700 Q1155 715 1140 700 Q1125 715 1110 700 Q1095 715 1080 700 Q1065 715 1050 700 Q1035 715 1020 700 Q1005 715 990 700 Q975 715 960 700 Q945 715 930 700 Q915 715 900 700 Q885 715 870 700 Q855 715 840 700 Q825 715 810 700 Q795 715 780 700 Q765 715 750 700 Q735 715 720 700 Q705 715 690 700 Q675 715 660 700 Q645 715 630 700 Q615 715 600 700 Q585 715 570 700 Q555 715 540 700 Q525 715 510 700 Q495 715 480 700 Q465 715 450 700 Q435 715 420 700 Q405 715 390 700 Q375 715 360 700 Q345 715 330 700 Q315 715 300 700 Q285 715 270 700 Q255 715 240 700 Q225 715 210 700 Q195 715 180 700 Q165 715 150 700 Q135 715 120 700 Q105 715 90 700 Q75 715 60 700 Q45 715 30 700 Q15 715 0 700 Z"/>
+<rect class="kgr2" x="0" y="666" width="1200" height="8"/>
+<g class="kstn"><ellipse cx="80" cy="740" rx="12" ry="6"/><ellipse cx="230" cy="770" rx="8" ry="4"/><ellipse cx="400" cy="735" rx="10" ry="5"/><ellipse cx="560" cy="765" rx="14" ry="6"/><ellipse cx="720" cy="740" rx="9" ry="5"/><ellipse cx="880" cy="772" rx="12" ry="5"/><ellipse cx="1040" cy="738" rx="10" ry="5"/><ellipse cx="1160" cy="768" rx="8" ry="4"/></g>
+<rect class="kdt2" x="0" y="785" width="1200" height="15"/>
+<g class="kffly"><circle cx="300" cy="560" r="4"/><circle cx="650" cy="600" r="3.5"/><circle cx="980" cy="560" r="4"/></g>
+</svg></div><script>document.body.classList.add("k")</script>
+<!--/KARTUN:SCENE-->
+<main>
+  <div class="top">
+    <span class="pill">🏃 CODE RUNNER · CYBER ESCAPE</span>
+    <span style="display:flex;gap:6px;flex-wrap:wrap"><a data-hub class="pill" style="display:none">⬅ Semua Game</a><span class="pill" id="hud">🪙 0 · ❤️ 3 · 🚩 0/6</span></span>
+  </div>
+
+  <section class="panel" id="intro">
+    <h1>Lari. Lompat. Kod. Lepaskan diri!</h1>
+    <p class="muted">Lompat melepasi blok laser, kutip syiling, dan jawab cabaran C Programming di setiap checkpoint 🚩. Lompat dengan SPACE / ↑, ketik skrin, atau butang LOMPAT. Sampai ke pintu keluar sebelum ❤️ habis!</p>
+    <div class="form">
+      <input id="inNama" placeholder="Nama penuh" maxlength="60" autocomplete="name">
+      <input id="inKelas" placeholder="Kelas (cth: DEP2A)" maxlength="20">
+      <select id="inLevel"></select>
+    </div>
+    <button class="btn" id="btnStart">▶ MULA LARIAN</button>
+    <div class="tema"><button data-tema="light">☀️ Cerah</button><button data-tema="dark">🌙 Gelap</button></div>
+  </section>
+
+  <section id="play" class="hidden">
+    <div class="panel">
+      <canvas id="canvas" width="900" height="380" aria-label="Permainan lari siber"></canvas>
+      <div class="controls"><button class="control" id="jump">⬆ LOMPAT</button><button class="control" id="pause">⏸ JEDA</button></div>
+      <p class="hint">Halangan bergerak ke arah anda. Larian berhenti sementara semasa soalan checkpoint.</p>
+    </div>
+    <p class="muted" id="message" aria-live="polite"></p>
+  </section>
+
+  <section class="panel hidden" id="finish">
+    <h1 id="result"></h1>
+    <p id="summary"></p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="btnAgain">↻ Main Lagi</button>
+      <button class="btn2" id="btnNext">⏭ Peringkat Seterusnya</button>
+      <button class="btn2" id="btnMenu">🏠 Menu</button>
+      <a data-hub class="btn2" style="display:none;text-decoration:none">⬅ Semua Game</a>
+    </div>
+    <div class="send" id="sendStatus"></div>
+  </section>
+
+  <div class="hakcipta">© 2026 Wan Fazlini Idayu · Kursus DEC20313 C Programming<br>Jabatan Kejuruteraan Elektrik (JKE), Politeknik Kota Bharu</div>
+</main>
+
+<section id="quiz" class="hidden"><div class="panel">
+  <div class="top"><span class="pill" id="checkpoint"></span><span class="pill" id="quizhearts"></span></div>
+  <h2 id="question"></h2>
+  <pre id="code"></pre>
+  <div class="answers" id="answers"></div>
+  <p id="toast" aria-live="polite"></p>
+  <button class="btn hidden" id="resume">TERUSKAN LARIAN ➜</button>
+</div></section>
+
+<script>
+/* ================= 1) TETAPAN ================= */
+const TETAPAN = { NAMA_GAME: "Code Runner", SCRIPT_URL: "https://script.google.com/macros/s/AKfycbz5bpcbSS4qKKUm3IE72JZseU-pA2Wk1DECFnKrwZg6qw-4f7oVQnYUwogyAEHrTllQ/exec", CHECKPOINT: 6, NYAWA: 3, LAJU: [4.6, 5.1, 5.6] };   // LAJU = kelajuan halangan bagi Peringkat 1, 2, 3
+
+/* ================= 2) BANK SOALAN =================
+   Bank khas Code Runner (tidak bertindih dengan game lain). q = soalan, c = kod (boleh ''), a = 4 pilihan, k = indeks jawapan betul, e = penerangan */
+const PERINGKAT = [
+ { nama:"Zon 1: Asas C (Topik 1–3)", soalan:[
+  {q:'Apakah output?',c:'printf("%d", 20 / 3);',a:['6','6.67','7','3'],k:0,e:'int / int ialah pembahagian integer — perpuluhan dibuang.'},
+  {q:'Apakah output?',c:'printf("%d", 20 % 6);',a:['2','3','0','6'],k:0,e:'20 ÷ 6 = 3 baki 2. Operator % memberi baki.'},
+  {q:'Apakah output?',c:'int a = 4, b = 7;\nprintf("%d", a > b);',a:['0','1','4','7'],k:0,e:'4 > 7 adalah PALSU, jadi nilainya 0.'},
+  {q:'Apakah nilai x yang dipaparkan?',c:'int x = 3;\nx = x * 2 + 1;\nprintf("%d", x);',a:['7','9','6','8'],k:0,e:'Darab dahulu: 3 × 2 = 6, kemudian + 1 = 7.'},
+  {q:'Penentu format manakah untuk memaparkan float?',c:'float harga = 9.50;\nprintf("___", harga);',a:['%f','%d','%c','%s'],k:0,e:'%f digunakan untuk float.'},
+  {q:'Penentu format manakah untuk memaparkan satu aksara?',c:"char gred = 'A';\nprintf(\"___\", gred);",a:['%c','%d','%f','%s'],k:0,e:'%c digunakan untuk char (satu aksara).'},
+  {q:'Apakah output?',c:'printf("%.1f", 7 / 2.0);',a:['3.5','3.0','3','4.0'],k:0,e:'2.0 ialah float, jadi pembahagian float: 3.5 (1 tempat perpuluhan).'},
+  {q:'Apakah output?',c:'int m = 45;\nif (m >= 50) printf("LULUS");\nelse printf("GAGAL");',a:['GAGAL','LULUS','45','Tiada output'],k:0,e:'45 >= 50 palsu, jadi cabang else dilaksanakan.'},
+  {q:'Apakah output?',c:'int x = 8;\nif (x > 5 && x < 10)\n    printf("A");\nelse\n    printf("B");',a:['A','B','AB','Tiada output'],k:0,e:'&& memerlukan KEDUA-DUA syarat benar: 8 > 5 dan 8 < 10.'},
+  {q:'Apakah output?',c:'int x = 12;\nif (x < 5 || x > 10)\n    printf("Y");\nelse\n    printf("N");',a:['Y','N','YN','Error'],k:0,e:'|| cukup jika SALAH SATU syarat benar: 12 > 10.'},
+  {q:'Apakah output?',c:'int k = 2;\nswitch (k) {\n    case 1: printf("Merah"); break;\n    case 2: printf("Kuning"); break;\n    default: printf("Hijau");\n}',a:['Kuning','KuningHijau','Merah','Hijau'],k:0,e:'case 2 dipadankan dan break menghentikan switch.'},
+  {q:'Simbol carta alir manakah untuk INPUT / OUTPUT?',c:'',a:['Segi empat selari (parallelogram)','Segi empat tepat','Berlian (diamond)','Bujur (oval)'],k:0,e:'Parallelogram = input/output; segi empat tepat = proses; berlian = keputusan; bujur = mula/tamat.'}
+ ]},
+ { nama:"Zon 2: Gelung & Tatasusunan (Topik 4, 6)", soalan:[
+  {q:'Apakah output?',c:'int i;\nfor (i = 2; i <= 8; i += 2)\n    printf("%d ", i);',a:['2 4 6 8','2 4 6','4 6 8','2 3 4 5 6 7 8'],k:0,e:'i bermula 2, bertambah 2, berhenti selepas 8.'},
+  {q:'Apakah output?',c:'int i = 1, s = 0;\nwhile (i <= 3) {\n    s += i * 2;\n    i++;\n}\nprintf("%d", s);',a:['12','6','9','8'],k:0,e:'s = 2 + 4 + 6 = 12.'},
+  {q:'Apakah output?',c:'int i;\nfor (i = 5; i > 0; i--)\n    if (i % 2 == 1) printf("%d", i);',a:['531','54321','42','135'],k:0,e:'Gelung menurun; hanya nombor ganjil (baki 1) dicetak.'},
+  {q:'Apakah output?',c:'int n = 0;\nwhile (n < 3)\n    n++;\nprintf("%d", n);',a:['3','2','4','0'],k:0,e:'Gelung berhenti bila n = 3; printf di luar gelung.'},
+  {q:'Berapa kali "OK" dicetak?',c:'int i = 10;\nwhile (i < 5) {\n    printf("OK");\n    i++;\n}',a:['0','1','5','Tidak terhad'],k:0,e:'Syarat 10 < 5 palsu dari awal — while tidak masuk langsung.'},
+  {q:'Berapa kali "OK" dicetak?',c:'int i = 10;\ndo {\n    printf("OK");\n    i++;\n} while (i < 5);',a:['1','0','5','Tidak terhad'],k:0,e:'do-while sentiasa dilaksanakan sekurang-kurangnya SEKALI.'},
+  {q:'Apakah output?',c:'int a[] = {8, 3, 5, 1};\nprintf("%d", a[3] + a[1]);',a:['4','8','6','13'],k:0,e:'a[3] = 1 dan a[1] = 3, jadi 1 + 3 = 4.'},
+  {q:'Apakah output?',c:'int a[5] = {1, 2, 3, 4, 5}, i, s = 0;\nfor (i = 0; i < 5; i += 2)\n    s += a[i];\nprintf("%d", s);',a:['9','15','6','12'],k:0,e:'Indeks 0, 2, 4: 1 + 3 + 5 = 9.'},
+  {q:'Berapakah bilangan elemen tatasusunan ini?',c:'int m[3][4];',a:['12','7','3','4'],k:0,e:'3 baris × 4 lajur = 12 elemen.'},
+  {q:'Apakah output?',c:'int a[4] = {2, 5, 1, 9}, i, maks = a[0];\nfor (i = 1; i < 4; i++)\n    if (a[i] > maks) maks = a[i];\nprintf("%d", maks);',a:['9','2','5','17'],k:0,e:'Algoritma mencari nilai terbesar dalam tatasusunan.'},
+  {q:'Apakah output?',c:'int a[3] = {1, 2, 3}, i;\nfor (i = 0; i < 3; i++)\n    a[i] = a[i] * 10;\nprintf("%d", a[2]);',a:['30','3','20','10'],k:0,e:'Setiap elemen didarab 10; a[2] = 3 × 10 = 30.'},
+  {q:'Apakah output?',c:'int b[2][3] = {{1, 2, 3}, {4, 5, 6}};\nprintf("%d", b[1][2]);',a:['6','5','3','Error'],k:0,e:'Baris 1 ialah {4, 5, 6}; lajur 2 ialah 6.'}
+ ]},
+ { nama:"Zon 3: Fungsi & Penuding (Topik 5, 7)", soalan:[
+  {q:'Apakah output?',c:'int tolak(int a, int b) {\n    return a - b;\n}\nprintf("%d", tolak(10, 4));',a:['6','-6','14','4'],k:0,e:'a = 10, b = 4 mengikut susunan argumen: 10 − 4 = 6.'},
+  {q:'Apakah output?',c:'int ganjil(int n) {\n    return n % 2;\n}\nprintf("%d", ganjil(7));',a:['1','0','7','3'],k:0,e:'7 % 2 = 1 (nombor ganjil memberi baki 1).'},
+  {q:'Apakah output?',c:'int f(int n) {\n    return n * n;\n}\nprintf("%d", f(2) + f(3));',a:['13','25','10','36'],k:0,e:'f(2) = 4 dan f(3) = 9, jadi 4 + 9 = 13.'},
+  {q:'Apakah output?',c:'void cetak(int n) {\n    int i;\n    for (i = 0; i < n; i++) printf("#");\n}\ncetak(3);',a:['###','#','3','####'],k:0,e:'Fungsi mencetak # sebanyak n = 3 kali.'},
+  {q:'Bahagian manakah ialah PARAMETER fungsi?',c:'int luas(int p, int l) {\n    return p * l;\n}',a:['int p, int l','luas','return p * l','int (sebelum luas)'],k:0,e:'Parameter ialah pembolehubah dalam kurungan kepala fungsi.'},
+  {q:'Apakah output?',c:'int dua(int n) {\n    return n * 2;\n    printf("X");\n}\nprintf("%d", dua(5));',a:['10','10X','X10','5'],k:0,e:'return terus keluar dari fungsi — printf("X") tidak pernah dilaksanakan.'},
+  {q:'Apakah output?',c:'int x = 7;\nint *p = &x;\nprintf("%d", *p + 3);',a:['10','7','3','Alamat x'],k:0,e:'*p = 7, kemudian + 3 = 10.'},
+  {q:'Apakah output?',c:'int a = 5, b = 9;\nint *p = &a;\n*p = b;\nprintf("%d", a);',a:['9','5','14','Alamat b'],k:0,e:'*p ialah a, jadi a menerima nilai b = 9.'},
+  {q:'Apakah output?',c:'int a[] = {4, 8, 12, 16};\nint *p = a + 2;\nprintf("%d", *p);',a:['12','8','6','16'],k:0,e:'a + 2 menunjuk ke a[2] = 12.'},
+  {q:'Apakah output?',c:'int a[] = {3, 6, 9};\nint *p = &a[2];\nprintf("%d", *(p - 2));',a:['3','9','7','6'],k:0,e:'p − 2 menunjuk ke a[0] = 3.'},
+  {q:'Apakah output?',c:'void tambahSatu(int *n) {\n    (*n)++;\n}\nint x = 4;\ntambahSatu(&x);\ntambahSatu(&x);\nprintf("%d", x);',a:['6','5','4','8'],k:0,e:'Setiap panggilan menambah 1 pada x melalui penuding: 4 → 5 → 6.'},
+  {q:'Apakah nilai *p selepas kod ini?',c:'int x = 3, y = 8;\nint *p = &x;\np = &y;',a:['8','3','Alamat x','11'],k:0,e:'p dialihkan untuk menunjuk ke y, jadi *p = 8.'}
+ ]}
+];
+
+/* ================= 3) ENJIN ================= */
+const $=id=>document.getElementById(id);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const cv=$('canvas'),ctx=cv.getContext('2d');const floor=310,NCP=TETAPAN.CHECKPOINT;
+let pemain={},lv=0,qs=[],laju=5,t0=0,betul=0,cur=null;
+let running=false,paused=false,quiz=false,finished=true,hearts=3,coins=0,checkpoints=0,dist=0,obstacles=[],tokens=[],last=0,spawn=0,inv=0,player={x:135,y:0,vy:0};
+
+PERINGKAT.forEach((p,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`Peringkat ${i+1} — ${p.nama}`;$('inLevel').appendChild(o)});
+
+function jump(){if(running&&!paused&&!quiz&&player.y===0)player.vy=-15;}
+function hud(){$('hud').textContent=`🪙 ${coins} · ❤️ ${hearts} · 🚩 ${checkpoints}/${NCP}`;}
+function mula(l){
+  lv=l;laju=TETAPAN.LAJU[lv]||5.1;
+  qs=shuffle(PERINGKAT[lv].soalan.slice()).slice(0,NCP);
+  player.y=0;player.vy=0;dist=0;spawn=0;last=0;obstacles=[];tokens=[];hearts=TETAPAN.NYAWA;coins=0;checkpoints=0;betul=0;inv=0;
+  running=true;paused=false;quiz=false;finished=false;t0=Date.now();
+  $('pause').textContent='⏸ JEDA';$('message').textContent='';
+  $('intro').classList.add('hidden');$('finish').classList.add('hidden');$('play').classList.remove('hidden');
+  hud();requestAnimationFrame(loop);
+}
+function loop(t){
+  if(!running||finished)return;
+  let dt=Math.min((t-last)/16.67||1,2);last=t;
+  if(!paused&&!quiz){
+    dist+=dt;spawn+=dt;inv=Math.max(0,inv-dt);
+    player.vy+=.85*dt;player.y=Math.min(0,player.y+player.vy*dt);if(player.y===0)player.vy=0;
+    if(spawn>72){spawn=0;obstacles.push({x:940,w:35,h:35});tokens.push({x:1030,y:floor-95});}
+    for(const o of obstacles)o.x-=laju*dt;for(const c of tokens)c.x-=laju*dt;
+    obstacles=obstacles.filter(o=>o.x>-70);tokens=tokens.filter(c=>c.x>-30);
+    for(const o of obstacles){
+      if(!o.hit&&inv===0&&o.x<player.x+33&&o.x+o.w>player.x+4&&floor-o.h<floor+player.y){
+        o.hit=true;hearts--;inv=65;$('message').textContent='⚡ Terkena laser! Lompat lebih awal.';hud();
+        if(hearts<=0){end(false);break;}
+      }
+    }
+    for(const c of tokens){if(!c.hit&&Math.abs(c.x-(player.x+16))<30&&Math.abs(c.y-(floor+player.y-25))<55){c.hit=true;coins+=10;hud();}}
+    if(!finished&&dist>=240*(checkpoints+1)&&checkpoints<NCP)openQuiz();
+  }
+  draw();
+  if(!finished)requestAnimationFrame(loop);
+}
+function draw(){
+  const w=cv.width,h=cv.height;ctx.clearRect(0,0,w,h);
+  const grad=ctx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#0b1b45');grad.addColorStop(1,'#17386a');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#243c72';for(let i=0;i<13;i++){let x=(i*90-dist*1.3)%1100;if(x<0)x+=1100;ctx.fillRect(x,110+(i%4)*22,52,200);}
+  ctx.fillStyle='#34d399';ctx.fillRect(0,floor,w,5);ctx.fillStyle='#1a2d51';ctx.fillRect(0,floor+5,w,70);
+  for(let i=0;i<12;i++){let x=(i*90-dist*5)%990;if(x<0)x+=990;ctx.fillStyle='#5577b2';ctx.fillRect(x,floor+30,45,5)}
+  for(const o of obstacles){ctx.fillStyle='#f43f5e';ctx.fillRect(o.x,floor-o.h,o.w,o.h);ctx.fillStyle='#fecdd3';ctx.fillRect(o.x+8,floor-o.h+8,18,5);}
+  for(const c of tokens)if(!c.hit){ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(c.x,c.y,11,0,Math.PI*2);ctx.fill();}
+  ctx.globalAlpha=inv>0&&Math.floor(inv/5)%2?0.35:1;
+  ctx.fillStyle='#67e8f9';ctx.fillRect(player.x,floor-46+player.y,34,46);ctx.fillStyle='#172554';ctx.fillRect(player.x+21,floor-35+player.y,7,7);ctx.fillStyle='#a78bfa';ctx.fillRect(player.x+3,floor-51+player.y,28,8);
+  ctx.globalAlpha=1;ctx.fillStyle='white';ctx.font='bold 18px system-ui';
+  ctx.fillText(`JARAK ${Math.floor(dist)}m`,20,30);ctx.fillText(`CHECKPOINT ${checkpoints}/${NCP}`,20,55);ctx.fillText(`PERINGKAT ${lv+1}`,770,30);
+  if(paused&&!quiz){ctx.font='bold 40px system-ui';ctx.fillText('JEDA',400,175)}
+}
+function openQuiz(){
+  quiz=true;const q=qs[checkpoints%qs.length];
+  cur={...q,pilihan:shuffle(q.a.map((t,i)=>({t,ok:i===q.k})))};
+  $('checkpoint').textContent=`🚩 CHECKPOINT ${checkpoints+1}/${NCP}`;$('quizhearts').textContent=`❤️ ${hearts}`;
+  $('question').textContent=q.q;$('code').textContent=q.c;$('toast').textContent='';$('resume').classList.add('hidden');
+  $('answers').innerHTML='';
+  cur.pilihan.forEach((p,i)=>{const btn=document.createElement('button');btn.className='answer';btn.textContent=String.fromCharCode(65+i)+'. '+p.t;btn.onclick=()=>choose(i);$('answers').append(btn);});
+  $('quiz').classList.remove('hidden');
+}
+function choose(i){
+  if(!$('resume').classList.contains('hidden'))return;
+  const kk=cur.pilihan.findIndex(p=>p.ok),ok=i===kk;
+  document.querySelectorAll('#answers .answer').forEach((b,j)=>{b.disabled=true;if(j===kk)b.classList.add('good');else if(j===i)b.classList.add('bad')});
+  if(ok){coins+=30;betul++;$('toast').textContent='🔓 AKSES DIBERI! +30 syiling. '+cur.e;}
+  else{hearts--;$('toast').textContent=`⚠️ AKSES DITOLAK! −1 ❤️. Jawapan: ${cur.pilihan[kk].t}. ${cur.e}`;}
+  checkpoints++;hud();$('quizhearts').textContent=`❤️ ${hearts}`;
+  $('resume').textContent=hearts<=0?'LIHAT KEPUTUSAN ➜':checkpoints===NCP?'KE PINTU KELUAR ➜':'TERUSKAN LARIAN ➜';
+  $('resume').classList.remove('hidden');
+}
+function end(win){
+  if(finished)return;finished=true;running=false;
+  $('quiz').classList.add('hidden');$('play').classList.add('hidden');$('finish').classList.remove('hidden');
+  $('result').textContent=win?'🏁 BERJAYA MELEPASKAN DIRI!':'💔 PERMAINAN TAMAT';
+  $('summary').textContent=`${pemain.nama} · ${pemain.kelas} — Peringkat ${lv+1}. Soalan betul: ${betul}/${NCP} · Checkpoint: ${checkpoints}/${NCP} · 🪙 ${coins} · ❤️ ${Math.max(0,hearts)}`;
+  $('btnNext').style.display=lv<PERINGKAT.length-1?'inline-block':'none';
+  hantarMarkah({game:TETAPAN.NAMA_GAME,nama:pemain.nama,kelas:pemain.kelas,peringkat:lv+1,betul,jumlah:NCP,peratus:Math.round(betul/NCP*100),mata:coins+betul*50,syiling:coins,masa:Math.round((Date.now()-t0)/1000)});
+}
+function hantarMarkah(data){
+  const s=$('sendStatus');s.textContent='Menghantar markah…';
+  const ok=()=>{s.textContent='✅ Markah telah dihantar kepada pensyarah!'};
+  const fail=()=>{s.textContent='⚠️ Mod latihan — markah tidak dihantar.'};
+  if(typeof google!=='undefined'&&google.script&&google.script.run){google.script.run.withSuccessHandler(ok).withFailureHandler(fail).simpanMarkah(data)}
+  else if(TETAPAN.SCRIPT_URL){fetch(TETAPAN.SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)}).then(ok).catch(fail)}
+  else fail();
+}
+$('resume').onclick=()=>{
+  if(hearts<=0){end(false);return;}
+  $('quiz').classList.add('hidden');quiz=false;last=0;inv=45;
+  if(checkpoints===NCP)end(true);
+};
+$('btnStart').onclick=()=>{
+  const n=$('inNama').value.trim(),k=$('inKelas').value.trim();
+  if(!n||!k){$('inNama').placeholder='⚠️ Sila isi nama';$('inKelas').placeholder='⚠️ Sila isi kelas';return}
+  pemain={nama:n,kelas:k.toUpperCase()};mula(+$('inLevel').value);
+};
+$('btnAgain').onclick=()=>mula(lv);
+$('btnNext').onclick=()=>mula(lv+1);
+$('btnMenu').onclick=()=>{$('finish').classList.add('hidden');$('intro').classList.remove('hidden');$('inLevel').value=lv;};
+$('jump').onclick=jump;
+$('pause').onclick=()=>{if(!quiz&&running){paused=!paused;$('pause').textContent=paused?'▶ SAMBUNG':'⏸ JEDA'}};
+document.addEventListener('keydown',e=>{
+  if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName))return;   // jangan ganggu taip nama
+  if(['Space','ArrowUp'].includes(e.code)&&running&&!quiz){e.preventDefault();if(!e.repeat)jump()}
+});
+cv.addEventListener('pointerdown',jump);
+
+/* ===== Tema cerah / gelap (dikongsi semua game) ===== */
+function temaSet(t){
+  document.body.classList.toggle("light", t==="light");
+  document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on", b.dataset.tema===t));
+  try{ localStorage.setItem("cgame-tema", t); }catch(e){}
+}
+document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>temaSet(b.dataset.tema));
+(function(){ let t=null; try{ t=localStorage.getItem("cgame-tema"); }catch(e){}
+  if(!t) t = (window.matchMedia && matchMedia("(prefers-color-scheme: light)").matches) ? "light" : "dark";
+  temaSet(t); })();
+function pasangHub(url){ document.querySelectorAll("[data-hub]").forEach(a=>{ a.href=url; a.target="_top"; a.style.display="inline-block"; }); }
+</script>
+<script>pasangHub("./");</script>
+</body>
+</html>
