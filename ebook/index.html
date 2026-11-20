@@ -68,7 +68,21 @@
   #pentas { position: relative; padding: 10px 0; }
   #rak { margin: 0 auto; width: 100%; max-width: calc((100dvh - 250px) * 1.413); }
   @media (max-width: 699px) { #rak { max-width: calc((100dvh - 300px) * 0.707); } }
-  :fullscreen #rak { max-width: calc((100dvh - 150px) * 1.413); }
+  /* MOD SKRIN PENUH: sorok header/tajuk/footer, buku guna seluruh skrin */
+  body.penuh { background: #0B0D1A; }
+  body.penuh header.atas, body.penuh .tajuk, body.penuh footer { display: none; }
+  body.penuh main { width: 100%; padding: 0; display: flex; flex-direction: column; justify-content: center; }
+  body.penuh #pentas { padding: 0 0 64px; }
+  body.penuh #rak { max-width: calc((100dvh - 72px) * 1.413); }
+  body.penuh .kawalan { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 8px; gap: 6px;
+                        background: rgba(11, 13, 26, .92); flex-wrap: nowrap; }
+  body.penuh .kawalan button, body.penuh .kawalan select { padding: 8px 12px; font-size: 13px; }
+  body.penuh #info { color: #fff; min-width: 70px; }
+  body.penuh #lompat { display: none; }
+  @media (max-width: 699px) {
+    body.penuh #rak { max-width: calc((100dvh - 72px) * 0.707); }
+    body.penuh .kawalan .teksb { display: none; }
+  }
   .page { background: #fff; overflow: hidden; }
   .page img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none;
               -webkit-user-drag: none; user-drag: none; }
@@ -149,13 +163,13 @@
 
   <div class="kawalan" id="kawalan" hidden>
     <button type="button" class="kecil" id="awal" aria-label="Halaman pertama">⏮</button>
-    <button type="button" class="utama" id="prev">◀ Sebelum</button>
+    <button type="button" class="utama" id="prev">◀<span class="teksb"> Sebelum</span></button>
     <span id="info">1 / 1</span>
-    <button type="button" class="utama" id="next">Seterus ▶</button>
+    <button type="button" class="utama" id="next"><span class="teksb">Seterus </span>▶</button>
     <button type="button" class="kecil" id="akhir" aria-label="Halaman terakhir">⏭</button>
     <select id="lompat" aria-label="Lompat ke halaman"></select>
-    <button type="button" class="utama" id="bukaZoom">🔍 Zoom</button>
-    <button type="button" id="penuh">⛶ Skrin penuh</button>
+    <button type="button" class="utama" id="bukaZoom">🔍<span class="teksb"> Zoom</span></button>
+    <button type="button" id="penuh">⛶<span class="teksb" id="penuhTeks"> Skrin penuh</span></button>
   </div>
 
   <div id="pentas">
@@ -242,10 +256,22 @@
   document.getElementById("awal").onclick = function () { muatSekitar(0); pf.turnToPage(0); kemas(); };
   document.getElementById("akhir").onclick = function () { muatSekitar(JUMLAH - 1); pf.turnToPage(JUMLAH - 1); kemas(); };
   pilih.onchange = function () { var n = +pilih.value; muatSekitar(n); pf.turnToPage(n); kemas(); };
+  // Skrin penuh: mod CSS (berfungsi di semua peranti, termasuk iPhone & app C Lab) + Fullscreen API jika ada
+  var penuhTeks = document.getElementById("penuhTeks");
+  function setPenuh(on) {
+    document.body.classList.toggle("penuh", on);
+    penuhTeks.textContent = on ? " Keluar" : " Skrin penuh";
+    setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 60);
+    setTimeout(function () { window.dispatchEvent(new Event("resize")); }, 400);
+  }
   document.getElementById("penuh").onclick = function () {
-    if (document.fullscreenElement) document.exitFullscreen();
-    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+    var on = !document.body.classList.contains("penuh");
+    setPenuh(on);
+    var el = document.documentElement, req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (on && req && !(document.fullscreenElement || document.webkitFullscreenElement)) { try { var r = req.call(el); if (r && r.catch) r.catch(function () {}); } catch (e) {} }
+    if (!on && (document.fullscreenElement || document.webkitFullscreenElement)) { (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
   };
+  document.addEventListener("fullscreenchange", function () { if (!document.fullscreenElement && document.body.classList.contains("penuh")) setPenuh(false); });
 
 
   /* ====== ZOOM ====== */
@@ -337,6 +363,7 @@
     var k = (e.key || "").toLowerCase(), ctrl = e.ctrlKey || e.metaKey;
     var zBuka = zoom.classList.contains("buka");
     if (zBuka && k === "escape") { tutupZoom(); return; }
+    if (!zBuka && k === "escape" && document.body.classList.contains("penuh")) { setPenuh(false); return; }
     if (zBuka && (k === "+" || k === "=")) { zoomDi(1.4); return; }
     if (zBuka && k === "-") { zoomDi(1 / 1.4); return; }
     if (k === "arrowright") { zBuka ? paparZoom(zHal + 1) : belek(1); return; }
