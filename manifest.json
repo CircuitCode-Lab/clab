@@ -19,20 +19,5 @@
       "type": "image/png",
       "purpose": "any"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "C Lab Compiler",
-      "short_name": "Compiler",
-      "description": "Tulis dan run kod C (boleh offline)",
-      "url": "compiler/",
-      "icons": [
-        {
-          "src": "compiler/icon-192.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    }
   ]
 }
