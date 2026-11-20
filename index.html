@@ -311,6 +311,13 @@
         <h3>Games</h3><p>Uji kefahaman C Programming sambil bermain.</p><span class="pergi">Main →</span></a>
     </div>
 
+    <p class="kumpulan">📚 Bahan bacaan</p>
+    <div class="grid g3">
+      <a class="kad c5" href="ebook/">
+        <span class="tag">E-BOOK</span><span class="ikon" aria-hidden="true">📘</span>
+        <h3>C Programming Made Easy</h3><p>Textbook bergambar Topik 1–7. Baca dalam talian, belek sehelai demi sehelai.</p><span class="pergi">Baca →</span></a>
+    </div>
+
     <p class="kumpulan">🛠️ Perisian</p>
     <div class="grid g3">
       <a class="kad c4" href="download/Dev-Cpp_5_11_TDM-GCC_4_9_2_Setup.exe" download>
@@ -393,10 +400,11 @@
     learnc: "learn-c/",
     video:  "video/",
     tutor:  "https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20",
-    games:  "games/"
+    games:  "games/",
+    ebook:  "ebook/"
   };
   // Laman dalam repo ini (GitHub Pages) dibuka di tab yang sama; laman ini ada butang "⌂ Laman Utama"
-  var TAB_SAMA = ["learnc", "video", "games"];
+  var TAB_SAMA = ["learnc", "video", "games", "ebook"];
 
   // id, label butang cepat, kata kunci, jawapan (HTML), pautan [label, url]
   var JAWAPAN = [
@@ -440,9 +448,13 @@
       kk: ["ai tutor", "tutor", "ai", "notebook", "tanya ai", "chatgpt"],
       j: "AI Tutor menjawab soalan C Programming berdasarkan nota kursus. Anda perlu <b>log masuk akaun Google</b>. AI boleh tersilap — semak dengan nota atau pensyarah.",
       a: [["🤖 Buka AI Tutor", "tutor"]] },
+    { id: "ebook", cip: "📘 E-Book",
+      kk: ["ebook", "e-book", "buku", "textbook", "text book", "buku teks", "baca", "nota", "notes"],
+      j: "E-Book <b>C Programming Made Easy</b> (Topik 1–7) boleh dibaca dalam talian di halaman <b>E-Book</b>. Belek dengan klik bucu halaman atau kekunci ← →. E-book ini untuk bacaan dalam talian sahaja.",
+      a: [["📘 Buka E-Book", "ebook"]] },
     { id: "video", cip: "🎬 Video",
-      kk: ["video", "youtube", "tonton", "rakaman", "demo", "tour", "panduan", "tutorial", "nota", "slaid", "slide", "bahan", "rujukan", "notes"],
-      j: "Video YouTube untuk <b>panduan Learning Lab</b> (tour portal, upload jawapan, games), <b>Practical Work (PW1–PW5)</b> dan <b>Topik 1–7</b> ada di halaman <b>Video</b>. Untuk nota dan slaid, rujuk pensyarah anda.",
+      kk: ["video", "youtube", "tonton", "rakaman", "demo", "tour", "panduan", "tutorial", "nota", "slaid", "slide", "bahan", "rujukan"],
+      j: "Video YouTube untuk <b>panduan Learning Lab</b> (tour portal, upload jawapan, games), <b>Practical Work (PW1–PW5)</b> dan <b>Topik 1–7</b> ada di halaman <b>Video</b>. Untuk nota bacaan, buka <b>E-Book</b>.",
       a: [["🎬 Buka Video", "video"]] },
     { id: "games", cip: "🎮 Games",
       kk: ["game", "games", "main", "permainan", "kuiz", "quiz"],

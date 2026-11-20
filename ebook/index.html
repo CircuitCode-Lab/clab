@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="E-Book C Programming (DEC20313) — baca dalam talian di C Programming Learning Lab.">
+<meta name="robots" content="noindex, noimageindex">
+<title>E-Book · C Programming Learning Lab</title>
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet">
+<script>
+  // Tema dikongsi dengan Laman Utama (kunci "clab-tema").
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("clab-tema"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<style>
+  :root {
+    --latar: #F4F6FC; --permukaan: #FFFFFF; --teks: #1B1F3B; --teks-lembut: #4A5070; --garis: #E3E6F2;
+    --bayang: rgba(27, 31, 59, .08); --fokus: #5B4BDB;
+    --hero-1: #3A2CC9; --hero-2: #7B3FE4; --hero-3: #E2508C;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --latar: #0F1222; --permukaan: #181C33; --teks: #EEF0FF; --teks-lembut: #B6BBD9; --garis: #2B3152;
+    --bayang: rgba(0, 0, 0, .35); --fokus: #A99CFF;
+    --hero-1: #2A1F8F; --hero-2: #5A2BB0; --hero-3: #A83270;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+  }
+  body { font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.6;
+         background: var(--latar); color: var(--teks); min-height: 100vh; display: flex; flex-direction: column; }
+  :focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1240px, 100% - 24px); margin-inline: auto; }
+
+  /* HEADER */
+  header.atas { background: var(--permukaan); border-bottom: 1px solid var(--garis); position: sticky; top: 0; z-index: 10; }
+  header.atas .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 64px; }
+  .jenama { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .logo { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; color: #fff; font: 800 17px "JetBrains Mono", monospace;
+          background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  .jenama b { display: block; font-size: 16px; line-height: 1.2; }
+  .jenama small { display: block; font-size: 12.5px; color: var(--teks-lembut); font-weight: 600; }
+  .kanan { display: flex; align-items: center; gap: 10px; }
+  .btn-home { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 800; font-size: 14px; white-space: nowrap;
+              padding: 9px 15px; border-radius: 999px; color: #fff; background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3));
+              box-shadow: 0 4px 14px rgba(58,44,201,.30); }
+  .tema { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--latar); border: 1px solid var(--garis); }
+  .tema button { border: 0; background: transparent; color: var(--teks-lembut); font: 700 14px "Plus Jakarta Sans", sans-serif;
+                 padding: 7px 14px; border-radius: 999px; cursor: pointer; }
+  .tema button[aria-pressed="true"] { background: var(--permukaan); color: var(--teks); box-shadow: 0 2px 8px var(--bayang); }
+
+  /* TAJUK */
+  .tajuk { text-align: center; padding: 18px 0 6px; }
+  .tajuk h1 { font-size: clamp(20px, 3vw, 28px); font-weight: 800; line-height: 1.2; }
+  .tajuk p { color: var(--teks-lembut); font-size: 14.5px; }
+
+  /* BUKU */
+  main { flex: 1; padding-bottom: 16px; }
+  #pentas { position: relative; padding: 10px 0; }
+  #rak { margin: 0 auto; width: 100%; max-width: calc((100dvh - 250px) * 1.413); }
+  @media (max-width: 699px) { #rak { max-width: calc((100dvh - 300px) * 0.707); } }
+  :fullscreen #rak { max-width: calc((100dvh - 150px) * 1.413); }
+  .page { background: #fff; overflow: hidden; }
+  .page img { width: 100%; height: 100%; object-fit: contain; display: block; pointer-events: none;
+              -webkit-user-drag: none; user-drag: none; }
+  #muat { text-align: center; padding: 60px 0; color: var(--teks-lembut); font-weight: 700; }
+
+  /* KAWALAN */
+  .kawalan { display: flex; gap: 8px; align-items: center; justify-content: center; flex-wrap: wrap; padding: 12px 0 4px; }
+  .kawalan button, .kawalan select {
+    border: 1px solid var(--garis); background: var(--permukaan); color: var(--teks); font: 700 14px "Plus Jakarta Sans", sans-serif;
+    padding: 9px 14px; border-radius: 999px; cursor: pointer; box-shadow: 0 2px 8px var(--bayang);
+  }
+  .kawalan button.utama { color: #fff; border: 0; background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  #info { min-width: 92px; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  footer { border-top: 1px solid var(--garis); padding: 16px 0; color: var(--teks-lembut); font-size: 13.5px; text-align: center; }
+
+  /* PERLINDUNGAN */
+  #tirai { position: fixed; inset: 0; z-index: 100; display: none; place-items: center; text-align: center; padding: 24px;
+           background: var(--latar); color: var(--teks); font-weight: 800; font-size: 18px; }
+  #tirai small { display: block; font-weight: 600; font-size: 14px; color: var(--teks-lembut); margin-top: 6px; }
+  body.sorok #tirai { display: grid; }
+  body.sorok #pentas { filter: blur(24px); }
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 110; background: #1B1F3B; color: #fff;
+           padding: 10px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  #toast.on { opacity: 1; }
+
+  @media print {
+    body * { display: none !important; }
+    body::after { content: "E-Book ini tidak boleh dicetak. © Wan Fazlini Idayu – PKB"; display: block !important;
+                  font: 700 20px sans-serif; padding: 40px; }
+  }
+  @media (max-width: 640px) {
+    .jenama small, .tema button span, .btn-home .teks { display: none; }
+    .kanan { gap: 6px; }
+    .kawalan button.kecil { display: none; }
+  }
+</style>
+</head>
+<body oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+
+<header class="atas">
+  <div class="wrap">
+    <a class="jenama" href="../" aria-label="C Programming Learning Lab, laman utama">
+      <span class="logo" aria-hidden="true">C</span>
+      <span><b>C Programming Learning Lab</b><small>DEC20313 · Politeknik Kota Bharu</small></span>
+    </a>
+    <div class="kanan">
+      <a class="btn-home" href="../">⌂ <span class="teks">Laman Utama</span></a>
+      <div class="tema" role="group" aria-label="Pilih tema paparan">
+        <button type="button" data-tema="light" aria-pressed="false">☀️<span> Light</span></button>
+        <button type="button" data-tema="dark" aria-pressed="false">🌙<span> Dark</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="tajuk">
+    <h1>📘 C Programming Made Easy</h1>
+    <p>Klik atau seret bucu halaman untuk membelek. Guna kekunci ← → pada papan kekunci.</p>
+  </div>
+
+  <div class="kawalan" id="kawalan" hidden>
+    <button type="button" class="kecil" id="awal" aria-label="Halaman pertama">⏮</button>
+    <button type="button" class="utama" id="prev">◀ Sebelum</button>
+    <span id="info">1 / 1</span>
+    <button type="button" class="utama" id="next">Seterus ▶</button>
+    <button type="button" class="kecil" id="akhir" aria-label="Halaman terakhir">⏭</button>
+    <select id="lompat" aria-label="Lompat ke halaman"></select>
+    <button type="button" id="penuh">⛶ Skrin penuh</button>
+  </div>
+
+  <div id="pentas">
+    <div id="muat">Memuatkan e-book…</div>
+    <div id="rak"><div id="book"></div></div>
+  </div>
+</main>
+
+<footer>Hak Cipta © 2026 Wan Fazlini Idayu · Jabatan Kejuruteraan Elektrik, Politeknik Kota Bharu · Untuk kegunaan pelajar sahaja. Dilarang menyalin, mencetak atau mengedar.</footer>
+
+<div id="tirai" aria-hidden="true"><div>🔒 Paparan dijeda<small>Klik di sini untuk sambung membaca.</small></div></div>
+<div id="toast" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script>
+(function () {
+  /* ====== TETAPAN ====== */
+  var JUMLAH = 95;            // bilangan halaman dalam folder hal/
+  var LEBAR = 595, TINGGI = 842; // nisbah A4
+  /* ===================== */
+
+  var book = document.getElementById("book");
+  var fail = function (i) { return "hal/" + String(i).padStart(3, "0") + ".jpg"; };
+
+  // Bina halaman (imej dimuat hanya bila hampir dibuka)
+  for (var i = 1; i <= JUMLAH; i++) {
+    var d = document.createElement("div");
+    d.className = "page";
+    if (i === 1 || i === JUMLAH) d.setAttribute("data-density", "hard");
+    var img = document.createElement("img");
+    img.alt = "Halaman " + i; img.draggable = false; img.setAttribute("data-src", fail(i));
+    d.appendChild(img); book.appendChild(d);
+  }
+  var imgs = book.querySelectorAll("img");
+  function muatSekitar(idx) {
+    for (var k = Math.max(0, idx - 2); k <= Math.min(JUMLAH - 1, idx + 5); k++) {
+      var im = imgs[k];
+      if (im.getAttribute("data-src")) { im.src = im.getAttribute("data-src"); im.removeAttribute("data-src"); }
+    }
+  }
+  muatSekitar(0);
+
+  var pf = new St.PageFlip(book, {
+    width: LEBAR, height: TINGGI, size: "stretch",
+    minWidth: 280, maxWidth: 1000, minHeight: 396, maxHeight: 1414,
+    showCover: true, maxShadowOpacity: 0.45, mobileScrollSupport: false, usePortrait: true
+  });
+  pf.loadFromHTML(book.querySelectorAll(".page"));
+  document.getElementById("muat").remove();
+  document.getElementById("kawalan").hidden = false;
+
+  // Kawalan
+  var info = document.getElementById("info"), pilih = document.getElementById("lompat");
+  for (var p = 1; p <= JUMLAH; p++) { var o = document.createElement("option"); o.value = p - 1; o.textContent = "Hal. " + p; pilih.appendChild(o); }
+  function kemas() {
+    var c = pf.getCurrentPageIndex();
+    var dua = pf.getOrientation() === "landscape" && c > 0 && c < JUMLAH - 1;
+    if (dua && c % 2 === 0) c = c - 1;
+    info.textContent = (dua ? (c + 1) + "–" + (c + 2) : (c + 1)) + " / " + JUMLAH;
+    pilih.value = c; muatSekitar(c);
+  }
+  pf.on("flip", kemas); pf.on("changeOrientation", kemas); kemas();
+  document.getElementById("prev").onclick = function () { pf.flipPrev(); };
+  document.getElementById("next").onclick = function () { pf.flipNext(); };
+  document.getElementById("awal").onclick = function () { muatSekitar(0); pf.turnToPage(0); kemas(); };
+  document.getElementById("akhir").onclick = function () { muatSekitar(JUMLAH - 1); pf.turnToPage(JUMLAH - 1); kemas(); };
+  pilih.onchange = function () { var n = +pilih.value; muatSekitar(n); pf.turnToPage(n); kemas(); };
+  document.getElementById("penuh").onclick = function () {
+    if (document.fullscreenElement) document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+  };
+
+  /* ====== PERLINDUNGAN (penghalang, bukan jaminan) ====== */
+  var toast = document.getElementById("toast"), tt;
+  function mesej(t) { toast.textContent = t; toast.classList.add("on"); clearTimeout(tt); tt = setTimeout(function () { toast.classList.remove("on"); }, 2200); }
+  function sorok() { document.body.classList.add("sorok"); }
+  function tunjuk() { document.body.classList.remove("sorok"); }
+
+  document.addEventListener("keydown", function (e) {
+    var k = (e.key || "").toLowerCase(), ctrl = e.ctrlKey || e.metaKey;
+    if (k === "arrowright") { pf.flipNext(); return; }
+    if (k === "arrowleft") { pf.flipPrev(); return; }
+    if ((ctrl && ["p", "s", "u", "c", "a"].indexOf(k) > -1) ||
+        (ctrl && e.shiftKey && ["i", "j", "c", "s"].indexOf(k) > -1) || k === "f12") {
+      e.preventDefault(); e.stopPropagation(); mesej("🔒 Fungsi ini tidak dibenarkan untuk e-book ini."); return false;
+    }
+    if (k === "printscreen") { sorok(); salinKosong(); mesej("🔒 Tangkapan skrin tidak dibenarkan."); }
+  }, true);
+  document.addEventListener("keyup", function (e) {
+    if ((e.key || "").toLowerCase() === "printscreen") { sorok(); salinKosong(); setTimeout(salinKosong, 300); }
+  }, true);
+  function salinKosong() { try { navigator.clipboard.writeText("© Wan Fazlini Idayu – PKB. Tangkapan skrin tidak dibenarkan."); } catch (e) {} }
+
+  // Kaburkan bila tetingkap hilang fokus (cth. Snipping Tool dibuka, tukar tab)
+  window.addEventListener("blur", sorok);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) sorok(); });
+  document.getElementById("tirai").addEventListener("click", tunjuk);
+  window.addEventListener("focus", function () { setTimeout(tunjuk, 400); });
+
+  window.addEventListener("beforeprint", sorok);
+  document.addEventListener("copy", function (e) { e.preventDefault(); });
+
+  // Tema
+  var butang = document.querySelectorAll(".tema button");
+  function pasang(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    butang.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-tema") === t)); });
+  }
+  butang.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var t = b.getAttribute("data-tema");
+      try { localStorage.setItem("clab-tema", t); } catch (e) {}
+      pasang(t);
+    });
+  });
+  pasang(document.documentElement.getAttribute("data-theme") || "light");
+})();
+</script>
+</body>
+</html>

@@ -14,6 +14,7 @@ clab/
 ├── index.html      → Laman Utama
 ├── learn-c/        → Learn C (Modul 5P) + Program & Flowchart Studio
 ├── video/          → Video (YouTube Panduan Lab, PW1–PW5, Topik 1–7, Tip)
+├── ebook/          → E-Book flipbook "C Programming Made Easy" (95 halaman, imej JPG bertanda air)
 ├── download/       → Fail muat turun (Dev-C++ 5.11 + TDM-GCC 4.9.2 installer)
 └── kehadiran/      → Tanda Kehadiran          [akan dipindah dari Netlify]
 ```
@@ -32,6 +33,7 @@ Sistem yang memerlukan Google Sheet kekal di Google Apps Script: Rayuan Kehadira
 Ubah fail dalam repo ini (atau minta Claude ubah). GitHub Pages mengemas kini laman secara automatik dalam 1–2 minit. Tiada kredit atau kos.
 
 ## Sejarah
+- **20 Nov 2026:** **E-Book** `ebook/` ditambah (kad baharu 📚 Bahan bacaan + jawapan Pembantu). Flipbook StPageFlip daripada PDF Canva "textbook C Program for DET" (95 hal.). PDF asal **tidak** dimasukkan ke repo; halaman disimpan sebagai `ebook/hal/001–095.jpg` (110 dpi) dengan watermark "© Wan Fazlini Idayu – PKB". Penghalang: klik kanan/seret/pilih teks dimatikan, Ctrl+P/S/U/C dan F12 disekat, cetakan kosong, paparan dikaburkan bila tetingkap hilang fokus. Untuk kemas kini: ganti imej dalam `hal/` dan ubah `JUMLAH` dalam `ebook/index.html`.
 - **19 Nov 2026:** Kad **Download Dev-C++** ditambah di bahagian 🛠️ Perisian. Fail: `download/Dev-Cpp_5_11_TDM-GCC_4_9_2_Setup.exe` (48 MB, SHA-256 `faad96bb…c9c0f1f`).
 - **14 Nov 2026:** Kad Bahan Kursus (Padlet) dibuang dari Laman Utama (Padlet mengandungi data pelajar). Diganti dengan kad **Video Pembelajaran** → `video/`.
 - **14 Nov 2026:** Video kini dibuka terus di YouTube (pemain terbenam dan tab baharu dibuang kerana tidak berfungsi pada sesetengah peranti).
