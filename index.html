@@ -134,29 +134,34 @@
   /* ================= LAMAN UTAMA v5.1 (pastel, aliran 1→4) ================= */
   :root { --ungu: #6A3FD6; --ungu-2: #8B5CF6; --hero-latar: linear-gradient(135deg, #F3EDFF 0%, #EFE8FD 55%, #F8EEFB 100%); }
   :root[data-theme="dark"] { --ungu: #9C7BFF; --ungu-2: #B79CFF; --hero-latar: linear-gradient(135deg, #211A3D 0%, #1E1838 60%, #2A1A36 100%); }
-  .hero2 { position: relative; overflow: hidden; border-radius: 26px; padding: 40px; background: var(--hero-latar); border: 1px solid var(--k4g);
+  .hero2 { position: relative; overflow: hidden; border-radius: 24px; padding: 40px; color: #fff;
+           background: linear-gradient(130deg, var(--hero-1) 0%, var(--hero-2) 55%, var(--hero-3) 100%);
            display: grid; grid-template-columns: 1.25fr .75fr; gap: 28px; align-items: center; }
-  .hero2-label { display: inline-block; font-size: 13px; font-weight: 700; color: var(--k4i); background: var(--permukaan); border: 1px solid var(--k4g); border-radius: 999px; padding: 4px 12px; }
-  .hero2 h1 { font-size: clamp(30px, 4.8vw, 50px); line-height: 1.08; font-weight: 800; margin: 12px 0 8px; letter-spacing: -.5px; }
-  .hero2-sub { font-size: 18px; color: var(--teks-lembut); }
-  .cta-mula { display: flex; align-items: center; gap: 16px; margin-top: 24px; max-width: 560px; text-decoration: none; color: #fff;
-              background: linear-gradient(135deg, var(--ungu), var(--ungu-2)); border-radius: 20px; padding: 18px 22px;
-              box-shadow: 0 14px 30px rgba(106,63,214,.35); transition: transform .15s, box-shadow .15s; }
-  .cta-mula:hover { transform: translateY(-3px); box-shadow: 0 18px 36px rgba(106,63,214,.45); }
-  .cta-ikon { width: 52px; height: 52px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; background: rgba(255,255,255,.22); }
+  .hero2::before { content: ""; position: absolute; width: 380px; height: 380px; border-radius: 50%; right: -120px; top: -140px; background: rgba(255,255,255,.08); }
+  .hero2::after { content: ""; position: absolute; width: 220px; height: 220px; border-radius: 50%; left: 38%; bottom: -150px; background: rgba(255,213,79,.18); }
+  .hero2 > * { position: relative; z-index: 1; }
+  .hero2-label { display: inline-block; font-size: 13.5px; font-weight: 600; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 5px 14px; }
+  .hero2 h1 { font-size: clamp(30px, 4.6vw, 46px); line-height: 1.15; font-weight: 800; margin: 14px 0 8px; }
+  .hero2 h1 span { color: var(--kuning); }
+  .hero2-sub { font-size: 17px; color: rgba(255,255,255,.92); }
+  .cta-mula { display: flex; align-items: center; gap: 16px; margin-top: 24px; max-width: 560px; text-decoration: none;
+              color: var(--kuning-teks); background: var(--kuning); border-radius: 20px; padding: 18px 22px;
+              box-shadow: 0 12px 26px rgba(0,0,0,.25); transition: transform .15s, box-shadow .15s; }
+  .cta-mula:hover { transform: translateY(-3px); box-shadow: 0 16px 32px rgba(0,0,0,.3); }
+  .cta-ikon { width: 52px; height: 52px; flex: none; border-radius: 50%; display: grid; place-items: center; font-size: 22px; color: #fff; background: #2A1F8F; }
   .cta-teks { flex: 1; }
   .cta-teks b { display: block; font-size: 24px; line-height: 1.2; }
   .cta-teks small { display: block; font-size: 14px; opacity: .92; margin-top: 2px; }
   .cta-panah { font-size: 28px; font-weight: 800; }
   .hero2-urusan { display: flex; flex-wrap: wrap; gap: 14px 16px; margin-top: 16px; }
   .urus { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-  .btn-garis { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 800; font-size: 15.5px; color: var(--teks);
-               background: var(--permukaan); border: 2px solid var(--k4g); border-radius: 14px; padding: 11px 18px; transition: border-color .15s, transform .15s; }
-  .btn-garis:hover { border-color: var(--ungu); transform: translateY(-2px); }
-  .pautan-kecil { font-size: 14px; font-weight: 700; color: var(--k4i); }
+  .btn-garis { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 800; font-size: 15.5px; color: #2A1F8F;
+               background: #fff; border-radius: 14px; padding: 12px 18px; box-shadow: 0 8px 20px rgba(0,0,0,.18); transition: transform .15s; }
+  .btn-garis:hover { transform: translateY(-2px); }
+  .pautan-kecil { font-size: 14px; font-weight: 700; color: var(--kuning); }
   /* ilustrasi */
   .hero2-art { position: relative; min-height: 230px; }
-  .kod-win { background: #1F1D3A; border-radius: 16px; box-shadow: 0 16px 34px rgba(40,30,90,.28); max-width: 340px; margin-left: auto; overflow: hidden; }
+  .kod-win { background: #12102A; border-radius: 16px; border: 1px solid rgba(255,255,255,.18); box-shadow: 0 18px 40px rgba(0,0,0,.35); transform: rotate(-2deg); max-width: 340px; margin-left: auto; overflow: hidden; }
   .kod-win pre { padding: 14px 16px 18px; font: 500 14px/1.75 "JetBrains Mono", Consolas, monospace; color: #F2F0FF; white-space: pre; overflow-x: auto; }
   .kod-win .ln { color: #6E6A99; display: inline-block; width: 18px; margin-right: 8px; }
   .flow-kad { position: absolute; right: -6px; bottom: -14px; width: 132px; background: #fff; border-radius: 16px; padding: 10px; box-shadow: 0 12px 26px rgba(40,30,90,.25); transform: rotate(4deg); border: 2px solid #E4DBFB; }
@@ -166,7 +171,7 @@
   /* aliran 1 → 4 */
   .aliran { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; counter-reset: none; }
   .aliran li { position: relative; }
-  .aliran li:not(:last-child)::after { content: "→"; position: absolute; right: -15px; top: 50%; transform: translateY(-50%); font-size: 20px; font-weight: 800; color: var(--k4i); z-index: 2; }
+  .aliran li:not(:last-child)::after { content: "→"; position: absolute; right: -15px; top: 50%; transform: translateY(-50%); font-size: 20px; font-weight: 800; color: var(--hero-2); z-index: 2; }
   .lkad, .rkad { --bg: var(--k1); --gr: var(--k1g); --ic: var(--k1i); }
   .lkad { position: relative; display: flex; flex-direction: column; gap: 4px; height: 100%; text-decoration: none; color: var(--teks);
           background: var(--bg); border: 1.5px solid var(--gr); border-radius: 20px; padding: 18px 18px 20px; transition: transform .15s, box-shadow .15s; }
@@ -338,7 +343,7 @@
   <section class="hero2" aria-labelledby="tajuk">
     <div class="hero2-teks">
       <span class="hero2-label">DEC20313 · Jabatan Kejuruteraan Elektrik</span>
-      <h1 id="tajuk">C Programming Learning Lab</h1>
+      <h1 id="tajuk">C Programming <span>Learning Lab</span></h1>
       <p class="hero2-sub">Belajar C dan urus kerja amali di satu tempat.</p>
       <a class="cta-mula" href="learn-c/">
         <span class="cta-ikon" aria-hidden="true">▶</span>
@@ -418,7 +423,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu · <span class="versi">CLab v5.1 (27 Nov 2026)</span></span>
+    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu · <span class="versi">CLab v5.2 (27 Nov 2026)</span></span>
     <span>Jabatan Kejuruteraan Elektrik · Politeknik Kota Bharu</span>
   </div>
 </footer>
