@@ -403,6 +403,14 @@
         <label><input type="checkbox" id="sari" checked> Sari kata</label>
       </div>
       <small id="status">Tip: guna kekunci ← → untuk bergerak antara langkah.</small>
+      <details class="nota" id="bantuSuara" hidden style="margin-top:8px">
+        <summary><b>Tiada suara? Cara pasang suara Bahasa Melayu / Indonesia</b></summary>
+        <ul style="margin:6px 0 0 18px">
+          <li><b>Telefon Android:</b> Tetapan → cari “Text-to-speech” → Enjin pilihan: <i>Speech Services by Google</i> → ⚙ → Pasang data suara → pilih <i>Bahasa Melayu</i> (atau <i>Bahasa Indonesia</i>). Buka semula halaman ini dalam Chrome.</li>
+          <li><b>Laptop Windows:</b> Settings → Time &amp; language → Speech → <i>Add voices</i> → pilih Malay atau Indonesian → mula semula Chrome/Edge. Pelayar <b>Chrome</b> atau <b>Edge</b> biasanya sudah ada suara dalam talian Bahasa Indonesia.</li>
+          <li><b>iPhone/iPad:</b> Settings → Accessibility → Spoken Content → Voices → pilih Malay atau Indonesian.</li>
+        </ul>
+      </details>
     </section>
 
     <section class="panel" aria-label="Code tracing">
@@ -1117,25 +1125,39 @@ function tungguSuara() {
   return suaraSedia;
 }
 
+// Pilih suara: Bahasa Melayu dahulu, kemudian Bahasa Indonesia (paling hampir).
+// Suara bahasa lain (cth. English) TIDAK digunakan kerana sebutannya mengelirukan.
+function pilihSuara() {
+  if (!window.speechSynthesis) return null;
+  const vs = speechSynthesis.getVoices();
+  const terbaik = (a) => a.find((x) => /natural|neural|google|online/i.test(x.name)) || a[0];
+  const ms = vs.filter((x) => /^ms([-_]|$)/i.test(x.lang)), idn = vs.filter((x) => /^(id|in)([-_]|$)/i.test(x.lang));
+  if (ms.length) return { v: terbaik(ms), lang: 'ms-MY', label: '🔊 Suara Bahasa Melayu' };
+  if (idn.length) return { v: terbaik(idn), lang: 'id-ID', label: '🔊 Suara Bahasa Indonesia (paling hampir dengan BM)' };
+  return null;
+}
+
 function cakap(teks, id) {
   return new Promise((res) => {
     const kadar = Number($('laju').value);
     let siap = false, pemasa;
     const habis = () => { if (siap) return; siap = true; clearTimeout(pemasa); res(); };
-    if ($('suara').checked && window.speechSynthesis && window.SpeechSynthesisUtterance) {
+    const suara = $('suara').checked && window.SpeechSynthesisUtterance ? pilihSuara() : null;
+    if (suara) {
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(teks);
-      u.lang = 'ms-MY'; u.rate = kadar;
-      const v = speechSynthesis.getVoices().find((x) => x.lang.toLowerCase().startsWith('ms'));
-      if (v) u.voice = v;
-      $('status').textContent = v ? '🔊 Suara Bahasa Melayu' : '🔊 Suara lalai peranti (suara Melayu tiada pada peranti ini)';
+      u.lang = suara.lang; u.voice = suara.v; u.rate = kadar;
+      $('status').textContent = suara.label + ' · ' + suara.v.name;
       u.onend = habis; u.onerror = habis;
       window._ucap = u;
       pemasa = setTimeout(() => { speechSynthesis.cancel(); habis(); }, 6000 + teks.length * 120);
       setTimeout(() => { if (id !== token) return habis(); speechSynthesis.resume(); speechSynthesis.speak(u); }, 80);
     } else {
-      $('status').textContent = '🔇 Mod tanpa suara';
-      pemasa = setTimeout(habis, (700 + teks.length * 45) / kadar);
+      $('status').textContent = $('suara').checked
+        ? '🔇 Peranti ini tiada suara Bahasa Melayu/Indonesia — baca sari kata. (Cara pasang suara: lihat “Tiada suara?” di bawah.)'
+        : '🔇 Mod tanpa suara';
+      $('bantuSuara').hidden = !$('suara').checked;
+      pemasa = setTimeout(habis, (900 + teks.length * 55) / kadar);
     }
   });
 }
