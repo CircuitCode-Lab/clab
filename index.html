@@ -180,7 +180,7 @@
               font-weight: 800; font-size: 16px; color: #fff; background: var(--ic); }
   :root[data-theme="dark"] .lkad .no { color: #12102A; }
   .lik { width: 52px; height: 52px; flex: none; border-radius: 14px; display: grid; place-items: center; background: var(--permukaan); border: 1.5px solid var(--gr); color: var(--ic); }
-  .lik svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .lik { font-size: 26px; line-height: 1; }
   .lgk { margin-top: 10px; font-size: 12.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--ic); }
   .lkad h3 { font-size: 18px; font-weight: 800; line-height: 1.3; }
   .lkad p { font-size: 14.5px; color: var(--teks-lembut); line-height: 1.5; }
@@ -213,7 +213,7 @@
     .aliran { gap: 10px; }
     .lkad { padding: 14px 12px 16px; border-radius: 16px; }
     .lkad .no { top: 10px; right: 10px; width: 28px; height: 28px; font-size: 14px; }
-    .lik { width: 44px; height: 44px; } .lik svg { width: 26px; height: 26px; }
+    .lik { width: 44px; height: 44px; font-size: 22px; }
     .lkad h3 { font-size: 15.5px; } .lkad p { font-size: 13px; }
     .lgk { font-size: 11px; }
   }
@@ -352,9 +352,9 @@
       </a>
       <div class="hero2-urusan">
         <div class="urus"><a class="btn-garis" href="https://circuitcode-lab.github.io/attendance/" target="_blank" rel="noopener">✅ Tanda Kehadiran</a>
-          <a class="pautan-kecil" href="https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec" target="_blank" rel="noopener">Rayuan Kehadiran</a></div>
+          <a class="pautan-kecil" href="https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec" target="_blank" rel="noopener">📨 Rayuan Kehadiran</a></div>
         <div class="urus"><a class="btn-garis" href="https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec" target="_blank" rel="noopener">📤 Hantar Practical Work</a>
-          <a class="pautan-kecil" href="#cara">Panduan Hantar PW</a></div>
+          <a class="pautan-kecil" href="#cara">🧭 Panduan Hantar PW</a></div>
       </div>
     </div>
     <div class="hero2-art" aria-hidden="true">
@@ -375,16 +375,16 @@
     <div class="tajuk-seksyen"><h2 id="belajar">Belajar &amp; Berlatih</h2><p>Ikut 4 langkah ini bagi setiap topik.</p></div>
     <ol class="aliran">
       <li><a class="lkad c4" href="learn-c/">
-        <span class="no">1</span><span class="lik"><svg viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></span>
+        <span class="no">1</span><span class="lik" aria-hidden="true">💻</span>
         <span class="lgk">Fahami topik</span><h3>Learn C · Modul 5P</h3><p>Pilih topik dan belajar langkah demi langkah.</p></a></li>
       <li><a class="lkad c2" href="smarttutor/">
-        <span class="no">2</span><span class="lik"><svg viewBox="0 0 24 24"><rect x="8" y="3" width="14" height="10" rx="1"/><path d="M11 6.5h8M11 9.5h5M15 13v2.5l-2 4.5M15 15.5l2 4.5"/><circle cx="4.5" cy="9" r="2"/><path d="M1.5 21v-4.5a3 3 0 0 1 6 0V21M6.5 14l3.5-2.5"/></svg></span>
+        <span class="no">2</span><span class="lik" aria-hidden="true">🧑‍🏫</span>
         <span class="lgk">Lihat kod berjalan</span><h3>Tengok Kod Berjalan · SmartTutor</h3><p>Ikuti Cikgu C-Bot di papan bersuara.</p></a></li>
       <li><a class="lkad c1" href="https://circuitcode-lab.github.io/compiler/">
-        <span class="no">3</span><span class="lik"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="11" rx="1.5"/><path d="M2 19h20M10.5 7.5l-2 2 2 2M13.5 7.5l2 2-2 2"/></svg></span>
+        <span class="no">3</span><span class="lik" aria-hidden="true">▶️</span>
         <span class="lgk">Cuba sendiri</span><h3>C Lab Compiler</h3><p>Tulis &amp; jalankan kod di telefon atau laptop.</p></a></li>
       <li><a class="lkad c3" href="games/">
-        <span class="no">4</span><span class="lik"><svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 4 4v2a3 3 0 0 1-5.4 1.8L15 14H9l-1.6 1.8A3 3 0 0 1 2 14v-2a4 4 0 0 1 4-4z"/><path d="M7 10.5v3M5.5 12h3"/><circle cx="16" cy="11" r=".9"/><circle cx="18" cy="13.2" r=".9"/></svg></span>
+        <span class="no">4</span><span class="lik" aria-hidden="true">🎮</span>
         <span class="lgk">Uji kefahaman</span><h3>Games</h3><p>Susun kod, cari bug dan teka output ikut topik.</p></a></li>
     </ol>
   </section>
@@ -393,9 +393,9 @@
   <section class="blok" aria-labelledby="rujukan">
     <div class="tajuk-seksyen"><h2 id="rujukan">Bahan Rujukan</h2><p>Guna bila-bila masa anda perlukan.</p></div>
     <div class="rujuk">
-      <a class="rkad c4" href="ebook/"><span class="lik"><svg viewBox="0 0 24 24"><path d="M2.5 5.5c2.8-1 6-1 9.5 1 3.5-2 6.7-2 9.5-1V19c-2.8-1-6-1-9.5 1-3.5-2-6.7-2-9.5-1z"/><path d="M12 6.5V20"/></svg></span><span><h3>E-book</h3><p>Baca ikut topik — <i>C Programming Made Easy</i>.</p></span></a>
-      <a class="rkad c2" href="video/"><span class="lik"><svg viewBox="0 0 24 24"><rect x="3" y="3.5" width="18" height="12.5" rx="2"/><path d="M10 7.3v5.2l4.5-2.6z"/><path d="M3 20.5h18"/><circle cx="8" cy="20.5" r="1.2"/></svg></span><span><h3>Galeri Video</h3><p>Tonton panduan Lab, PW dan topik.</p></span></a>
-      <a class="rkad c1" href="https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20" target="_blank" rel="noopener"><span class="lik"><svg viewBox="0 0 24 24"><path d="M1.5 10c2.2-.8 4.8-.8 7.5.8 2.7-1.6 5.3-1.6 7.5-.8v11c-2.2-.8-4.8-.8-7.5.8-2.7-1.6-5.3-1.6-7.5-.8z"/><path d="M9 10.8v11"/><path d="M14.5 1.5h7a1 1 0 0 1 1 1V7a1 1 0 0 1-1 1h-3.5l-2.5 2.2V8h-1a1 1 0 0 1-1-1V2.5a1 1 0 0 1 1-1z"/></svg></span><span><h3>Tanya Nota Kursus · AI Tutor</h3><p>Tanya berdasarkan nota kursus. Perlu akaun Google.</p></span></a>
+      <a class="rkad c4" href="ebook/"><span class="lik" aria-hidden="true">📘</span><span><h3>E-book</h3><p>Baca ikut topik — <i>C Programming Made Easy</i>.</p></span></a>
+      <a class="rkad c2" href="video/"><span class="lik" aria-hidden="true">🎬</span><span><h3>Galeri Video</h3><p>Tonton panduan Lab, PW dan topik.</p></span></a>
+      <a class="rkad c1" href="https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20" target="_blank" rel="noopener"><span class="lik" aria-hidden="true">🤖</span><span><h3>Tanya Nota Kursus · AI Tutor</h3><p>Tanya berdasarkan nota kursus. Perlu akaun Google.</p></span></a>
     </div>
     <p class="pautan-bawah"><a href="download/Dev-Cpp_5_11_TDM-GCC_4_9_2_Setup.exe" download>⬇ Muat turun Dev-C++ untuk Windows</a> <span>(48 MB)</span></p>
   </section>
@@ -423,7 +423,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu · <span class="versi">CLab v5.2 (27 Nov 2026)</span></span>
+    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu · <span class="versi">CLab v5.3 (27 Nov 2026)</span></span>
     <span>Jabatan Kejuruteraan Elektrik · Politeknik Kota Bharu</span>
   </div>
 </footer>
