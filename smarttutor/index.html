@@ -324,6 +324,7 @@
     <div>
       <span class="label">✦ BAHARU · Tutor visual bersuara</span>
       <h1>Smart<span>Tutor</span></h1>
+      <p style="font-weight:700;margin-bottom:4px">Tengok kod berjalan, langkah demi langkah.</p>
       <p>Ikuti Cikgu C-Bot menerangkan setiap baris kod langkah demi langkah — lihat papan visual, jejak nilai pemboleh ubah, kemudian uji kefahaman anda.</p>
     </div>
     <div class="skor" aria-live="polite">
@@ -335,7 +336,7 @@
 
   <!-- ============ PILIH TOPIK ============ -->
   <section class="pilih" aria-label="Pilih topik dan pelajaran">
-    <p class="kumpulan">Topik</p>
+    <p class="kumpulan">Pilih topik</p>
     <nav class="chips" id="topik"></nav>
     <div class="chips" id="pelajaran" style="margin-top:4px"></div>
   </section>
@@ -479,7 +480,7 @@
 <footer>
   <div class="wrap">
     <span>SmartTutor · DEC20313 C Programming</span>
-    <span>v2.5 · Prototaip berdasarkan nota kursus · Bukan AI generatif</span>
+    <span>SmartTutor v2.6 · Prototaip berdasarkan nota kursus · Bukan AI generatif</span>
   </div>
 </footer>
 
@@ -1145,7 +1146,8 @@ function pilihSuara() {
 const AUDIO = new Map();
 let audioKini = null;
 const bersihTeks = (t) => String(t || '').replace(/\s+/g, ' ').trim();
-const guna_AI = () => !!AI_URL && $('suara').checked && $('suaraAI').checked;
+// Suara AI hanya untuk pelajaran tetap (suaranya disimpan & dikongsi); kuota suara percuma sangat terhad.
+const guna_AI = () => !!AI_URL && $('suara').checked && $('suaraAI').checked && !(PELAJARAN[k] && PELAJARAN[k].ai);
 function ambilSuaraAI(teks) {
   teks = bersihTeks(teks);
   if (!AI_URL || !teks) return Promise.resolve(null);
@@ -1578,7 +1580,7 @@ if (!AI_URL) $('statusAI').textContent = 'Cikgu C-Bot belum disambungkan kepada 
 
 /* MULA */
 paparSkor();
-pilih(3);
+pilih(0);   // pelajar baru bermula di Topik 1
 </script>
 </body>
 </html>

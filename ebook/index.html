@@ -78,7 +78,7 @@
                         background: rgba(11, 13, 26, .92); flex-wrap: nowrap; }
   body.penuh .kawalan button, body.penuh .kawalan select { padding: 8px 12px; font-size: 13px; }
   body.penuh #info { color: #fff; min-width: 70px; }
-  body.penuh #lompat { display: none; }
+  body.penuh #lompat, body.penuh #lompatTopik { display: none; }
   @media (max-width: 699px) {
     body.penuh #rak { max-width: calc((100dvh - 72px) * 0.707); }
     body.penuh .kawalan .teksb { display: none; }
@@ -167,6 +167,7 @@
     <span id="info">1 / 1</span>
     <button type="button" class="utama" id="next"><span class="teksb">Seterus </span>▶</button>
     <button type="button" class="kecil" id="akhir" aria-label="Halaman terakhir">⏭</button>
+    <select id="lompatTopik" aria-label="Lompat ke topik"><option value="">📑 Lompat ke topik…</option></select>
     <select id="lompat" aria-label="Lompat ke halaman"></select>
     <button type="button" class="utama" id="bukaZoom">🔍<span class="teksb"> Zoom</span></button>
     <button type="button" id="penuh">⛶<span class="teksb" id="penuhTeks"> Skrin penuh</span></button>
@@ -256,6 +257,12 @@
   document.getElementById("awal").onclick = function () { muatSekitar(0); pf.turnToPage(0); kemas(); };
   document.getElementById("akhir").onclick = function () { muatSekitar(JUMLAH - 1); pf.turnToPage(JUMLAH - 1); kemas(); };
   pilih.onchange = function () { var n = +pilih.value; muatSekitar(n); pf.turnToPage(n); kemas(); };
+  // Lompat ke topik: indeks fail halaman (hal/NNN.jpg tolak 1). Halaman buku 1 = fail 006.
+  var TOPIK = [["Isi Kandungan", 4], ["Topik 1 · Introduction to C", 5], ["Topik 2 · Fundamentals", 16], ["Topik 3 · Selection", 28],
+               ["Topik 4 · Looping", 39], ["Topik 5 · Functions", 56], ["Topik 6 · Arrays & Strings", 67], ["Topik 7 · Pointers & Structures", 80]];
+  var pilihT = document.getElementById("lompatTopik");
+  TOPIK.forEach(function (t) { var o = document.createElement("option"); o.value = t[1]; o.textContent = t[0]; pilihT.appendChild(o); });
+  pilihT.onchange = function () { if (pilihT.value === "") return; var n = +pilihT.value; muatSekitar(n); pf.turnToPage(n); kemas(); pilihT.value = ""; };
   // Skrin penuh: mod CSS (berfungsi di semua peranti, termasuk iPhone & app C Lab) + Fullscreen API jika ada
   var penuhTeks = document.getElementById("penuhTeks");
   function setPenuh(on) {

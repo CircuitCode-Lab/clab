@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), SmartTutor, video, AI Tutor dan Games.">
+<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), SmartTutor, C Lab Compiler, Games, e-book, video dan AI Tutor.">
 <title>C Programming Learning Lab · DEC20313</title>
 <link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#8e65c7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,7 +129,8 @@
   .grid { display: grid; gap: 14px; }
   .g3 { grid-template-columns: repeat(3, 1fr); }
   .g4 { grid-template-columns: repeat(4, 1fr); }
-  .kad.sorot { grid-column: 1 / -1; min-height: 0; }
+  .kumpulan .petunjuk { display: inline-block; margin-left: 8px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--teks-lembut); }
+  footer .versi { opacity: .85; }
   .kad { --bg: var(--k1); --gr: var(--k1g); --ic: var(--k1i);
          position: relative; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--teks);
          background: var(--bg); border: 1.5px solid var(--gr); border-radius: 18px; padding: 20px 18px 18px;
@@ -239,7 +240,7 @@
     </a>
     <div class="kanan">
     <button class="bot-btn" id="bot-btn" type="button" aria-expanded="false" aria-controls="bot">
-      <span class="bulat" aria-hidden="true">💬</span><span class="teks">Ada soalan?</span>
+      <span class="bulat" aria-hidden="true">💬</span><span class="teks">Bantuan Portal</span>
     </button>
     <div class="tema" role="group" aria-label="Pilih tema paparan">
       <button type="button" data-tema="light" aria-pressed="false">☀️ <span class="teks">Light</span></button>
@@ -256,10 +257,11 @@
     <div>
       <span class="label">DEC20313 · Jabatan Kejuruteraan Elektrik</span>
       <h1 id="tajuk">C Programming <span>Learning Lab</span></h1>
-      <p class="desc">Tanda kehadiran, hantar jawapan Practical Work (PW), dan belajar C dengan Modul 5P, AI Tutor serta Games — semuanya di sini.</p>
+      <p class="desc">Tanda kehadiran, hantar jawapan Practical Work (PW), dan belajar C dengan Modul 5P, SmartTutor, compiler serta Games — semuanya di sini.</p>
       <div class="butang">
         <a class="btn btn-putih" href="https://circuitcode-lab.github.io/attendance/" target="_blank" rel="noopener">✅ Tanda Kehadiran</a>
         <a class="btn btn-utama" href="https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec" target="_blank" rel="noopener">📤 Hantar Practical Work</a>
+        <a class="btn btn-putih" href="learn-c/">📘 Mula Belajar C</a>
       </div>
       <p class="kecil">Tidak hadir atau terlupa tanda kehadiran?
         <a href="https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec" target="_blank" rel="noopener">Hantar rayuan kehadiran →</a></p>
@@ -280,7 +282,7 @@
   <section class="blok" aria-labelledby="akses">
     <div class="tajuk-seksyen">
       <h2 id="akses">🚀 Akses Learning Lab</h2>
-      <p>Semua pautan dibuka dalam tab baharu.</p>
+      <p>Sistem luar (Kehadiran, PW, AI Tutor) dibuka dalam tab baharu.</p>
     </div>
 
     <p class="kumpulan">📋 Urusan kelas</p>
@@ -296,40 +298,43 @@
         <h3>Hantar PW</h3><p>Hantar jawapan, semak status dan cetak Lab Report.</p><span class="pergi">Buka →</span></a>
     </div>
 
-    <p class="kumpulan">🧠 Belajar &amp; berlatih</p>
+    <p class="kumpulan">🧠 Belajar &amp; berlatih <span class="petunjuk">Baru mula? Buka <b>Learn C</b> dan pilih Topik 1.</span></p>
     <div class="grid g4">
-      <a class="kad c2 sorot" href="smarttutor/">
-        <span class="tag">BAHARU · AI</span><span class="ikon" aria-hidden="true">🧑‍🏫</span>
-        <h3>SmartTutor — Cikgu C-Bot</h3><p>Kelas visual bersuara: tonton kod berjalan langkah demi langkah di papan, atau tanya Cikgu C-Bot dan ia mengajar anda di papan.</p><span class="pergi">Mula sesi tutor →</span></a>
       <a class="kad c4" href="learn-c/">
-        <span class="tag">5P</span><span class="ikon" aria-hidden="true">💻</span>
-        <h3>Learn C</h3><p>Topik 1–7: faham, fikir, jangka, surih kod dan terangkan.</p><span class="pergi">Mula belajar →</span></a>
-      <a class="kad c5" href="video/">
-        <span class="tag">VIDEO</span><span class="ikon" aria-hidden="true">🎬</span>
-        <h3>Video</h3><p>Panduan Lab, Practical Work, Topik 1–7 dan tip.</p><span class="pergi">Tonton →</span></a>
-      <a class="kad c6" href="https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20" target="_blank" rel="noopener">
-        <span class="tag">AI</span><span class="ikon" aria-hidden="true">🤖</span>
-        <h3>AI Tutor</h3><p>Tanya dalam BM atau English. Perlu log masuk akaun Google.</p><span class="pergi">Tanya →</span></a>
+        <span class="tag">MULA DI SINI</span><span class="ikon" aria-hidden="true">💻</span>
+        <h3>Learn C · Modul 5P</h3><p>Topik 1–7: faham, fikir, jangka, surih kod dan terangkan.</p><span class="pergi">Mula belajar →</span></a>
+      <a class="kad c2" href="smarttutor/">
+        <span class="tag">BAHARU</span><span class="ikon" aria-hidden="true">🧑‍🏫</span>
+        <h3>Tengok Kod Berjalan · SmartTutor</h3><p>Ikuti penerangan Cikgu C-Bot di papan bersuara. Lihat nilai berubah langkah demi langkah, cuba kuiz atau minta contoh lain.</p><span class="pergi">Mula sesi tutor →</span></a>
+      <a class="kad c3" href="https://circuitcode-lab.github.io/compiler/">
+        <span class="tag">RUN KOD</span><span class="ikon" aria-hidden="true">▶️</span>
+        <h3>C Lab Compiler</h3><p>Tulis dan jalankan kod C sendiri di <b>telefon &amp; laptop</b>. Boleh guna tanpa Internet selepas dibuka sekali.</p><span class="pergi">Buka compiler →</span></a>
       <a class="kad c7" href="games/">
-        <span class="tag">BAHARU</span><span class="ikon" aria-hidden="true">🎮</span>
-        <h3>Games</h3><p>Uji kefahaman C Programming sambil bermain.</p><span class="pergi">Main →</span></a>
+        <span class="tag">GAMES</span><span class="ikon" aria-hidden="true">🎮</span>
+        <h3>Games</h3><p>Uji kefahaman ikut topik sambil bermain.</p><span class="pergi">Main →</span></a>
     </div>
 
-    <p class="kumpulan">📚 Bahan bacaan</p>
+    <p class="kumpulan">📚 Bahan rujukan</p>
     <div class="grid g3">
       <a class="kad c5" href="ebook/">
         <span class="tag">E-BOOK</span><span class="ikon" aria-hidden="true">📘</span>
-        <h3>C Programming Made Easy</h3><p>Textbook bergambar Topik 1–7. Baca dalam talian, belek sehelai demi sehelai.</p><span class="pergi">Baca →</span></a>
+        <h3>C Programming Made Easy</h3><p>Textbook bergambar Topik 1–7. Lompat terus ke topik yang dikehendaki.</p><span class="pergi">Baca →</span></a>
+      <a class="kad c1" href="video/">
+        <span class="tag">VIDEO</span><span class="ikon" aria-hidden="true">🎬</span>
+        <h3>Galeri Video</h3><p>Panduan Lab, Practical Work, Topik 1–7 dan tip.</p><span class="pergi">Tonton →</span></a>
+      <a class="kad c6" href="https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20" target="_blank" rel="noopener">
+        <span class="tag">AI</span><span class="ikon" aria-hidden="true">🤖</span>
+        <h3>Tanya Nota Kursus · AI Tutor</h3><p>Tanya tentang nota DEC20313 dalam BM atau English. Perlu log masuk akaun Google.</p><span class="pergi">Tanya →</span></a>
     </div>
 
-    <p class="kumpulan">🛠️ Perisian</p>
+    <p class="kumpulan">🛠️ Panduan &amp; perisian</p>
     <div class="grid g3">
+      <a class="kad c3" href="#cara">
+        <span class="tag">PW</span><span class="ikon" aria-hidden="true">🧭</span>
+        <h3>Cara hantar PW</h3><p>Empat langkah menghantar jawapan Practical Work, serta perkara penting.</p><span class="pergi">Lihat panduan ↓</span></a>
       <a class="kad c4" href="download/Dev-Cpp_5_11_TDM-GCC_4_9_2_Setup.exe" download>
         <span class="tag">WINDOWS</span><span class="ikon" aria-hidden="true">⬇️</span>
         <h3>Download Dev-C++</h3><p>Dev-C++ 5.11 + TDM-GCC 4.9.2 untuk menulis dan menjalankan program C (48 MB).</p><span class="pergi">Muat turun →</span></a>
-      <a class="kad c7" href="https://circuitcode-lab.github.io/compiler/">
-        <span class="tag">TELEFON</span><span class="ikon" aria-hidden="true">📱</span>
-        <h3>C Lab Compiler</h3><p>Tulis dan run kod C terus di telefon atau laptop. Boleh guna tanpa Internet selepas dibuka sekali.</p><span class="pergi">Buka compiler →</span></a>
     </div>
   </section>
 
@@ -356,7 +361,7 @@
 
 <footer>
   <div class="wrap">
-    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu</span>
+    <span>Hak Cipta &amp; Idea © 2026 Wan Fazlini Idayu · <span class="versi">CLab v5.0 (27 Nov 2026)</span></span>
     <span>Jabatan Kejuruteraan Elektrik · Politeknik Kota Bharu</span>
   </div>
 </footer>
@@ -379,10 +384,10 @@
   })();
 </script>
 <!-- ================= CHATBOT PEMBANTU PORTAL (tanpa AI) ================= -->
-<section class="bot" id="bot" role="dialog" aria-label="Pembantu Learning Lab">
+<section class="bot" id="bot" role="dialog" aria-label="Bantuan Portal">
   <div class="bot-kepala">
     <span class="av" aria-hidden="true">🤖</span>
-    <span><b>Pembantu Learning Lab</b><small>Jawapan pantas tentang portal</small></span>
+    <span><b>Bantuan Portal</b><small>Kehadiran, PW dan cara guna CLab</small></span>
     <button type="button" id="bot-tutup" aria-label="Tutup pembantu">✕</button>
   </div>
   <div class="bot-isi" id="bot-isi" aria-live="polite"></div>
@@ -391,7 +396,7 @@
     <input id="bot-input" type="text" placeholder="Taip soalan… cth: lupa PIN" aria-label="Taip soalan anda" maxlength="200">
     <button type="submit" aria-label="Hantar">➤</button>
   </form>
-  <p class="bot-nota">Pembantu automatik. Untuk soalan kod C, guna AI Tutor atau Learn C.</p>
+  <p class="bot-nota">Bantuan Portal: jawapan pantas tentang kehadiran, PW dan cara guna CLab. Untuk belajar kod C, guna Learn C, SmartTutor atau AI Tutor.</p>
 </section>
 
 <script>
@@ -405,6 +410,7 @@
     rayuan: "https://script.google.com/macros/s/AKfycbzLWcSIcWyFfVeiKsHS4WUlQy833Yc7Pu6-gMESXf9RsGCuJ5lkB-_jiE_quc58WhuW/exec",
     pw:     "https://script.google.com/macros/s/AKfycbxQU5YHWNJ8TzcEE-g60AhIDCPG1N-lRVuNcVDIbBELSQJD2V-7_gAlMdgFeovYeMSr1Q/exec",
     learnc: "learn-c/",
+    smarttutor: "smarttutor/",
     video:  "video/",
     tutor:  "https://notebook.google.com/notebook/acbbb872-8dda-4c05-95f5-35893985ec20",
     games:  "games/",
@@ -412,7 +418,7 @@
     compiler: "https://circuitcode-lab.github.io/compiler/"
   };
   // Laman dalam repo ini (GitHub Pages) dibuka di tab yang sama; laman ini ada butang "⌂ Laman Utama"
-  var TAB_SAMA = ["learnc", "video", "games", "ebook", "compiler"];
+  var TAB_SAMA = ["learnc", "smarttutor", "video", "games", "ebook", "compiler"];
 
   // id, label butang cepat, kata kunci, jawapan (HTML), pautan [label, url]
   var JAWAPAN = [
@@ -450,8 +456,12 @@
       j: "Cuba langkah ini:<ol><li>Semak sambungan internet.</li><li>Muat semula halaman (refresh) dan log masuk semula.</li><li>Pastikan fail ialah gambar (JPG/PNG).</li><li>Jika muncul mesej merah, ambil screenshot mesej itu dan hantar kepada pensyarah.</li></ol>" },
     { id: "belajar", cip: "💻 Belajar kod C",
       kk: ["belajar", "faham", "loop", "for", "while", "if", "array", "function", "fungsi", "pointer", "kod", "coding", "c programming", "topik", "nota topik", "5p"],
-      j: "Untuk belajar dan memahami kod C:<ul><li><b>Learn C (Modul 5P)</b> — Topik 1–7 dengan Code Tracer langkah demi langkah.</li><li><b>AI Tutor</b> — tanya soalan C dalam BM atau English.</li></ul>",
-      a: [["💻 Learn C", "learnc"], ["🤖 AI Tutor", "tutor"]] },
+      j: "Untuk belajar dan memahami kod C:<ul><li><b>Learn C (Modul 5P)</b> — mula di sini. Baru mula? Pilih Topik 1.</li><li><b>SmartTutor</b> — tengok kod berjalan di papan bersuara, atau minta Cikgu C-Bot terangkan contoh lain.</li><li><b>AI Tutor</b> — tanya tentang nota kursus dalam BM atau English.</li></ul>",
+      a: [["💻 Learn C", "learnc"], ["🧑‍🏫 SmartTutor", "smarttutor"], ["🤖 AI Tutor", "tutor"]] },
+    { id: "smarttutor", cip: "🧑‍🏫 SmartTutor",
+      kk: ["smarttutor", "smart tutor", "c-bot", "cbot", "cikgu", "papan", "visual", "suara", "tengok kod"],
+      j: "<b>SmartTutor</b> menunjukkan kod berjalan langkah demi langkah di papan bersuara: nilai pemboleh ubah, flowchart dan output. Anda juga boleh taip soalan di kotak <b>Tanya Cikgu C-Bot</b> untuk contoh lain. Jawapan dijana AI — semak dengan nota.",
+      a: [["🧑‍🏫 Buka SmartTutor", "smarttutor"]] },
     { id: "compiler", cip: "📱 Compiler di telefon",
       kk: ["compiler", "compile", "run kod", "run code", "jalankan", "telefon", "phone", "handphone", "android", "iphone", "offline", "dev-c", "devc", "tiada laptop", "takde laptop"],
       j: "Guna <b>C Lab Compiler</b> untuk tulis dan run kod C terus di telefon atau laptop.<ul><li>Isi nilai untuk <code>scanf</code> dalam kotak <b>Input</b> (satu nilai setiap baris), kemudian tekan <b>▶ Run</b>.</li><li>Untuk guna <b>tanpa Internet</b>: buka sekali semasa ada Internet, kemudian pilih <i>Add to Home Screen</i>.</li><li>Untuk tugasan rasmi, uji semula dalam <b>Dev-C++</b>.</li></ul>",

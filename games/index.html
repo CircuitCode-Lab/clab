@@ -43,6 +43,12 @@ body.dark .tm button.on{background:#5a4220;color:#ffe9b0}
 .w .mt{font-weight:700;background:#ffd166;color:#4a2a00;border-radius:999px;padding:2px 9px;white-space:nowrap;box-shadow:0 2px 0 #c98400}
 .nt{font-size:12px;opacity:.75;text-align:center;margin-top:8px}
 .note{max-width:760px;margin:16px auto 0;text-align:center;font-weight:600;font-size:14px;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px}
+.tapis{max-width:760px;margin:0 auto 14px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center}
+.tapis span{font-weight:700;font-size:14px;margin-right:2px}
+.tapis button{font-family:inherit;background:var(--tile);color:var(--fg);border:3px solid var(--line);border-radius:14px;padding:5px 11px;font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 3px 0 var(--tsh)}
+.tapis button.on{background:#ffe9b0;border-color:#f4a300;color:#3b2414}
+body.dark .tapis button.on{background:#5a4220;color:#ffe9b0}
+.k[hidden]{display:none}
 .foot{max-width:760px;margin:16px auto 0;font-size:12px;text-align:center;line-height:1.6;font-weight:600;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 </style>
 </head>
@@ -50,6 +56,8 @@ body.dark .tm button.on{background:#5a4220;color:#ffe9b0}
 <div class="bukit"><svg viewBox="0 0 1200 300" preserveAspectRatio="none"><path d="M0 170 Q200 40 420 170 T840 160 T1200 150 V300 H0Z" fill="var(--h1)"/><path d="M0 230 Q260 120 520 220 T1000 210 T1200 200 V300 H0Z" fill="var(--h2)"/></svg></div>
 <div class="top"><a class="pil" href="https://circuitcode-lab.github.io/clab/">⌂ Laman Utama</a><div class="tm"><button type="button" data-tema="light">☀️ Cerah</button><button type="button" data-tema="dark">🌙 Gelap</button></div></div>
 <div class="kepala"><div class="sign"><h1>🎮 Games C Programming</h1></div><br><div class="rib">Kursus DEC20313 · Pilih permainan</div></div>
+<div class="tapis" role="group" aria-label="Tapis game mengikut topik"><span>Ulang kaji topik:</span><button type="button" data-t="0" class="on">Semua</button><button type="button" data-t="1">Topik 1</button><button type="button" data-t="2">Topik 2</button><button type="button" data-t="3">Topik 3</button><button type="button" data-t="4">Topik 4</button><button type="button" data-t="5">Topik 5</button><button type="button" data-t="6">Topik 6</button><button type="button" data-t="7">Topik 7</button></div>
+<p class="note" id="tapisNota" hidden></p>
 <div class="g"><a class="k" href="flappy-c/"><span class="i">🐦</span><span class=b>BAHARU</span><b>Flappy C</b><small>Game bonus — kutip perkataan C, elak perangkap</small><em>Bonus</em></a><a class="k" href="crush.html"><span class="i">🏃</span><b>C Rush</b><small>Larian 3D — pilih lorong jawapan</small><em>Topik 1–7</em></a><a class="k" href="bughunter.html"><span class="i">🐞</span><b>Pemburu Bug</b><small>Cari & betulkan ralat kod C</small><em>Topik 2–7</em></a><a class="k" href="susunkod.html"><span class="i">🧩</span><b>Susun Kod</b><small>Susun baris kod ke susunan betul</small><em>Topik 2–7</em></a><a class="k" href="tekaoutput.html"><span class="i">🔮</span><b>Teka Output</b><small>Ramal output printf</small><em>Topik 2–7</em></a><a class="k" href="tracetable.html"><span class="i">📊</span><b>Trace Table</b><small>Jejak nilai dalam gelung</small><em>Topik 4–7</em></a><a class="k" href="padankad.html"><span class="i">🃏</span><b>Padan Kad</b><small>Padankan jenis data, operator & penuding</small><em>Topik 2, 5, 7</em></a><a class="k" href="penembak.html"><span class="i">🚀</span><b>Penembak Array</b><small>Tembak jawapan indeks tatasusunan</small><em>Topik 6, 7</em></a><a class="k" href="escaperoom.html"><span class="i">🔐</span><b>Escape Room C</b><small>Selesaikan teka-teki, keluar bilik</small><em>Ulang kaji</em></a><a class="k" href="codedefender.html"><span class="i">🤖</span><b>Code Defender</b><small>Pertahan markas daripada robot</small><em>Topik 1–7</em></a><a class="k" href="coderunner.html"><span class="i">🏃‍♂️</span><b>Code Runner</b><small>Lari, lompat & jawab di checkpoint</small><em>Topik 1–7</em></a><a class="k" href="codemaster.html"><span class="i">⚔️</span><b>Code Master</b><small>Lawan 3 boss dengan kod C</small><em>Topik 1–6</em></a><a class="k" href="codefarm.html"><span class="i">🌱</span><b>Code Farm</b><small>Susun kod robot ladang</small><em>Topik 1, 3–6</em></a><a class="k" href="codekitchen.html"><span class="i">🍳</span><b>Code Kitchen</b><small>Susun kod resipi dapur</small><em>Topik 1, 3–6</em></a><a class="k" href="coderacing.html"><span class="i">🏎️</span><b>Code Racing</b><small>Susun arahan kereta lumba</small><em>Topik 1–6</em></a></div>
 <div class="pp"><h2>🏆 Papan Pemenang</h2><div class="pl" id="pemenang"><div class="w"><span class="kosong">Memuatkan pemenang…</span></div></div>
   <div class="nt">Jumlah markah = mata terbaik setiap peringkat dicampurkan (Flappy C: skor terbaik satu pusingan) · dikemas kini setiap 2 minit</div></div>
@@ -70,6 +78,19 @@ function temaSet(t){document.body.classList.toggle("dark",t==="dark");
   document.querySelectorAll("[data-tema]").forEach(b=>b.classList.toggle("on",b.dataset.tema===t));
   try{localStorage.setItem("cgame-tema",t)}catch(e){}}
 document.querySelectorAll("[data-tema]").forEach(b=>b.onclick=()=>temaSet(b.dataset.tema));
+// Tapis game ikut topik: baca label <em> (cth "Topik 1, 3–6"); "Bonus"/"Ulang kaji" sesuai untuk semua topik.
+(function(){
+  const kad=[...document.querySelectorAll(".g .k")];
+  kad.forEach(k=>{const t=(k.querySelector("em")||{}).textContent||"";const s=new Set();
+    const m=t.match(/Topik\s*(.+)/i);
+    if(m){m[1].split(",").forEach(p=>{const r=p.trim().split(/[–-]/).map(x=>parseInt(x,10));if(r.length===2&&!isNaN(r[0])&&!isNaN(r[1]))for(let i=r[0];i<=r[1];i++)s.add(i);else if(!isNaN(r[0]))s.add(r[0]);});}
+    else for(let i=1;i<=7;i++)s.add(i);
+    k.dataset.topik=[...s].join(",");});
+  const bt=[...document.querySelectorAll(".tapis button")],nota=document.getElementById("tapisNota");
+  bt.forEach(b=>b.onclick=()=>{const t=b.dataset.t;bt.forEach(x=>x.classList.toggle("on",x===b));let n=0;
+    kad.forEach(k=>{const ok=t==="0"||k.dataset.topik.split(",").includes(t);k.hidden=!ok;if(ok)n++;});
+    nota.hidden=t==="0";nota.textContent=n+" game sesuai untuk Topik "+t+". Cuba Teka Output atau Trace Table untuk latih surih kod, dan Pemburu Bug untuk latih cari ralat.";});
+})();
 let t=null;try{t=localStorage.getItem("cgame-tema")}catch(e){}
 temaSet(t||"light");
 }
