@@ -400,6 +400,7 @@
           <select id="laju"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select>
         </label>
         <label><input type="checkbox" id="suara" checked> Suara</label>
+        <label id="labelSuaraAI" title="Suara Bahasa Melayu dijana AI — sama untuk semua peranti"><input type="checkbox" id="suaraAI" checked> Suara AI (BM)</label>
         <label><input type="checkbox" id="sari" checked> Sari kata</label>
       </div>
       <small id="status">Tip: guna kekunci ← → untuk bergerak antara langkah.</small>
@@ -1009,6 +1010,7 @@ function pilih(i) {
   henti(); k = i; s = 0; b = 0;
   janaPelajaran();
   paparPilihan(); papar(); mulaKuiz(); paparPepijat(); paparEksplor();
+  if (guna_AI()) { ambilSuaraAI(AKTIF.steps[0].beats[0].say); prefetchSuara(2); }
 }
 
 let kuiz = { senarai: [], i: 0, skor: 0, cubaan: 0 };
@@ -1137,28 +1139,76 @@ function pilihSuara() {
   return null;
 }
 
+/* ---------- Suara AI Bahasa Melayu (Gemini TTS melalui Apps Script) ----------
+   Setiap ayat diminta sekali; pelayan menyimpan fail suara dalam Drive
+   supaya semua pelajar berkongsi suara yang sama. */
+const AUDIO = new Map();
+let audioKini = null;
+const bersihTeks = (t) => String(t || '').replace(/\s+/g, ' ').trim();
+const guna_AI = () => !!AI_URL && $('suara').checked && $('suaraAI').checked;
+function ambilSuaraAI(teks) {
+  teks = bersihTeks(teks);
+  if (!AI_URL || !teks) return Promise.resolve(null);
+  if (AUDIO.has(teks)) return AUDIO.get(teks);
+  const p = fetch(AI_URL, { method: 'POST', body: JSON.stringify({ jenis: 'suara', teks }) })
+    .then((r) => r.json()).then((d) => (d.ok && d.audio ? d.audio : null)).catch(() => null);
+  AUDIO.set(teks, p);
+  p.then((a) => { if (!a) AUDIO.delete(teks); });
+  return p;
+}
+function prefetchSuara(bil = 3) {
+  if (!guna_AI() || !AKTIF) return;
+  let ss = s, bb = b;
+  for (let n = 0; n < bil; n++) {
+    bb++;
+    if (bb >= AKTIF.steps[ss].beats.length) { ss++; bb = 0; }
+    if (ss >= AKTIF.steps.length) break;
+    ambilSuaraAI(AKTIF.steps[ss].beats[bb].say);
+  }
+}
+
 function cakap(teks, id) {
   return new Promise((res) => {
     const kadar = Number($('laju').value);
     let siap = false, pemasa;
     const habis = () => { if (siap) return; siap = true; clearTimeout(pemasa); res(); };
-    const suara = $('suara').checked && window.SpeechSynthesisUtterance ? pilihSuara() : null;
-    if (suara) {
-      speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(teks);
-      u.lang = suara.lang; u.voice = suara.v; u.rate = kadar;
-      $('status').textContent = suara.label + ' · ' + suara.v.name;
-      u.onend = habis; u.onerror = habis;
-      window._ucap = u;
-      pemasa = setTimeout(() => { speechSynthesis.cancel(); habis(); }, 6000 + teks.length * 120);
-      setTimeout(() => { if (id !== token) return habis(); speechSynthesis.resume(); speechSynthesis.speak(u); }, 80);
-    } else {
-      $('status').textContent = $('suara').checked
-        ? '🔇 Peranti ini tiada suara Bahasa Melayu/Indonesia — baca sari kata. (Cara pasang suara: lihat “Tiada suara?” di bawah.)'
-        : '🔇 Mod tanpa suara';
-      $('bantuSuara').hidden = !$('suara').checked;
-      pemasa = setTimeout(habis, (900 + teks.length * 55) / kadar);
-    }
+
+    // Laluan sandaran: suara peranti (BM/Indonesia) atau sari kata sahaja
+    const suaraPeranti = () => {
+      if (id !== token) return habis();
+      const suara = $('suara').checked && window.SpeechSynthesisUtterance ? pilihSuara() : null;
+      if (suara) {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(teks);
+        u.lang = suara.lang; u.voice = suara.v; u.rate = kadar;
+        $('status').textContent = suara.label + ' · ' + suara.v.name;
+        u.onend = habis; u.onerror = habis;
+        window._ucap = u;
+        pemasa = setTimeout(() => { speechSynthesis.cancel(); habis(); }, 6000 + teks.length * 120);
+        setTimeout(() => { if (id !== token) return habis(); speechSynthesis.resume(); speechSynthesis.speak(u); }, 80);
+      } else {
+        $('status').textContent = $('suara').checked
+          ? '🔇 Suara tidak tersedia buat masa ini — baca sari kata.'
+          : '🔇 Mod tanpa suara';
+        $('bantuSuara').hidden = !$('suara').checked || guna_AI();
+        pemasa = setTimeout(habis, (900 + teks.length * 55) / kadar);
+      }
+    };
+
+    if (!guna_AI()) return suaraPeranti();
+    $('status').textContent = AUDIO.has(bersihTeks(teks)) ? '🔊 Suara AI Bahasa Melayu' : '⏳ Menyediakan suara AI Bahasa Melayu…';
+    const tamatMasa = new Promise((r) => setTimeout(() => r(null), 25000));
+    Promise.race([ambilSuaraAI(teks), tamatMasa]).then((b64) => {
+      if (id !== token) return habis();
+      if (!b64) return suaraPeranti();
+      const a = new Audio('data:audio/wav;base64,' + b64);
+      a.playbackRate = kadar;
+      audioKini = a;
+      a.onended = habis;
+      a.onerror = suaraPeranti;
+      pemasa = setTimeout(habis, 90000);
+      a.play().then(() => { $('status').textContent = '🔊 Suara AI Bahasa Melayu'; }).catch(() => { clearTimeout(pemasa); suaraPeranti(); });
+    });
   });
 }
 
@@ -1169,6 +1219,7 @@ async function mainkan(terus) {
   if (id !== token) return;
   while (true) {
     papar();
+    prefetchSuara();
     await cakap(AKTIF.steps[s].beats[b].say, id);
     if (id !== token) return;
     await new Promise((r) => setTimeout(r, 250 / Number($('laju').value)));
@@ -1183,6 +1234,7 @@ async function mainkan(terus) {
 function henti() {
   bermain = false; token++;
   if (window.speechSynthesis) speechSynthesis.cancel();
+  if (audioKini) { audioKini.pause(); audioKini = null; }
   $('btnMain').textContent = s > 0 || b > 0 ? '▶ Sambung' : '▶ Auto play';
 }
 
@@ -1203,6 +1255,9 @@ $('btnNext').onclick = () => gerak(1);
 $('btnUlang').onclick = () => { henti(); b = 0; mainkan(false); };
 $('btnReset').onclick = () => { henti(); s = 0; b = 0; papar(); $('btnMain').textContent = '▶ Auto play'; };
 $('suara').onchange = () => { henti(); papar(); };
+$('suaraAI').onchange = () => { henti(); try { localStorage.setItem('clab-smarttutor-suaraAI', $('suaraAI').checked ? '1' : '0'); } catch (e) {} };
+try { if (localStorage.getItem('clab-smarttutor-suaraAI') === '0') $('suaraAI').checked = false; } catch (e) {}
+if (!AI_URL) $('labelSuaraAI').hidden = true;
 $('laju').onchange = () => { if (bermain) { henti(); $('status').textContent = 'Kelajuan dikemas kini. Tekan Sambung untuk teruskan.'; } };
 $('sari').onchange = () => { $('sarikata').hidden = !$('sari').checked; };
 document.addEventListener('keydown', (e) => {
