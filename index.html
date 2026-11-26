@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), video, AI Tutor dan Games.">
+<meta name="description" content="Portal DEC20313 C Programming, Politeknik Kota Bharu: kehadiran, hantar Practical Work, Learn C (Modul 5P), SmartTutor, video, AI Tutor dan Games.">
 <title>C Programming Learning Lab · DEC20313</title>
 <link rel="icon" type="image/png" href="favicon.png"><link rel="apple-touch-icon" href="apple-touch-icon.png"><link rel="manifest" href="manifest.json"><meta name="theme-color" content="#8e65c7">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,6 +129,7 @@
   .grid { display: grid; gap: 14px; }
   .g3 { grid-template-columns: repeat(3, 1fr); }
   .g4 { grid-template-columns: repeat(4, 1fr); }
+  .kad.sorot { grid-column: 1 / -1; min-height: 0; }
   .kad { --bg: var(--k1); --gr: var(--k1g); --ic: var(--k1i);
          position: relative; display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: var(--teks);
          background: var(--bg); border: 1.5px solid var(--gr); border-radius: 18px; padding: 20px 18px 18px;
@@ -297,6 +298,9 @@
 
     <p class="kumpulan">🧠 Belajar &amp; berlatih</p>
     <div class="grid g4">
+      <a class="kad c2 sorot" href="smarttutor/">
+        <span class="tag">BAHARU · AI</span><span class="ikon" aria-hidden="true">🧑‍🏫</span>
+        <h3>SmartTutor — Cikgu C-Bot</h3><p>Kelas visual bersuara: tonton kod berjalan langkah demi langkah di papan, atau tanya Cikgu C-Bot dan ia mengajar anda di papan.</p><span class="pergi">Mula sesi tutor →</span></a>
       <a class="kad c4" href="learn-c/">
         <span class="tag">5P</span><span class="ikon" aria-hidden="true">💻</span>
         <h3>Learn C</h3><p>Topik 1–7: faham, fikir, jangka, surih kod dan terangkan.</p><span class="pergi">Mula belajar →</span></a>

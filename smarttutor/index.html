@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SmartTutor DEC20313: tutor visual bersuara untuk C Programming — papan visual, code tracing, eksperimen, debugging dan kuiz.">
+<title>SmartTutor · C Programming Learning Lab</title>
+<link rel="icon" type="image/png" href="../favicon.png"><link rel="apple-touch-icon" href="../apple-touch-icon.png"><meta name="theme-color" content="#8e65c7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script>
+  // Tema dikongsi dengan Laman Utama (kunci "clab-tema").
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("clab-tema"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = (window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<style>
+  /* ================= WARNA (sama seperti Laman Utama CLab) ================= */
+  :root {
+    --latar: #F4F6FC; --permukaan: #FFFFFF; --teks: #1B1F3B; --teks-lembut: #4A5070;
+    --garis: #E3E6F2; --bayang: rgba(27, 31, 59, .08); --fokus: #5B4BDB;
+    --hero-1: #3A2CC9; --hero-2: #7B3FE4; --hero-3: #E2508C;
+    --kuning: #FFD54F; --kuning-teks: #2B2100;
+    --nota-latar: #FFF6DB; --nota-garis: #F5C84C; --nota-teks: #5A4300;
+    --k1: #E8F8EE; --k1g: #BFE8CF; --k1i: #187A43;
+    --k3: #FFF0E8; --k3g: #F8D2BF; --k3i: #B5461A;
+    --k4: #F1ECFF; --k4g: #D9CCFB; --k4i: #5631C2;
+    --k5: #E6F7F8; --k5g: #BDE6E9; --k5i: #0B6C78;
+    --k6: #FDEBF6; --k6g: #F5C8E3; --k6i: #A0276E;
+    --betul: #187A43; --salah: #B5461A;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --latar: #0F1222; --permukaan: #181C33; --teks: #EEF0FF; --teks-lembut: #B6BBD9;
+    --garis: #2B3152; --bayang: rgba(0, 0, 0, .35); --fokus: #A99CFF;
+    --hero-1: #2A1F8F; --hero-2: #5A2BB0; --hero-3: #A83270;
+    --nota-latar: #2C2614; --nota-garis: #7A6320; --nota-teks: #FFE08A;
+    --k1: #13291E; --k1g: #22513A; --k1i: #5FD992;
+    --k3: #2E1B13; --k3g: #5C3422; --k3i: #FF9C6E;
+    --k4: #211A3D; --k4g: #3F3375; --k4i: #B9A3FF;
+    --k5: #112A2D; --k5g: #22545A; --k5i: #5ED6E2;
+    --k6: #2D1726; --k6g: #5A2B4B; --k6i: #F58AC8;
+    --betul: #5FD992; --salah: #FF9C6E;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Plus Jakarta Sans", "Segoe UI", Roboto, Arial, sans-serif; font-size: 16px; line-height: 1.6;
+         background: var(--latar); color: var(--teks); transition: background .25s, color .25s; }
+  a { color: inherit; }
+  button, select, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--fokus); outline-offset: 3px; border-radius: 6px; }
+  .wrap { width: min(1140px, 100% - 32px); margin-inline: auto; }
+  .mono, pre, code { font-family: "JetBrains Mono", Consolas, monospace; }
+  [hidden] { display: none !important; }
+
+  /* ================= HEADER ================= */
+  header.atas { background: var(--permukaan); border-bottom: 1px solid var(--garis); position: sticky; top: 0; z-index: 10; }
+  header.atas .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; }
+  .jenama { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 17px;
+          background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  .jenama b { display: block; font-size: 16px; line-height: 1.2; }
+  .jenama small { display: block; font-size: 12.5px; color: var(--teks-lembut); font-weight: 600; }
+  .kanan { display: flex; align-items: center; gap: 10px; }
+  .btn-home { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 800; font-size: 14px; white-space: nowrap;
+              padding: 9px 15px; border-radius: 999px; color: #fff; background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3));
+              box-shadow: 0 4px 14px rgba(58,44,201,.30); }
+  .tema { display: inline-flex; padding: 4px; gap: 4px; border-radius: 999px; background: var(--latar); border: 1px solid var(--garis); }
+  .tema button { border: 0; background: transparent; color: var(--teks-lembut); font-weight: 700; font-size: 14px;
+                 padding: 7px 14px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .tema button[aria-pressed="true"] { background: var(--permukaan); color: var(--teks); box-shadow: 0 2px 8px var(--bayang); }
+
+  /* ================= HERO ================= */
+  main { padding: 24px 0 40px; }
+  .hero { position: relative; overflow: hidden; border-radius: 24px; color: #fff; padding: 30px 32px;
+          background: linear-gradient(130deg, var(--hero-1) 0%, var(--hero-2) 55%, var(--hero-3) 100%);
+          display: grid; grid-template-columns: 1.4fr .6fr; gap: 24px; align-items: center; }
+  .hero::before { content: ""; position: absolute; width: 340px; height: 340px; border-radius: 50%; right: -110px; top: -150px; background: rgba(255,255,255,.08); }
+  .hero > * { position: relative; z-index: 1; }
+  .label { display: inline-block; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3); border-radius: 999px; padding: 4px 13px; font-size: 13px; font-weight: 700; }
+  .hero h1 { font-size: clamp(28px, 4vw, 40px); line-height: 1.15; font-weight: 800; margin: 12px 0 8px; }
+  .hero h1 span { color: var(--kuning); }
+  .hero p { font-size: 16px; color: rgba(255,255,255,.92); max-width: 560px; }
+  .skor { background: rgba(18,16,42,.35); border: 1px solid rgba(255,255,255,.22); border-radius: 18px; padding: 16px 18px; }
+  .skor small { font-size: 13px; font-weight: 700; color: rgba(255,255,255,.85); }
+  .skor b { display: block; font-size: 30px; line-height: 1.2; margin: 2px 0 8px; }
+  .skor b span { font-size: 16px; font-weight: 600; opacity: .85; }
+  .meter { height: 10px; border-radius: 99px; background: rgba(255,255,255,.22); overflow: hidden; }
+  .meter i { display: block; height: 100%; width: 0; border-radius: 99px; background: var(--kuning); transition: width .4s; }
+
+  /* ================= PEMILIH TOPIK ================= */
+  .pilih { margin-top: 22px; }
+  .kumpulan { font-size: 13px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--teks-lembut); margin: 0 0 8px; }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 2px 2px 8px; scrollbar-width: thin; }
+  .chip { white-space: nowrap; border: 1.5px solid var(--garis); background: var(--permukaan); color: var(--teks-lembut); font-weight: 700; font-size: 14.5px;
+          padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: border-color .15s, background .15s; }
+  .chip:hover { border-color: var(--k4g); }
+  .chip.aktif { background: linear-gradient(135deg, var(--hero-1), var(--hero-2)); border-color: transparent; color: #fff; }
+  .chip.sub { font-size: 14px; padding: 6px 13px; }
+  .chip.sub.aktif { background: var(--k4); color: var(--k4i); border-color: var(--k4g); }
+  .chip .tick { color: var(--betul); margin-left: 4px; }
+  .chip.aktif .tick { color: inherit; }
+
+  /* ================= KAD / PANEL ================= */
+  .panel { background: var(--permukaan); border: 1px solid var(--garis); border-radius: 20px; padding: 20px; box-shadow: 0 4px 18px var(--bayang); }
+  .panel h2 { font-size: 18px; font-weight: 800; line-height: 1.3; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .ikon { width: 36px; height: 36px; flex: none; border-radius: 11px; display: grid; place-items: center; font-size: 18px;
+          background: var(--bg, var(--k4)); border: 1.5px solid var(--gr, var(--k4g)); }
+  .c1 { --bg: var(--k1); --gr: var(--k1g); --ic: var(--k1i); }
+  .c3 { --bg: var(--k3); --gr: var(--k3g); --ic: var(--k3i); }
+  .c4 { --bg: var(--k4); --gr: var(--k4g); --ic: var(--k4i); }
+  .c5 { --bg: var(--k5); --gr: var(--k5g); --ic: var(--k5i); }
+  .c6 { --bg: var(--k6); --gr: var(--k6g); --ic: var(--k6i); }
+  .lembut { color: var(--teks-lembut); font-size: 14.5px; }
+
+  .tajuk-pelajaran { margin-top: 18px; display: flex; justify-content: space-between; align-items: flex-end; gap: 8px 20px; flex-wrap: wrap; }
+  .tajuk-pelajaran h2 { font-size: 24px; font-weight: 800; line-height: 1.25; }
+  .tajuk-pelajaran p { color: var(--teks-lembut); font-size: 15.5px; max-width: 720px; }
+
+  .utama { display: grid; grid-template-columns: 1.55fr 1fr; gap: 16px; margin-top: 14px; align-items: start; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; align-items: start; }
+  .grid2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 16px; margin-top: 16px; align-items: start; }
+
+  /* ================= TUTOR ================= */
+  .tutor-atas { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tutor-id { display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; font-size: 24px;
+            background: linear-gradient(135deg, var(--hero-1), var(--hero-2) 60%, var(--hero-3)); }
+  .tutor-id b { display: block; font-size: 16.5px; line-height: 1.2; }
+  .tutor-id small { color: var(--teks-lembut); font-size: 13px; font-weight: 600; }
+  .alat { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .btn-kecil { border: 1.5px solid var(--garis); background: var(--latar); color: var(--teks); font-weight: 700; font-size: 13px;
+               padding: 6px 11px; border-radius: 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+  .btn-kecil:hover { border-color: var(--k4g); }
+  .btn-kecil.aktif { background: var(--k4); border-color: var(--k4g); color: var(--k4i); }
+  .btn-kecil input[type=color] { width: 22px; height: 22px; border: 0; padding: 0; background: none; cursor: pointer; }
+
+  /* Papan visual */
+  .papan { position: relative; overflow: hidden; border-radius: 16px; min-height: 330px; padding: 10px;
+           background-color: #12102A; color: #F2F0FF; border: 1px solid rgba(255,255,255,.08);
+           background-image: radial-gradient(rgba(255,255,255,.07) 1px, transparent 1px); background-size: 20px 20px; }
+  .papan.putih { background-color: #FFFFFF; color: #1B1F3B; border-color: #E3E6F2;
+                 background-image: radial-gradient(rgba(27,31,59,.10) 1px, transparent 1px); }
+  .papan:fullscreen { padding: 30px; display: flex; flex-direction: column; justify-content: center; }
+  #visual svg { width: 100%; height: auto; display: block; max-height: 640px; }
+  .papan:fullscreen #visual svg { max-height: 85vh; }
+  #visual svg text { font-family: "Plus Jakarta Sans", system-ui, sans-serif; fill: currentColor; }
+  #visual .kotak { fill: rgba(255,255,255,.06); stroke: currentColor; stroke-opacity: .5; stroke-width: 1.5; }
+  .papan.putih #visual .kotak { fill: #F1ECFF; stroke: #7B3FE4; stroke-opacity: .55; }
+  #visual .fokus { fill: #FFD54F; stroke: #E0A800; stroke-width: 2; filter: drop-shadow(0 0 6px rgba(255,213,79,.55)); }
+  #visual .fokus-teks { fill: #2B2100 !important; font-weight: 700; }
+  #visual .garis { stroke: currentColor; fill: none; stroke-width: 2; }
+  #visual .anak-panah { fill: currentColor; }
+  #visual .denyut { fill: #E2508C; animation: denyut 1s infinite alternate; }
+  #visual .lukis { stroke-dasharray: 1; stroke-dashoffset: 1; animation: lukis .7s ease forwards; }
+  #visual .muncul { animation: muncul .45s ease both; }
+  @keyframes lukis { to { stroke-dashoffset: 0; } }
+  @keyframes denyut { to { opacity: .35; } }
+  @keyframes muncul { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+  #ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: none; }
+  #ink.on { pointer-events: auto; cursor: crosshair; }
+
+  /* Sari kata & kawalan */
+  .sarikata { margin-top: 12px; background: var(--k4); border: 1.5px solid var(--k4g); border-radius: 14px; padding: 12px 14px;
+              min-height: 64px; font-size: 16px; line-height: 1.6; }
+  .sarikata .langkah { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--k4i); margin-bottom: 2px; }
+  .kemajuan { height: 6px; border-radius: 99px; background: var(--garis); overflow: hidden; margin-top: 12px; }
+  .kemajuan i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--hero-1), var(--hero-2), var(--hero-3)); transition: width .3s; }
+  .kawalan { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .btn { border: 1.5px solid var(--garis); background: var(--permukaan); color: var(--teks); font-weight: 800; font-size: 15px;
+         padding: 10px 16px; border-radius: 12px; cursor: pointer; transition: transform .12s, box-shadow .12s; }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 14px var(--bayang); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+  .btn-utama { background: var(--kuning); color: var(--kuning-teks); border-color: transparent; }
+  .tetapan { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; margin-top: 10px; font-size: 14px; color: var(--teks-lembut); font-weight: 600; }
+  .tetapan label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .tetapan select { border: 1.5px solid var(--garis); background: var(--latar); border-radius: 8px; padding: 3px 6px; }
+  .tetapan input[type=checkbox] { accent-color: var(--hero-2); width: 16px; height: 16px; }
+  #status { display: block; margin-top: 6px; font-size: 13px; color: var(--teks-lembut); }
+
+  /* ================= KOD ================= */
+  .kod { background: #12102A; border-radius: 14px; border: 1px solid rgba(255,255,255,.1); overflow: hidden; }
+  .kod-bar { display: flex; align-items: center; gap: 7px; padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.12);
+             font: 600 12.5px "JetBrains Mono", monospace; color: #CFCBF2; }
+  .kod-bar i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+  .kod-bar i:nth-child(1) { background: #FF6B8B; } .kod-bar i:nth-child(2) { background: #FFD54F; } .kod-bar i:nth-child(3) { background: #5FD992; }
+  .kod pre { padding: 10px 0; font-size: 14px; line-height: 1.8; color: #F2F0FF; overflow-x: auto; counter-reset: baris; }
+  .kod pre span { display: block; padding: 0 14px 0 10px; border-left: 3px solid transparent; white-space: pre; }
+  .kod pre span::before { counter-increment: baris; content: counter(baris); display: inline-block; width: 22px; margin-right: 10px; text-align: right; color: #6E6A99; }
+  .kod pre span.hi { background: rgba(123,63,228,.45); border-left-color: #FFD54F; }
+  .keadaan { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+  .kotak-info { background: var(--latar); border: 1px solid var(--garis); border-radius: 12px; padding: 10px 12px; }
+  .kotak-info small { display: block; font-size: 12.5px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--teks-lembut); }
+  .kotak-info strong { font-family: "JetBrains Mono", monospace; font-size: 15px; font-weight: 600; }
+  .konsol { background: #000; color: #7CF0A8; border-radius: 10px; padding: 10px 12px; font: 600 16px "JetBrains Mono", monospace; min-height: 42px; margin-top: 4px; white-space: pre-wrap; }
+  .nota { margin-top: 12px; background: var(--nota-latar); border: 1.5px solid var(--nota-garis); border-radius: 12px; padding: 10px 12px; color: var(--nota-teks); font-size: 13.5px; }
+
+  /* ================= JADUAL TRACE ================= */
+  .skrol { overflow: auto; max-height: 320px; border: 1px solid var(--garis); border-radius: 12px; }
+  table.trace { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .trace th { position: sticky; top: 0; background: var(--k4); color: var(--k4i); text-align: left; padding: 8px 12px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+  .trace td { padding: 7px 12px; border-top: 1px solid var(--garis); font-family: "JetBrains Mono", monospace; font-size: 13.5px; }
+  .trace tr:last-child td { background: var(--nota-latar); color: var(--nota-teks); font-weight: 600; }
+
+  /* ================= LATIHAN ================= */
+  .latihan h2 .ikon { background: var(--bg); border-color: var(--gr); }
+  .latihan .eks { background: var(--latar); border: 1px solid var(--garis); border-radius: 12px; padding: 12px 14px; font-size: 15px; line-height: 1.7; white-space: pre-wrap; margin-top: 10px; }
+  .latihan input[type=range] { width: 100%; accent-color: var(--hero-2); margin-top: 8px; }
+  .latihan label.lbl { font-weight: 700; font-size: 14.5px; display: flex; justify-content: space-between; }
+  .latihan label.lbl output { font-family: "JetBrains Mono", monospace; color: var(--ic); }
+  .latihan pre.pepijat { background: #12102A; color: #FF9CB0; border-radius: 12px; padding: 12px 14px; font-size: 14px; white-space: pre-wrap; border-left: 4px solid #FF6B8B; }
+  .pilihan { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .pilihan button { text-align: left; border: 1.5px solid var(--garis); background: var(--latar); border-radius: 12px; padding: 10px 12px; cursor: pointer; font-weight: 600; font-size: 14.5px; }
+  .pilihan button.kod-pilihan { font-family: "JetBrains Mono", monospace; font-size: 13.5px; }
+  .pilihan button:hover { border-color: var(--gr); }
+  .pilihan button.ok { background: var(--k1); border-color: var(--k1g); color: var(--k1i); }
+  .pilihan button.no { background: var(--k3); border-color: var(--k3g); color: var(--k3i); }
+  .maklum { margin-top: 10px; font-size: 14.5px; font-weight: 600; min-height: 1.5em; }
+  .maklum.ok { color: var(--betul); } .maklum.no { color: var(--salah); }
+  .soalan { font-weight: 700; font-size: 16px; }
+
+  /* ================= PRESTASI ================= */
+  .dash { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+  .dash div { background: var(--latar); border: 1px solid var(--garis); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+  .dash b { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 6px; }
+  .dash b span { color: var(--teks-lembut); font-weight: 600; }
+  .dash .meter { background: var(--garis); height: 8px; }
+  .dash .meter i { background: linear-gradient(90deg, var(--hero-1), var(--hero-2)); }
+  .baris-butang { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+
+  /* ================= ENJIN v2.4 ================= */
+  .kod pre mark.bahagian { background: #FFD54F; color: #2B2100; border-radius: 4px; padding: 0 3px; }
+  #visual .tajuk-papan { font-weight: 800; }
+  #visual .nilai { font-family: "JetBrains Mono", monospace; font-weight: 600; }
+  #visual .pop { animation: pop .5s ease; transform-box: fill-box; transform-origin: center; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.35); fill: #FFD54F; } 100% { transform: scale(1); } }
+  #visual .konsol-svg { fill: #000; stroke: rgba(255,255,255,.25); }
+  .papan.putih #visual .konsol-svg { fill: #12102A; }
+  #visual .konsol-teks { fill: #7CF0A8 !important; font-family: "JetBrains Mono", monospace; font-weight: 600; }
+  #visual .konsol-label { fill: #CFCBF2 !important; }
+  #visual .tepi { stroke: currentColor; fill: none; stroke-width: 2; opacity: .28; }
+  #visual .tepi.lalu { opacity: .65; }
+  #visual .tepi.aktif { opacity: 1; stroke: #FFD54F; stroke-width: 3; }
+  .papan.putih #visual .tepi.aktif { stroke: #E0A800; }
+  #visual .label-tepi { font-size: 12px; font-weight: 700; }
+  #visual .hasil-ok { fill: #5FD992; } #visual .hasil-no { fill: #FF8A6E; }
+  #visual .hasil-teks { fill: #12102A !important; font-weight: 800; }
+  #visual .penunjuk { transition: transform .45s ease, opacity .3s; }
+  #visual .lencana { font-size: 11px; opacity: .75; }
+  .sarikata .beat { transition: opacity .2s; }
+  .sarikata .beat.lepas { opacity: .55; }
+  .sarikata .beat.akan { opacity: .3; }
+  .sarikata .beat.kini { font-weight: 700; }
+  .jangka { margin-top: 10px; background: var(--nota-latar); border: 1.5px solid var(--nota-garis); color: var(--nota-teks); border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+  .kuiz-bawah { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .lencana-enjin { display: inline-block; font-size: 11.5px; font-weight: 800; letter-spacing: .04em; color: var(--k4i); background: var(--k4); border: 1.5px solid var(--k4g); border-radius: 999px; padding: 2px 9px; margin-left: 8px; vertical-align: middle; }
+
+  /* ================= TANYA C-BOT ================= */
+  .tanya { margin-top: 16px; }
+  .tanya .baris { display: flex; gap: 8px; }
+  .tanya textarea { flex: 1; resize: vertical; min-height: 48px; max-height: 140px; border: 1.5px solid var(--garis); background: var(--latar); color: var(--teks);
+                    border-radius: 12px; padding: 10px 12px; font: inherit; font-size: 15px; }
+  .tanya textarea:focus { outline: none; border-color: var(--hero-2); }
+  .cadangan { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .cadangan button { border: 1.5px dashed var(--k4g); background: transparent; color: var(--k4i); font-weight: 700; font-size: 13px; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+  .jawapan-ai { margin-top: 10px; background: var(--k4); border: 1.5px solid var(--k4g); border-radius: 12px; padding: 12px 14px; font-size: 15px; white-space: pre-wrap; }
+  .memuat::after { content: ''; display: inline-block; width: 14px; height: 14px; margin-left: 8px; vertical-align: -2px; border-radius: 50%;
+                   border: 2px solid var(--k4g); border-top-color: var(--hero-2); animation: pusing .8s linear infinite; }
+  @keyframes pusing { to { transform: rotate(360deg); } }
+  @media (max-width: 620px) { .tanya .baris { flex-direction: column; } }
+
+  footer { border-top: 1px solid var(--garis); padding: 22px 0; color: var(--teks-lembut); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; }
+
+  /* ================= RESPONSIF ================= */
+  @media (max-width: 920px) {
+    .hero { grid-template-columns: 1fr; padding: 26px; }
+    .utama, .grid2 { grid-template-columns: 1fr; }
+    .grid3 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 620px) {
+    .tema button span.teks, .btn-home .teks { display: none; }
+    .kanan { gap: 6px; }
+    .grid3 { grid-template-columns: 1fr; }
+    .panel { padding: 16px; }
+    .hero { padding: 22px; border-radius: 20px; }
+    .papan { min-height: 240px; padding: 4px; }
+    .btn { padding: 9px 13px; font-size: 14.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    #visual .lukis { stroke-dashoffset: 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="atas">
+  <div class="wrap">
+    <a class="jenama" href="../" aria-label="C Programming Learning Lab, laman utama">
+      <span class="logo mono" aria-hidden="true">C</span>
+      <span><b>C Programming Learning Lab</b><small>DEC20313 · Politeknik Kota Bharu</small></span>
+    </a>
+    <div class="kanan">
+      <a class="btn-home" href="../">⌂ <span class="teks">Laman Utama</span></a>
+      <div class="tema" role="group" aria-label="Pilih tema paparan">
+        <button type="button" data-tema="light" aria-pressed="false">☀️ <span class="teks">Light</span></button>
+        <button type="button" data-tema="dark" aria-pressed="false">🌙 <span class="teks">Dark</span></button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div>
+      <span class="label">✦ BAHARU · Tutor visual bersuara</span>
+      <h1>Smart<span>Tutor</span></h1>
+      <p>Ikuti Cikgu C-Bot menerangkan setiap baris kod langkah demi langkah — lihat papan visual, jejak nilai pemboleh ubah, kemudian uji kefahaman anda.</p>
+    </div>
+    <div class="skor" aria-live="polite">
+      <small>Kemajuan kuiz anda</small>
+      <b id="skorNilai">0 <span>/ 11 pelajaran</span></b>
+      <div class="meter"><i id="skorMeter"></i></div>
+    </div>
+  </section>
+
+  <!-- ============ PILIH TOPIK ============ -->
+  <section class="pilih" aria-label="Pilih topik dan pelajaran">
+    <p class="kumpulan">Topik</p>
+    <nav class="chips" id="topik"></nav>
+    <div class="chips" id="pelajaran" style="margin-top:4px"></div>
+  </section>
+
+  <section class="panel tanya c4" aria-label="Tanya Cikgu C-Bot">
+    <h2><span class="ikon" aria-hidden="true">💬</span> Tanya Cikgu C-Bot <span class="lencana-enjin">AI · BETA</span></h2>
+    <div class="baris">
+      <textarea id="soalanAI" maxlength="500" placeholder="Cth: Cikgu, saya tak faham nested loop. Boleh terangkan perlahan-lahan?"></textarea>
+      <button class="btn btn-utama" id="btnTanya" type="button">Ajar saya ▶</button>
+    </div>
+    <div class="cadangan" id="cadanganAI"></div>
+    <p class="lembut" id="statusAI" style="margin-top:8px" aria-live="polite">C-Bot akan menyediakan pelajaran baharu di papan berdasarkan soalan anda. Jawapan dijana AI — semak semula dengan nota kuliah.</p>
+    <div class="jawapan-ai" id="jawapanAI" hidden></div>
+  </section>
+
+  <div class="tajuk-pelajaran">
+    <div>
+      <h2><span id="tajuk"></span><span class="lencana-enjin" id="lencanaEnjin" hidden>ENJIN v2.4</span></h2>
+      <p id="konsep"></p>
+    </div>
+    <span class="lembut" id="kiraan"></span>
+  </div>
+
+  <!-- ============ TUTOR + KOD ============ -->
+  <div class="utama">
+    <section class="panel" aria-label="Papan tutor">
+      <div class="tutor-atas">
+        <div class="tutor-id">
+          <span class="avatar" aria-hidden="true">🤖</span>
+          <div><b>Cikgu C-Bot</b><small>Papan visual interaktif</small></div>
+        </div>
+        <div class="alat">
+          <button class="btn-kecil" id="btnPapan" type="button" title="Tukar papan gelap / putih">◐ Papan</button>
+          <button class="btn-kecil" id="btnPen" type="button" aria-pressed="false">✎ Lukis</button>
+          <label class="btn-kecil" title="Warna pen"><input id="warnaPen" type="color" value="#FFD54F" aria-label="Warna pen"></label>
+          <button class="btn-kecil" id="btnUndo" type="button" title="Buat asal coretan">↶</button>
+          <button class="btn-kecil" id="btnPadam" type="button" title="Padam semua coretan">✕</button>
+          <button class="btn-kecil" id="btnPenuh" type="button" title="Skrin penuh">⛶</button>
+        </div>
+      </div>
+
+      <div class="papan" id="papan">
+        <div id="visual"></div>
+        <canvas id="ink" aria-label="Lapisan lukisan"></canvas>
+      </div>
+
+      <div class="kemajuan" aria-hidden="true"><i id="barLangkah"></i></div>
+      <div class="sarikata" id="sarikata" aria-live="polite">
+        <span class="langkah" id="labelLangkah"></span>
+        <span id="terang"></span>
+      </div>
+
+      <div class="kawalan">
+        <button class="btn" id="btnPrev" type="button" aria-label="Langkah sebelum">◀</button>
+        <button class="btn btn-utama" id="btnMain" type="button">▶ Auto play</button>
+        <button class="btn" id="btnNext" type="button">Seterusnya ▶</button>
+        <button class="btn" id="btnUlang" type="button" title="Terangkan semula langkah ini">↻ Ulang</button>
+        <button class="btn" id="btnReset" type="button" title="Mula dari langkah 1">⏮</button>
+      </div>
+      <div class="tetapan">
+        <label>Kelajuan
+          <select id="laju"><option value="0.75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select>
+        </label>
+        <label><input type="checkbox" id="suara" checked> Suara</label>
+        <label><input type="checkbox" id="sari" checked> Sari kata</label>
+      </div>
+      <small id="status">Tip: guna kekunci ← → untuk bergerak antara langkah.</small>
+    </section>
+
+    <section class="panel" aria-label="Code tracing">
+      <h2><span class="ikon c4" aria-hidden="true">⌨️</span> Code tracing</h2>
+      <div class="kod">
+        <div class="kod-bar"><i></i><i></i><i></i> <span id="namaFail">main.c</span></div>
+        <pre id="kod"></pre>
+      </div>
+      <div class="keadaan">
+        <div class="kotak-info"><small>Program state</small><strong id="keadaan"></strong></div>
+        <div class="kotak-info"><small>Console output</small><div class="konsol" id="output"></div></div>
+      </div>
+      <p class="nota">Simulasi contoh tetap, bukan compiler C. Letakkan snippet dalam program lengkap (<code>int main()</code> … <code>return 0;</code>) apabila mencuba sendiri.</p>
+    </section>
+  </div>
+
+  <!-- ============ TRACE TABLE ============ -->
+  <section class="panel" style="margin-top:16px" aria-label="Trace table">
+    <h2><span class="ikon c4" aria-hidden="true">📋</span> Trace table <span class="lembut" style="font-weight:600">· dikemas kini setiap langkah</span></h2>
+    <div class="skrol" id="trace"></div>
+  </section>
+
+  <!-- ============ LATIHAN ============ -->
+  <div class="grid3 latihan">
+    <section class="panel c5" aria-label="Explore">
+      <h2><span class="ikon" aria-hidden="true">🧪</span> Explore</h2>
+      <div id="eksWrap">
+        <label class="lbl" for="julat"><span id="eksLabel"></span><output id="eksNilai"></output></label>
+        <input id="julat" type="range">
+        <div class="eks mono" id="eksHasil"></div>
+      </div>
+      <p class="jangka" id="eksJangka" hidden></p>
+      <p class="lembut" id="eksTiada" hidden>Tiada eksperimen untuk pelajaran ini. Cuba bahagian Debugging dan Kuiz.</p>
+    </section>
+
+    <section class="panel c3" aria-label="Debugging challenge">
+      <h2><span class="ikon" aria-hidden="true">🛠</span> Debugging</h2>
+      <p class="lembut">Kod di bawah ada ralat. Pilih pembetulan yang tepat.</p>
+      <pre class="pepijat" id="pepijat"></pre>
+      <div class="pilihan" id="pembetulan"></div>
+      <p class="maklum" id="maklumBug" aria-live="polite"></p>
+    </section>
+
+    <section class="panel c6" aria-label="Uji kefahaman">
+      <h2><span class="ikon" aria-hidden="true">🧩</span> Uji kefahaman</h2>
+      <p class="soalan" id="soalan"></p>
+      <div class="pilihan" id="jawapan"></div>
+      <p class="maklum" id="maklumKuiz" aria-live="polite"></p>
+      <div class="kuiz-bawah"><small class="lembut" id="kuizKiraan"></small><button class="btn" id="btnSoalan" type="button" hidden>Soalan seterusnya ▶</button></div>
+    </section>
+  </div>
+
+  <!-- ============ PRESTASI ============ -->
+  <section class="panel c1" style="margin-top:16px" aria-label="Kemajuan saya">
+    <h2><span class="ikon" aria-hidden="true">📊</span> Kemajuan saya</h2>
+    <div class="dash" id="dash"></div>
+    <div class="baris-butang">
+      <button class="btn" id="btnCsv" type="button">⬇ Export CSV</button>
+      <button class="btn" id="btnSifar" type="button">Set semula rekod</button>
+    </div>
+    <p class="lembut" style="margin-top:8px">Rekod disimpan pada pelayar ini sahaja — tiada data dihantar.</p>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>SmartTutor · DEC20313 C Programming</span>
+    <span>v2.5 · Prototaip berdasarkan nota kursus · Bukan AI generatif</span>
+  </div>
+</footer>
+
+<script>
+/* ================================================================
+   SMARTTUTOR v2.4 — ENJIN PENGAJARAN VISUAL
+   ----------------------------------------------------------------
+   Seni bina (lihat Master Context bahagian 14–15):
+   1. PENJANA PELAJARAN  — fungsi(param) → kod, flowchart (graf) dan
+                           langkah berstruktur. Explore menjana semula
+                           semuanya, jadi kod, papan, trace dan suara
+                           sentiasa selaras.
+   2. KOMPONEN VISUAL    — flowchart dilukis daripada graf (simbol
+                           standard) + disemak oleh pengesah; kotak
+                           memori, kad condition, konsol, penunjuk.
+   3. TIMELINE BEAT      — setiap langkah dipecah kepada "beat":
+                           satu ayat suara + perubahan papan serentak.
+   Pelajaran berlabel `lama: true` masih guna adegan v2.3 (belum
+   dipindahkan ke enjin baharu).
+   ================================================================ */
+/* ======== TETAPAN AI ========
+   Tampal URL Web app Apps Script (Code.gs) di sini selepas Deploy.
+   Biarkan kosong jika belum disambung — fungsi lain tetap berjalan. */
+const AI_URL = 'https://script.google.com/macros/s/AKfycbxqweIcaGE2gLseRpOOD7zsG9SihLrC9t_SWaAqfs_T9RNequYSXYOIgMp4lBRS8FXW/exec';
+
+const TOPIK = ['Introductory', 'Fundamentals', 'Selection', 'Looping', 'Function', 'Array', 'Pointers & Structures'];
+const $ = (id) => document.getElementById(id);
+const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+/* ---------- Pembantu membina langkah ----------
+   langkah(beat1, beat2, ...) : setiap beat = { say, ...perubahan keadaan }
+   Medan keadaan: line (indeks baris kod), part (teks dalam baris untuk
+   ditanda), node, edge ("dari>ke"), vars {}, changed (nama var),
+   out (output konsol), cond {expr, hasil: true|false|null}, note       */
+function langkah(...beats) {
+  beats[0] = Object.assign({ cond: null, note: '', changed: null }, beats[0]);
+  return { beats };
+}
+
+/* ================================================================
+   PELAJARAN ENJIN BAHARU — LOOP (for / while / do-while)
+   ================================================================ */
+function pelajaranLoop(jenis) {
+  const nama = { for: 'for loop', while: 'while loop', do: 'do-while loop' }[jenis];
+  return {
+    id: 't4-' + jenis, t: 4, n: nama,
+    c: jenis === 'do'
+      ? 'Post-test loop: badan loop dilaksanakan dahulu, kemudian condition diuji — sekurang-kurangnya sekali.'
+      : 'Pre-test loop: condition diuji dahulu. Jika FALSE pada kali pertama, badan loop tidak dilaksanakan langsung.',
+    param: { key: 'n', label: 'Ubah had loop (i <= n)', min: 0, max: 8, nilai: 5 },
+    vars: ['i'],
+    jangka: (p) => `Had baharu: i <= ${p.n}. Jangka dulu — apakah output dan berapa kali printf dilaksanakan? Kemudian tekan ▶ Auto play untuk semak.`,
+    bina(p) {
+      const n = p.n;
+      const kod = {
+        for: ['int i;', `for (i = 1; i <= ${n}; i++) {`, '    printf("%d ", i);', '}'],
+        while: ['int i = 1;', `while (i <= ${n}) {`, '    printf("%d ", i);', '    i++;', '}'],
+        do: ['int i = 1;', 'do {', '    printf("%d ", i);', '    i++;', `} while (i <= ${n});`]
+      }[jenis];
+      const B = {
+        for: { init: [1, 'i = 1'], cond: [1, `i <= ${n}`], print: [2], upd: [1, 'i++'], end: [3] },
+        while: { init: [0, 'i = 1'], cond: [1, `i <= ${n}`], print: [2], upd: [3, 'i++'], end: [4] },
+        do: { init: [0, 'i = 1'], cond: [4, `i <= ${n}`], print: [2], upd: [3, 'i++'], end: [4] }
+      }[jenis];
+      const at = (k) => ({ line: B[k][0], part: B[k][1] || '' });
+
+      const susunan = jenis === 'do' ? ['start', 'init', 'print', 'upd', 'cond', 'end'] : ['start', 'init', 'cond', 'print', 'upd', 'end'];
+      const label = { start: 'START', init: 'i = 1', cond: `i <= ${n}?`, print: 'Print i', upd: 'i++', end: 'END' };
+      const jenisNod = { start: 'terminal', init: 'process', cond: 'decision', print: 'io', upd: 'process', end: 'terminal' };
+      const flow = {
+        nodes: susunan.map((id, r) => ({ id, type: jenisNod[id], label: label[id], row: r, col: 0 })),
+        edges: jenis === 'do'
+          ? [['start', 'init'], ['init', 'print'], ['print', 'upd'], ['upd', 'cond'], ['cond', 'print', 'Yes', 'loopR'], ['cond', 'end', 'No']]
+          : [['start', 'init'], ['init', 'cond'], ['cond', 'print', 'Yes'], ['print', 'upd'], ['upd', 'cond', '', 'loopL'], ['cond', 'end', 'No', 'outR']]
+      };
+
+      const steps = [];
+      let i = 1, out = '', kali = 0, masukCond = 'init>cond', masukPrint = 'init>print';
+      steps.push(langkah(
+        { say: 'Mula-mula, kita isytiharkan counter i dan berikan nilai awal.', ...at('init'), node: 'init', edge: 'start>init' },
+        { say: 'Nilai i sekarang ialah 1.', vars: { i: 1 }, changed: 'i' }
+      ));
+      const uji = () => {
+        const ok = i <= n;
+        steps.push(langkah(
+          { say: jenis === 'do' ? 'Sekarang, selepas badan loop, kita semak condition.' : 'Sekarang kita semak condition.', ...at('cond'), node: 'cond', edge: jenis === 'do' ? 'upd>cond' : masukCond, cond: { expr: `${i} <= ${n}`, hasil: null } },
+          { say: ok ? `${i} kurang atau sama dengan ${n}. Condition TRUE, jadi badan loop ${jenis === 'do' ? 'diulang' : 'dilaksanakan'}.` : `${i} lebih besar daripada ${n}. Condition FALSE, jadi loop berhenti.`, cond: { expr: `${i} <= ${n}`, hasil: ok } }
+        ));
+        masukCond = 'upd>cond';
+        return ok;
+      };
+      const badan = () => {
+        out += i + ' '; kali++;
+        steps.push(langkah({ say: `printf memaparkan nilai i, iaitu ${i}, pada skrin.`, ...at('print'), node: 'print', edge: masukPrint, out }));
+        masukPrint = 'cond>print';
+        steps.push(langkah(
+          { say: 'Kemudian, i++ menambah nilai i sebanyak satu.', ...at('upd'), node: 'upd', edge: 'print>upd', note: `${i} + 1 = ${i + 1}` },
+          { say: `Sekarang i bernilai ${i + 1}.`, vars: { i: i + 1 }, changed: 'i' }
+        ));
+        i++;
+      };
+      if (jenis === 'do') { do { badan(); } while (uji() && kali < 20); }
+      else { while (uji() && kali < 20) badan(); }
+      steps.push(langkah({
+        say: kali === 0 ? 'Loop tamat tanpa sebarang output, kerana condition FALSE sejak awal.'
+          : `Loop tamat. printf dilaksanakan sebanyak ${kali} kali.` + (jenis === 'do' && n < 1 ? ' Perhatikan: do-while tetap berjalan sekali walaupun condition FALSE.' : ''),
+        ...at('end'), part: '', node: 'end', edge: 'cond>end'
+      }));
+      return { code: kod, flow, steps };
+    },
+    kuiz: {
+      for: [
+        { q: 'Jika had n = 0, berapa kali printf dalam for loop ini dilaksanakan?', opts: ['0 kali', '1 kali', '5 kali'], a: 0, why: 'for ialah pre-test loop: 1 <= 0 adalah FALSE sejak awal.' },
+        { q: 'Bilakah bahagian i++ dalam for dilaksanakan?', opts: ['Sebelum condition pertama', 'Selepas setiap kali badan loop dilaksanakan', 'Sekali sahaja di akhir'], a: 1, why: 'Update berlaku selepas badan loop, sebelum condition diuji semula.' },
+        { q: 'Loop manakah menjamin sekurang-kurangnya satu iteration?', opts: ['for', 'while', 'do-while'], a: 2, why: 'do-while ialah post-test loop.' }
+      ],
+      while: [
+        { q: 'Apakah yang berlaku jika baris i++; dibuang daripada while loop ini?', opts: ['Loop tamat lebih awal', 'Infinite loop', 'Ralat sintaks'], a: 1, why: 'i kekal 1, jadi condition sentiasa TRUE.' },
+        { q: 'while loop ialah jenis…', opts: ['Pre-test loop', 'Post-test loop'], a: 0, why: 'Condition diuji sebelum badan loop.' },
+        { q: 'Jika n = 3, apakah output?', opts: ['1 2 3', '1 2 3 4', '0 1 2 3'], a: 0, why: 'i bermula 1 dan berhenti apabila i = 4.' }
+      ],
+      do: [
+        { q: 'Jika n = 0, berapa kali printf dalam do-while ini dilaksanakan?', opts: ['0 kali', '1 kali', '5 kali'], a: 1, why: 'Badan do-while dilaksanakan dahulu sebelum condition diuji.' },
+        { q: 'Di manakah semicolon wajib dalam do-while?', opts: ['Selepas do', 'Selepas while (condition)', 'Selepas {'], a: 1, why: 'Sintaks: do { … } while (condition);' },
+        { q: 'do-while loop ialah jenis…', opts: ['Pre-test loop', 'Post-test loop'], a: 1, why: 'Condition diuji selepas badan loop.' }
+      ]
+    }[jenis]
+  };
+}
+
+/* ================================================================
+   PELAJARAN ENJIN BAHARU — if-else
+   ================================================================ */
+const IF_ELSE = {
+  id: 't3-ifelse', t: 3, n: 'if-else',
+  c: 'Condition menentukan cabang yang dilaksanakan: TRUE → blok if, FALSE → blok else. Hanya satu cabang berjalan.',
+  param: { key: 'mark', label: 'Ubah markah', min: 0, max: 100, nilai: 65 },
+  vars: ['mark'],
+  jangka: (p) => `mark = ${p.mark}. Jangka dulu — cabang mana akan dilaksanakan? Cuba juga nilai tepat 50. Kemudian tekan ▶ Auto play.`,
+  bina(p) {
+    const m = p.mark, ok = m >= 50;
+    const code = [`int mark = ${m};`, 'if (mark >= 50)', '    printf("PASS");', 'else', '    printf("FAIL");'];
+    const flow = {
+      nodes: [
+        { id: 'start', type: 'terminal', label: 'START', row: 0, col: 0 },
+        { id: 'set', type: 'process', label: `mark = ${m}`, row: 1, col: 0 },
+        { id: 'dec', type: 'decision', label: 'mark >= 50?', row: 2, col: 0 },
+        { id: 'pass', type: 'io', label: 'Print PASS', row: 3, col: -1 },
+        { id: 'fail', type: 'io', label: 'Print FAIL', row: 3, col: 1 },
+        { id: 'end', type: 'terminal', label: 'END', row: 4, col: 0 }
+      ],
+      edges: [['start', 'set'], ['set', 'dec'], ['dec', 'pass', 'TRUE', 'elbowL'], ['dec', 'fail', 'FALSE', 'elbowR'], ['pass', 'end'], ['fail', 'end']]
+    };
+    const steps = [
+      langkah(
+        { say: 'Kita mulakan dengan menyimpan markah pelajar.', line: 0, part: '', node: 'set', edge: 'start>set' },
+        { say: `Pemboleh ubah mark bernilai ${m}.`, vars: { mark: m }, changed: 'mark' }
+      ),
+      langkah(
+        { say: 'Seterusnya, if menguji condition: adakah mark lebih besar atau sama dengan 50?', line: 1, part: 'mark >= 50', node: 'dec', edge: 'set>dec', cond: { expr: `${m} >= 50`, hasil: null } },
+        { say: ok ? (m === 50 ? '50 sama dengan 50, dan operator >= termasuk sama dengan. Condition TRUE.' : `${m} lebih besar daripada 50. Condition TRUE.`) : `${m} kurang daripada 50. Condition FALSE.`, cond: { expr: `${m} >= 50`, hasil: ok } }
+      ),
+      ok ? langkah(
+        { say: 'Cabang TRUE dilaksanakan: printf memaparkan PASS.', line: 2, part: '', node: 'pass', edge: 'dec>pass', out: 'PASS' },
+        { say: 'Blok else dilangkau sepenuhnya.' }
+      ) : langkah(
+        { say: 'Condition FALSE, jadi program melompat ke else.', line: 3, part: '', node: 'fail', edge: 'dec>fail' },
+        { say: 'printf memaparkan FAIL.', line: 4, out: 'FAIL' }
+      ),
+      langkah({ say: 'Kedua-dua laluan bertemu semula, dan pernyataan if-else tamat.', line: ok ? 2 : 4, node: 'end', edge: ok ? 'pass>end' : 'fail>end' })
+    ];
+    return { code, flow, steps };
+  },
+  kuiz: [
+    { jana: true },
+    { q: 'Apakah simbol flowchart untuk if (mark >= 50)?', opts: ['Rectangle', 'Diamond', 'Parallelogram'], a: 1, why: 'Decision diwakili oleh diamond dengan dua laluan TRUE/FALSE.' },
+    { q: 'Jika mark = 50, condition mark >= 50 bernilai…', opts: ['TRUE', 'FALSE'], a: 0, why: '>= bermaksud lebih besar ATAU sama dengan.' }
+  ]
+};
+
+/* ================================================================
+   PELAJARAN LAMA (adegan v2.3 — belum dipindahkan ke enjin baharu)
+   Format langkah: [baris kod, penerangan, program state, output]
+   ================================================================ */
+const LAMA = [
+  { id: 't1-ohm', t: 1, n: 'Ohm’s Law & IPO', c: 'Input → Process → Output; SDM dan algoritma.',
+    code: ['float current = 2.5, resistance = 4;', 'float voltage = current * resistance;', 'printf("%.2f", voltage);'],
+    steps: [[0, 'Input: arus 2.5 ampere dan rintangan 4 ohm.', 'I = 2.5; R = 4', ''], [1, 'Process: darab arus dengan rintangan.', 'V = 10', ''], [2, 'Output: paparkan voltan dengan dua tempat perpuluhan.', 'V = 10', '10.00']],
+    q: 'Apakah simbol flowchart untuk output?', opts: ['Rectangle', 'Parallelogram', 'Diamond'], a: 1 },
+  { id: 't2-ops', t: 2, n: 'Data types & operators', c: 'Integer division membuang bahagian pecahan; casting menukar jenis operand.',
+    code: ['int a = 5, b = 2;', 'float x = a / b;', 'float y = (float)a / b;', 'printf("%.1f %.1f", x, y);'],
+    steps: [[0, 'Dua integer diisytiharkan.', 'a = 5; b = 2', ''], [1, 'Pembahagian integer menghasilkan 2 sebelum disimpan sebagai float.', 'x = 2.0', ''], [2, 'Casting menjadikan pembahagian floating point.', 'y = 2.5', ''], [3, 'Paparkan kedua-dua hasil.', 'x = 2.0; y = 2.5', '2.0 2.5']],
+    q: 'Berapakah hasil 5 / 2 dalam C jika kedua-duanya int?', opts: ['2.5', '2', '3'], a: 1 },
+  { id: 't5-func', t: 5, n: 'Function call & return', c: 'Prototype, call dan definition; parameter menerima salinan nilai.',
+    code: ['int tambah(int a, int b);', '// dalam main():', 'int hasil = tambah(3, 4);', 'printf("%d", hasil);', '// di luar main():', 'int tambah(int a, int b) {', '    return a + b;', '}'],
+    steps: [[0, 'Prototype memberitahu compiler tentang function.', 'int tambah(int, int)', ''], [2, 'Main memanggil function dengan argumen 3 dan 4.', 'main → tambah', ''], [5, 'Parameter menerima salinan argumen.', 'a = 3; b = 4', ''], [6, 'Return menghantar hasil kembali kepada main.', 'return 7', ''], [3, 'Main memaparkan hasil.', 'hasil = 7', '7']],
+    q: 'Apakah return value tambah(3,4)?', opts: ['3', '4', '7'], a: 2 },
+  { id: 't6-1d', t: 6, n: '1D array', c: 'Index bermula daripada sifar. Array lima elemen mempunyai index 0 hingga 4.',
+    code: ['int marks[5] = {75,80,92,68,85};', 'int x = marks[2];', 'printf("%d", x);'],
+    steps: [[0, 'Lima elemen disimpan berturutan.', '75,80,92,68,85', ''], [1, 'Akses index 2, iaitu elemen ketiga.', 'x = 92', ''], [2, 'Paparkan nilai.', 'x = 92', '92']],
+    q: 'Index terakhir marks[5] ialah?', opts: ['5', '4', '3'], a: 1 },
+  { id: 't6-2d', t: 6, n: '2D array', c: 'Array dua dimensi menggunakan row dan column.',
+    code: ['int a[2][3] = {{1,2,3},{4,5,6}};', 'int x = a[1][2];', 'printf("%d", x);'],
+    steps: [[0, 'Dua baris, tiga lajur.', '1 2 3 / 4 5 6', ''], [1, 'Akses baris kedua, lajur ketiga.', 'x = 6', ''], [2, 'Paparkan hasil.', 'x = 6', '6']],
+    q: 'Berapa elemen a[2][3]?', opts: ['5', '6', '3'], a: 1 },
+  { id: 't7-ptr', t: 7, n: 'Pointer', c: 'Pointer menyimpan alamat; dereference mengakses objek yang ditunjuk.',
+    code: ['int x = 50;', 'int *ptr = &x;', '*ptr = 80;', 'printf("%d", x);'],
+    steps: [[0, 'Cipta pemboleh ubah x.', 'x = 50', ''], [1, 'Pointer menyimpan alamat x.', 'ptr → x', ''], [2, 'Dereference mengubah nilai x.', 'x = 80', ''], [3, 'Paparkan nilai x.', 'x = 80', '80']],
+    q: 'Operator untuk mendapatkan alamat x?', opts: ['*', '&', '%'], a: 1 },
+  { id: 't7-struct', t: 7, n: 'Structure', c: 'Structure mengumpulkan ahli yang boleh berlainan jenis.',
+    code: ['struct Pelajar {', '    char nama[20];', '    float cgpa;', '};', 'struct Pelajar p = {"Aina", 3.92f};', 'printf("%.2f", p.cgpa);'],
+    steps: [[0, 'Takrifkan jenis structure Pelajar.', 'struct Pelajar', ''], [4, 'Cipta rekod dengan nama dan CGPA.', 'Aina | 3.92', ''], [5, 'Operator titik mencapai ahli cgpa.', 'p.cgpa = 3.92', '3.92']],
+    q: 'Operator untuk ahli structure biasa?', opts: ['->', '.', '&'], a: 1 }
+].map((l) => Object.assign(l, { lama: true, kuiz: [{ q: l.q, opts: l.opts, a: l.a }] }));
+
+const L = (id) => LAMA.find((x) => x.id === id);
+const PELAJARAN = [L('t1-ohm'), L('t2-ops'), IF_ELSE, pelajaranLoop('for'), pelajaranLoop('while'), pelajaranLoop('do'),
+  L('t5-func'), L('t6-1d'), L('t6-2d'), L('t7-ptr'), L('t7-struct')];
+
+// Debugging challenge ikut topik: [kod berpepijat, pembetulan betul, pilihan salah, penjelasan]
+const PEPIJAT = [
+  ['voltage = current + resistance;', 'voltage = current * resistance;', 'voltage = current / resistance;', 'Hukum Ohm: V = I × R.'],
+  ['float c = 5 / 2;', 'float c = (float)5 / 2;', 'float c = (float)(5 / 2);', 'Cast sebelum pembahagian untuk mendapat 2.5.'],
+  ['if (mark = 50)', 'if (mark == 50)', 'if (mark != 50)', 'Gunakan == untuk menguji kesamaan.'],
+  ['for (int i = 1; i <= 5; )', 'for (int i = 1; i <= 5; i++)', 'for (int i = 1; i <= 5; i--)', 'Counter perlu meningkat untuk mencapai syarat tamat.'],
+  ['int tambah(int a, int b); { return a + b; }', 'int tambah(int a, int b) { return a + b; }', 'void tambah(int a, int b) { return a + b; }', 'Definition tidak mempunyai semicolon selepas header.'],
+  ['int a[5];\n// akses elemen terakhir:\na[5];', 'a[4];', 'a[3];', 'Index terakhir ialah saiz tolak satu.'],
+  ['int x = 5; int *p = &x;\n// ubah x kepada 20:\np = 20;', '*p = 20;', '&p = 20;', 'Dereference pointer untuk mengubah nilai objek.']
+];
+
+/* ================================================================
+   PENGESAH FLOWCHART (Master Context bahagian 16)
+   ================================================================ */
+function semakFlowchart(flow) {
+  const isu = [], ids = new Set(flow.nodes.map((n) => n.id));
+  const keluar = (id) => flow.edges.filter((e) => e[0] === id);
+  const starts = flow.nodes.filter((n) => n.type === 'terminal' && n.label === 'START');
+  if (starts.length !== 1) isu.push('Mesti ada tepat satu START.');
+  if (!flow.nodes.some((n) => n.type === 'terminal' && n.label === 'END')) isu.push('Tiada END.');
+  flow.nodes.forEach((n) => {
+    const k = keluar(n.id);
+    if (n.type === 'terminal' && !['START', 'END'].includes(n.label)) isu.push(`Terminal "${n.label}" hanya untuk START/END.`);
+    if (n.type === 'decision') {
+      const lab = k.map((e) => e[2]).sort().join('/');
+      if (k.length !== 2 || !['No/Yes', 'FALSE/TRUE'].includes(lab)) isu.push(`Decision "${n.label}" mesti ada dua laluan Yes/No atau TRUE/FALSE.`);
+    } else if (n.label !== 'END' && k.length !== 1) isu.push(`Nod "${n.label}" mesti ada satu laluan keluar.`);
+    if (n.type === 'io' && !/^(Print|Display|Input|Read|Get)\b/i.test(n.label)) isu.push(`I/O "${n.label}" sepatutnya Print/Input.`);
+    if (n.type !== 'io' && /^(Print|Display|Input|Read)\b/i.test(n.label)) isu.push(`"${n.label}" mesti guna parallelogram.`);
+  });
+  flow.edges.forEach((e) => { if (!ids.has(e[0]) || !ids.has(e[1])) isu.push(`Laluan ${e[0]}>${e[1]} tidak sah.`); });
+  const capai = new Set(), q = starts.map((n) => n.id);
+  while (q.length) { const x = q.shift(); if (capai.has(x)) continue; capai.add(x); keluar(x).forEach((e) => q.push(e[1])); }
+  flow.nodes.forEach((n) => { if (!capai.has(n.id)) isu.push(`Nod "${n.label}" tidak boleh dicapai dari START.`); });
+  return isu;
+}
+
+/* ================================================================
+   KEADAAN APLIKASI
+   ================================================================ */
+const KUNCI = 'clab-smarttutor';
+let k = 3, s = 0, b = 0, bermain = false, token = 0;
+let P = {};          // nilai parameter Explore bagi setiap pelajaran
+let AKTIF = null;    // pelajaran semasa yang telah dijana {code, flow, steps, states}
+let rekod = {};
+try {
+  rekod = JSON.parse(localStorage.getItem(KUNCI) || '{}') || {};
+  // pindah rekod lama v2.3 (kunci ikut indeks)
+  const lama = JSON.parse(localStorage.getItem('clab2done') || '{}') || {};
+  const susunLama = ['t1-ohm', 't2-ops', 't3-ifelse', 't4-for', 't4-while', 't4-do', 't5-func', 't6-1d', 't6-2d', 't7-ptr', 't7-struct'];
+  Object.keys(lama).forEach((i) => { const id = susunLama[i]; if (id && lama[i] && !rekod[id]) rekod[id] = { lulus: true }; });
+} catch (e) {}
+const simpan = () => { try { localStorage.setItem(KUNCI, JSON.stringify(rekod)); } catch (e) {} };
+const pel = () => PELAJARAN[k];
+
+function el(tag, attrs = {}, text) {
+  const e = document.createElement(tag);
+  for (const [a, v] of Object.entries(attrs)) {
+    if (a === 'on') e.addEventListener('click', v);
+    else if (a === 'class') e.className = v;
+    else e.setAttribute(a, v);
+  }
+  if (text != null) e.textContent = text;
+  return e;
+}
+
+/* Jana pelajaran: tukar langkah kepada senarai keadaan kumulatif states[s][b] */
+function janaPelajaran() {
+  const l = pel();
+  let code, flow = null, steps;
+  if (l.lama) {
+    code = l.code;
+    steps = l.steps.map((a) => ({ beats: [{ say: a[1], line: a[0], part: '', stateText: a[2], out: a[3] }] }));
+  } else {
+    if (l.param && !P[l.id]) P[l.id] = { [l.param.key]: l.param.nilai };
+    ({ code, flow, steps } = l.bina(P[l.id] || {}));
+  }
+  let st = { vars: {}, out: '', cond: null, note: '', changed: null, node: null, edge: null, line: -1, part: '', lalu: [] };
+  const states = steps.map((stp) => stp.beats.map((bt) => {
+    const { say, ...d } = bt;
+    st = { ...st, ...d, vars: { ...st.vars, ...(d.vars || {}) }, say };
+    if (!('changed' in d)) st.changed = null;
+    if (d.edge && !st.lalu.includes(d.edge)) st.lalu = [...st.lalu, d.edge];
+    return st;
+  }));
+  AKTIF = { code, flow, steps, states, isu: flow ? semakFlowchart(flow) : [] };
+  if (AKTIF.isu.length) console.warn('Flowchart tidak standard:', l.id, AKTIF.isu);
+  binaPapan();
+}
+
+/* ================================================================
+   PAPAN — LUKIS STRUKTUR SEKALI, KEMAS KINI SETIAP BEAT
+   ================================================================ */
+let W = 600, H = 440, TEGAK = false;
+let GEO = {};   // geometri nod flowchart
+
+function binaPapan() {
+  const l = pel();
+  if (l.lama) return;
+  const parts = [];
+  const text = (x, y, v, size = 14, cl = '', anchor = 'middle', id = '') => parts.push(`<text ${id ? `id="${id}"` : ''} x="${x}" y="${y}" text-anchor="${anchor}" style="font-size:${size}px" class="${cl}">${esc(v)}</text>`);
+
+  // --- Susun atur: mendatar (desktop) atau menegak (telefon) ---
+  TEGAK = $('papan').clientWidth < 520;
+  const banyak = TEGAK && l.vars.length > 1;
+  const f = AKTIF.flow || { nodes: [], edges: [] }, rows = Math.max(1, ...f.nodes.map((n) => n.row + 1));
+  const top = TEGAK ? (banyak ? 318 : 236) : 34, gap = rows <= 6 ? 66 : 60;
+  W = TEGAK ? 360 : 600;
+  H = Math.max(TEGAK ? 640 : 440, Math.round(top + (rows - 1) * gap + 15 + 45));
+  const Lx = 16, memY = 62, condX = TEGAK ? (banyak ? 16 : 132) : 16, condY = TEGAK ? (banyak ? 168 : 62) : 200, condW = TEGAK ? (banyak ? 328 : 212) : 214;
+  const konY = TEGAK ? (banyak ? 254 : 160) : 290, konX = Lx, konW = TEGAK ? 328 : 214, konH = TEGAK ? 44 : 62;
+  // --- Panel maklumat: tajuk, memori, condition, konsol ---
+  text(Lx, 30, l.n, 19, 'tajuk-papan', 'start');
+  text(Lx, memY - 8, 'MEMORI', 11, 'lencana', 'start');
+  const nv = Math.max(1, l.vars.length), lebarPanel = TEGAK ? (nv > 1 ? 328 : 104) : 214;
+  const wv = Math.min(TEGAK ? 104 : 100, (lebarPanel - (nv - 1) * 8) / nv);
+  l.vars.forEach((v, j) => {
+    const x = Lx + j * (wv + 8), w = wv;
+    parts.push(`<g id="var-${v}"><rect x="${x}" y="${memY}" width="${w}" height="74" rx="10" class="kotak"/>`);
+    text(x + w / 2, memY + 20, v, 13); text(x + w / 2, memY + 60, '?', w < 70 ? 19 : 26, 'nilai', 'middle', `val-${v}`);
+    parts.push('</g>');
+  });
+  text(Lx, TEGAK ? 150 : 158, '', 14, 'nilai', 'start', 'nota');
+  text(condX, condY - 8, 'CONDITION', 11, 'lencana', 'start');
+  parts.push(`<g id="kadCond" opacity=".35"><rect x="${condX}" y="${condY}" width="${condW}" height="56" rx="10" class="kotak"/>`);
+  text(condX + 14, condY + 34, '—', 17, 'nilai', 'start', 'condExpr');
+  parts.push(`<g id="condHasil" opacity="0"><rect id="condPil" x="${condX + condW - 80}" y="${condY + 14}" width="68" height="28" rx="14" class="hasil-ok"/>`);
+  text(condX + condW - 46, condY + 33, 'TRUE', 13, 'hasil-teks', 'middle', 'condTeks');
+  parts.push('</g></g>');
+  text(konX, konY - 8, 'CONSOLE OUTPUT', 11, 'lencana', 'start');
+  parts.push(`<rect x="${konX}" y="${konY}" width="${konW}" height="${konH}" rx="10" class="konsol-svg"/>`);
+  text(konX + 12, konY + konH / 2 + 6, '', 16, 'konsol-teks', 'start', 'konsolTeks');
+
+  // --- Panel kanan: flowchart daripada graf ---
+  GEO = {};
+  const cx0 = TEGAK ? 180 : 430;
+  f.nodes.forEach((n) => {
+    const w = n.type === 'decision' ? 150 : n.col ? 118 : 128, h = n.type === 'decision' ? 50 : n.type === 'terminal' ? 30 : 38;
+    const cx = cx0 + n.col * 86, cy = top + n.row * gap + 15;
+    GEO[n.id] = { cx, cy, w, h, top: cy - h / 2, bot: cy + h / 2, left: cx - w / 2, right: cx + w / 2 };
+  });
+  const lorongKiri = cx0 - (TEGAK ? 100 : 105), lorongKanan = cx0 + (TEGAK ? 102 : 108);
+  f.edges.forEach(([a, z, lab = '', jenis = 'v']) => {
+    const A = GEO[a], Z = GEO[z];
+    let d, lx, ly;
+    const L2 = TEGAK ? 22 : 26;
+    if (jenis === 'loopL2') { d = `M${A.left} ${A.cy} H${lorongKiri - L2} V${Z.cy} H${Z.left}`; lx = lorongKiri - L2 - 6; ly = (A.cy + Z.cy) / 2; }
+    else if (jenis === 'loopR2') { d = `M${A.right} ${A.cy} H${lorongKanan + L2} V${Z.cy} H${Z.right}`; lx = lorongKanan + L2 + 6; ly = A.cy - 6; }
+    else if (jenis === 'outR2') { d = `M${A.right} ${A.cy} H${lorongKanan + L2} V${Z.cy} H${Z.right}`; lx = A.right + 14; ly = A.cy - 7; }
+    else if (jenis === 'loopL') { d = `M${A.left} ${A.cy} H${lorongKiri} V${Z.cy} H${Z.left}`; lx = lorongKiri - 6; ly = (A.cy + Z.cy) / 2; }
+    else if (jenis === 'loopR') { d = `M${A.right} ${A.cy} H${lorongKanan} V${Z.cy} H${Z.right}`; lx = lorongKanan + 6; ly = A.cy - 6; }
+    else if (jenis === 'outR') { d = `M${A.right} ${A.cy} H${lorongKanan} V${Z.cy} H${Z.right}`; lx = A.right + 14; ly = A.cy - 7; }
+    else if (jenis === 'elbowL' || jenis === 'elbowR') { const sx = jenis === 'elbowL' ? A.left : A.right; d = `M${sx} ${A.cy} H${Z.cx} V${Z.top}`; lx = (sx + Z.cx) / 2; ly = A.cy - 7; }
+    else if (A.cx === Z.cx) { d = `M${A.cx} ${A.bot} V${Z.top}`; lx = A.cx + 22; ly = A.bot + 14; }
+    else { const my = Z.top - 12; d = `M${A.cx} ${A.bot} V${my} H${Z.cx} V${Z.top}`; lx = A.cx; ly = A.bot + 14; }
+    parts.push(`<path id="e-${a}-${z}" d="${d}" class="tepi" pathLength="1" marker-end="url(#anakPanah)"/>`);
+    if (lab) text(lx, ly, lab, 12, 'label-tepi', /^loopL/.test(jenis) ? 'end' : /^loopR/.test(jenis) ? 'start' : 'middle');
+  });
+  f.nodes.forEach((n) => {
+    const g = GEO[n.id], { left: x, top: y, w, h } = g;
+    let shape;
+    if (n.type === 'decision') shape = `<polygon points="${g.cx},${y} ${x + w},${g.cy} ${g.cx},${y + h} ${x},${g.cy}" class="kotak"/>`;
+    else if (n.type === 'io') shape = `<polygon points="${x + 12},${y} ${x + w},${y} ${x + w - 12},${y + h} ${x},${y + h}" class="kotak"/>`;
+    else if (n.type === 'call') shape = `<rect x="${x}" y="${y}" width="${w}" height="${h}" class="kotak"/><path d="M${x + 9} ${y}v${h} M${x + w - 9} ${y}v${h}" class="garis"/>`;
+    else shape = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${n.type === 'terminal' ? h / 2 : 2}" class="kotak"/>`;
+    parts.push(`<g id="n-${n.id}">${shape}`);
+    text(g.cx, g.cy + 5, n.label, 13);
+    parts.push('</g>');
+  });
+  // penunjuk pengajaran (bergerak ke nod aktif)
+  parts.push('<g id="penunjuk" class="penunjuk" style="opacity:0"><path d="M-7 -16 L0 -4 L7 -16 Z" class="denyut"/></g>');
+  if (AKTIF.flow && !AKTIF.isu.length) text(W - 8, H - 8, '✓ Simbol flowchart disemak', 11, 'lencana', 'end');
+  if (!AKTIF.flow) text(TEGAK ? W / 2 : 430, TEGAK ? 400 : 220, l.ai ? 'Tiada flowchart untuk jawapan ini' : '', 13, 'lencana');
+  if (TEGAK) parts.push(`<line x1="16" y1="${top - 16}" x2="${W - 16}" y2="${top - 16}" class="garis" opacity=".15"/>`);
+
+  $('visual').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Papan visual ${esc(l.n)}">
+    <defs><marker id="anakPanah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" class="anak-panah"/></marker></defs>${parts.join('')}</svg>`;
+}
+
+const ulangAnim = (e, kelas) => { if (!e) return; e.classList.remove(kelas); void e.getBoundingClientRect(); e.classList.add(kelas); };
+
+function kemasPapan(st) {
+  const l = pel();
+  if (l.lama) { lukisAdeganLama(l); return; }
+  const svg = $('visual');
+  l.vars.forEach((v) => {
+    const t = svg.querySelector('#val-' + v), nilai = v in st.vars ? String(st.vars[v]) : '?';
+    if (t.textContent !== nilai || st.changed === v) { t.textContent = nilai; if (st.changed === v) ulangAnim(t, 'pop'); }
+    svg.querySelector(`#var-${v} rect`).setAttribute('class', st.changed === v ? 'fokus' : 'kotak');
+    t.setAttribute('class', 'nilai' + (st.changed === v ? ' fokus-teks pop' : ''));
+    svg.querySelector(`#var-${v} text`).setAttribute('class', st.changed === v ? 'fokus-teks' : '');
+  });
+  svg.querySelector('#nota').textContent = st.note || '';
+  const kad = svg.querySelector('#kadCond');
+  kad.setAttribute('opacity', st.cond ? 1 : .35);
+  kad.querySelector('rect').setAttribute('class', st.cond ? 'fokus' : 'kotak');
+  svg.querySelector('#condExpr').textContent = st.cond ? st.cond.expr : '—';
+  svg.querySelector('#condExpr').setAttribute('class', 'nilai' + (st.cond ? ' fokus-teks' : ''));
+  const hasil = svg.querySelector('#condHasil');
+  if (st.cond && st.cond.hasil !== null) {
+    hasil.setAttribute('opacity', 1);
+    svg.querySelector('#condPil').setAttribute('class', st.cond.hasil ? 'hasil-ok' : 'hasil-no');
+    svg.querySelector('#condTeks').textContent = st.cond.hasil ? 'TRUE' : 'FALSE';
+    ulangAnim(hasil, 'muncul');
+  } else hasil.setAttribute('opacity', 0);
+  svg.querySelector('#konsolTeks').textContent = (st.out || '').trim() || '_';
+
+  const F = AKTIF.flow || { nodes: [], edges: [] };
+  F.nodes.forEach((n) => {
+    const g = svg.querySelector('#n-' + n.id), hot = st.node === n.id;
+    g.querySelectorAll('rect,polygon').forEach((x) => x.setAttribute('class', hot ? 'fokus' : 'kotak'));
+    g.querySelector('text').setAttribute('class', hot ? 'fokus-teks' : '');
+  });
+  F.edges.forEach(([a, z]) => {
+    const p = svg.querySelector(`#e-${a}-${z}`), key = `${a}>${z}`;
+    const aktif = st.edge === key, lalu = st.lalu.includes(key);
+    const kelas = 'tepi' + (lalu ? ' lalu' : '') + (aktif ? ' aktif' : '');
+    if (p.getAttribute('class').replace(' lukis', '') !== kelas || aktif) { p.setAttribute('class', kelas); if (aktif) ulangAnim(p, 'lukis'); }
+  });
+  const pn = svg.querySelector('#penunjuk'), g = st.node && GEO[st.node];
+  if (g) { pn.style.opacity = 1; pn.style.transform = `translate(${g.left + 16}px, ${g.top + 2}px)`; }
+  else pn.style.opacity = 0;
+}
+
+/* ================================================================
+   PAPARAN UI
+   ================================================================ */
+function paparPilihan() {
+  const t = pel().t;
+  $('topik').replaceChildren(...TOPIK.map((n, i) => {
+    const ids = PELAJARAN.map((p, j) => p.t === i + 1 ? j : -1).filter((j) => j >= 0);
+    const b2 = el('button', { class: 'chip' + (t === i + 1 ? ' aktif' : ''), type: 'button', on: () => pilih(ids[0]) }, `${i + 1}. ${n}`);
+    if (ids.filter((j) => !PELAJARAN[j].ai).every((j) => rekod[PELAJARAN[j].id]?.lulus)) b2.append(el('span', { class: 'tick', 'aria-label': 'selesai' }, '✓'));
+    return b2;
+  }));
+  const sub = PELAJARAN.map((p, i) => ({ p, i })).filter((x) => x.p.t === t);
+  $('pelajaran').replaceChildren(...(sub.length > 1 ? sub.map(({ p, i }) => {
+    const b2 = el('button', { class: 'chip sub' + (i === k ? ' aktif' : ''), type: 'button', on: () => pilih(i) }, p.n);
+    if (rekod[p.id]?.lulus) b2.append(el('span', { class: 'tick' }, '✓'));
+    return b2;
+  }) : []));
+}
+
+function papar() {
+  const l = pel(), n = AKTIF.steps.length, st = AKTIF.states[s][b];
+  $('tajuk').textContent = l.n;
+  $('lencanaEnjin').hidden = !!l.lama;
+  $('lencanaEnjin').textContent = l.ai ? 'DIJANA AI' : 'ENJIN v2.4';
+  $('konsep').textContent = l.c;
+  $('kiraan').textContent = `Langkah ${s + 1} / ${n}`;
+  $('labelLangkah').textContent = `Langkah ${s + 1}`;
+  $('terang').replaceChildren(...AKTIF.steps[s].beats.map((bt, j) => {
+    const sp = el('span', { class: 'beat ' + (j < b ? 'lepas' : j === b ? 'kini' : 'akan') }, bt.say + ' ');
+    return sp;
+  }));
+  $('barLangkah').style.width = ((s + (b + 1) / AKTIF.steps[s].beats.length) / n * 100) + '%';
+  // kod dengan bahagian ditanda
+  $('kod').replaceChildren(...AKTIF.code.map((line, i) => {
+    const sp = el('span', { class: i === st.line ? 'hi' : '' });
+    const ix = i === st.line && st.part ? line.indexOf(st.part) : -1;
+    if (ix >= 0) sp.append(line.slice(0, ix), el('mark', { class: 'bahagian' }, st.part), line.slice(ix + st.part.length));
+    else sp.textContent = line;
+    return sp;
+  }));
+  $('keadaan').textContent = l.lama ? st.stateText : (Object.entries(st.vars).map(([a, v]) => `${a} = ${v}`).join('; ') || '—') + (st.cond && st.cond.hasil !== null ? `;  ${st.cond.expr} → ${st.cond.hasil ? 'TRUE' : 'FALSE'}` : '');
+  $('output').textContent = (st.out || '').trim() || '—';
+  $('btnPrev').disabled = s === 0;
+  $('btnNext').disabled = s === n - 1;
+  kemasPapan(st);
+  paparTrace();
+}
+
+function paparTrace() {
+  const l = pel(), tb = el('table', { class: 'trace' });
+  const kepala = l.lama ? ['Langkah', 'Baris', 'Program state', 'Output'] : ['Langkah', 'Baris', ...l.vars, 'Condition', 'Output'];
+  const h = tb.createTHead().insertRow();
+  kepala.forEach((x) => h.append(el('th', {}, x)));
+  const body = tb.createTBody();
+  AKTIF.states.slice(0, s + 1).forEach((bs, i) => {
+    const st = i === s ? bs[b] : bs[bs.length - 1];
+    const sel = l.lama ? [i + 1, st.line + 1, st.stateText, (st.out || '').trim() || '—']
+      : [i + 1, st.line + 1, ...l.vars.map((v) => v in st.vars ? st.vars[v] : '—'),
+        st.cond ? `${st.cond.expr}${st.cond.hasil === null ? ' ?' : st.cond.hasil ? ' → TRUE' : ' → FALSE'}` : '—', (st.out || '').trim() || '—'];
+    const r = body.insertRow();
+    sel.forEach((x) => { r.insertCell().textContent = x; });
+  });
+  $('trace').replaceChildren(tb);
+  $('trace').scrollTop = $('trace').scrollHeight;
+}
+
+function paparSkor() {
+  const TETAP = PELAJARAN.filter((p) => !p.ai), jumlah = TETAP.length, siap = TETAP.filter((p) => rekod[p.id]?.lulus).length;
+  $('skorNilai').innerHTML = `${siap} <span>/ ${jumlah} pelajaran</span>`;
+  $('skorMeter').style.width = (siap / jumlah * 100) + '%';
+  $('dash').replaceChildren(...TOPIK.map((n, i) => {
+    const ps = PELAJARAN.filter((p) => p.t === i + 1 && !p.ai), c = ps.filter((p) => rekod[p.id]?.lulus).length;
+    const d = el('div');
+    const bb = el('b', {}, `${i + 1}. ${n}`); bb.append(el('span', {}, `${c}/${ps.length}`));
+    const m = el('div', { class: 'meter' }); const bar = el('i'); bar.style.width = (c / ps.length * 100) + '%'; m.append(bar);
+    d.append(bb, m);
+    return d;
+  }));
+}
+
+/* ================================================================
+   PILIH PELAJARAN, KUIZ, DEBUG, EXPLORE
+   ================================================================ */
+function pilih(i) {
+  henti(); k = i; s = 0; b = 0;
+  janaPelajaran();
+  paparPilihan(); papar(); mulaKuiz(); paparPepijat(); paparEksplor();
+}
+
+let kuiz = { senarai: [], i: 0, skor: 0, cubaan: 0 };
+function mulaKuiz() {
+  const l = pel();
+  const senarai = (l.kuiz && l.kuiz.length ? l.kuiz : [{ q: 'Tiada kuiz untuk pelajaran ini.', opts: ['OK'], a: 0 }]).map((q) => {
+    if (!q.jana) return q;
+    // soalan jangka output yang dijana (if-else)
+    let m; do { m = 20 + Math.floor(Math.random() * 61); } while (m === 50);
+    return { q: `Jika mark = ${m}, apakah output program ini?`, opts: ['PASS', 'FAIL', 'PASS FAIL'], a: m >= 50 ? 0 : 1, why: `${m} >= 50 ialah ${m >= 50 ? 'TRUE' : 'FALSE'}; hanya satu cabang dilaksanakan.` };
+  });
+  kuiz = { senarai, i: 0, skor: 0, cubaan: 0 };
+  paparSoalan();
+}
+function paparSoalan() {
+  const l = pel(), Q = kuiz.senarai[kuiz.i];
+  $('soalan').textContent = Q.q;
+  $('maklumKuiz').textContent = ''; $('maklumKuiz').className = 'maklum';
+  $('kuizKiraan').textContent = `Soalan ${kuiz.i + 1} / ${kuiz.senarai.length}` + (rekod[l.id]?.lulus ? ' · ✓ lulus sebelum ini' : '');
+  $('btnSoalan').hidden = true;
+  kuiz.cubaan = 0;
+  $('jawapan').replaceChildren(...Q.opts.map((x, i) => el('button', { type: 'button', on: (e) => {
+    if ($('btnSoalan').hidden === false || $('jawapan').dataset.siap === '1') return;
+    kuiz.cubaan++;
+    if (i === Q.a) {
+      e.currentTarget.className = 'ok';
+      if (kuiz.cubaan === 1) kuiz.skor++;
+      $('maklumKuiz').textContent = '✓ Betul! ' + (Q.why || '');
+      $('maklumKuiz').className = 'maklum ok';
+      $('jawapan').dataset.siap = '1';
+      if (kuiz.i < kuiz.senarai.length - 1) { $('btnSoalan').hidden = false; }
+      else {
+        if (!l.ai) { rekod[l.id] = { lulus: true, skor: `${kuiz.skor}/${kuiz.senarai.length}` }; simpan(); paparSkor(); paparPilihan(); }
+        $('kuizKiraan').textContent = `Selesai · betul pada cubaan pertama: ${kuiz.skor}/${kuiz.senarai.length}`;
+        $('btnSoalan').textContent = '↻ Ulang kuiz'; $('btnSoalan').hidden = false;
+      }
+    } else {
+      e.currentTarget.className = 'no';
+      $('maklumKuiz').textContent = 'Belum tepat. Ulang penerangan atau cuba di Explore, kemudian cuba lagi.';
+      $('maklumKuiz').className = 'maklum no';
+    }
+  } }, x)));
+  $('jawapan').dataset.siap = '0';
+}
+$('btnSoalan').onclick = () => {
+  if (kuiz.i < kuiz.senarai.length - 1) { kuiz.i++; paparSoalan(); }
+  else { $('btnSoalan').textContent = 'Soalan seterusnya ▶'; mulaKuiz(); }
+};
+
+function paparPepijat() {
+  const bg = PEPIJAT[pel().t - 1];
+  $('pepijat').textContent = bg[0];
+  $('maklumBug').textContent = ''; $('maklumBug').className = 'maklum';
+  const pilihan = pel().t % 2 === 0 ? [bg[2], bg[1]] : [bg[1], bg[2]];
+  $('pembetulan').replaceChildren(...pilihan.map((x) => el('button', { type: 'button', class: 'kod-pilihan', on: (e) => {
+    const ok = x === bg[1];
+    e.currentTarget.classList.add(ok ? 'ok' : 'no');
+    $('maklumBug').textContent = (ok ? '✓ Tepat. ' : '✗ Belum tepat. ') + bg[3];
+    $('maklumBug').className = 'maklum ' + (ok ? 'ok' : 'no');
+  } }, x)));
+}
+
+function paparEksplor() {
+  const l = pel(), r = $('julat');
+  $('eksJangka').hidden = true;
+  if (l.ai || (!l.lama && !l.param)) { $('eksWrap').hidden = true; $('eksTiada').hidden = false; return; }
+  if (!l.lama) {
+    // ENJIN BAHARU: slider menjana semula keseluruhan pelajaran
+    $('eksWrap').hidden = false; $('eksTiada').hidden = true;
+    $('eksHasil').hidden = true;
+    r.min = l.param.min; r.max = l.param.max; r.value = P[l.id][l.param.key];
+    $('eksLabel').textContent = l.param.label;
+    $('eksNilai').textContent = r.value;
+    $('eksJangka').textContent = l.jangka(P[l.id]); $('eksJangka').hidden = false;
+    r.oninput = () => {
+      henti();
+      P[l.id][l.param.key] = +r.value; $('eksNilai').textContent = r.value;
+      s = 0; b = 0; janaPelajaran(); papar();
+      $('eksJangka').textContent = l.jangka(P[l.id]);
+      $('status').textContent = 'Kod, flowchart, papan dan trace table dikemas kini mengikut nilai baharu.';
+    };
+    return;
+  }
+  // PELAJARAN LAMA: eksperimen teks sahaja
+  $('eksHasil').hidden = false;
+  const t = l.t, ada = [1, 2, 6].includes(t) || l.n === 'Pointer';
+  $('eksWrap').hidden = !ada; $('eksTiada').hidden = ada;
+  if (!ada) return;
+  const satu = l.n.startsWith('1D');
+  const cfg = {
+    1: { min: 1, max: 10, v: 5, label: 'Ubah arus I (R = 4 Ω)', f: (n) => `V = I × R\nV = ${n} × 4 = ${n * 4} V` },
+    2: { min: 1, max: 10, v: 5, label: 'Ubah integer a (b = 2)', f: (n) => `a / b        → ${n} / 2 = ${Math.trunc(n / 2)}\n(float)a / b → ${n}.0 / 2 = ${n / 2}` },
+    6: { min: 0, max: satu ? 4 : 5, v: 2, label: 'Pilih index', f: (n) => satu ? `marks[${n}] = ${[75, 80, 92, 68, 85][n]}` : `a[${Math.floor(n / 3)}][${n % 3}] = ${n + 1}` },
+    7: { min: 1, max: 100, v: 80, label: 'Ubah nilai melalui pointer', f: (n) => `*ptr = ${n};\n→ x = ${n} (x diubah melalui alamatnya)` }
+  }[t];
+  r.min = cfg.min; r.max = cfg.max; r.value = cfg.v;
+  $('eksLabel').textContent = cfg.label;
+  const kemas = () => { $('eksNilai').textContent = r.value; $('eksHasil').textContent = cfg.f(+r.value); };
+  r.oninput = kemas; kemas();
+}
+
+/* ================================================================
+   NARRATION ENGINE — main / jeda / sambung, ikut beat
+   ================================================================ */
+let suaraSedia = null;
+function tungguSuara() {
+  if (suaraSedia) return suaraSedia;
+  suaraSedia = new Promise((res) => {
+    if (!window.speechSynthesis) return res();
+    if (speechSynthesis.getVoices().length) return res();
+    const t = setTimeout(res, 1200);
+    speechSynthesis.addEventListener('voiceschanged', () => { clearTimeout(t); res(); }, { once: true });
+  });
+  return suaraSedia;
+}
+
+function cakap(teks, id) {
+  return new Promise((res) => {
+    const kadar = Number($('laju').value);
+    let siap = false, pemasa;
+    const habis = () => { if (siap) return; siap = true; clearTimeout(pemasa); res(); };
+    if ($('suara').checked && window.speechSynthesis && window.SpeechSynthesisUtterance) {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(teks);
+      u.lang = 'ms-MY'; u.rate = kadar;
+      const v = speechSynthesis.getVoices().find((x) => x.lang.toLowerCase().startsWith('ms'));
+      if (v) u.voice = v;
+      $('status').textContent = v ? '🔊 Suara Bahasa Melayu' : '🔊 Suara lalai peranti (suara Melayu tiada pada peranti ini)';
+      u.onend = habis; u.onerror = habis;
+      window._ucap = u;
+      pemasa = setTimeout(() => { speechSynthesis.cancel(); habis(); }, 6000 + teks.length * 120);
+      setTimeout(() => { if (id !== token) return habis(); speechSynthesis.resume(); speechSynthesis.speak(u); }, 80);
+    } else {
+      $('status').textContent = '🔇 Mod tanpa suara';
+      pemasa = setTimeout(habis, (700 + teks.length * 45) / kadar);
+    }
+  });
+}
+
+// Mainkan beat bermula dari (s, b). Jika `terus`, sambung ke langkah seterusnya.
+async function mainkan(terus) {
+  const id = ++token;
+  await tungguSuara();
+  if (id !== token) return;
+  while (true) {
+    papar();
+    await cakap(AKTIF.steps[s].beats[b].say, id);
+    if (id !== token) return;
+    await new Promise((r) => setTimeout(r, 250 / Number($('laju').value)));
+    if (id !== token) return;
+    if (b < AKTIF.steps[s].beats.length - 1) { b++; continue; }
+    if (terus && s < AKTIF.steps.length - 1) { s++; b = 0; continue; }
+    break;
+  }
+  if (terus) henti(); else $('btnMain').textContent = '▶ Auto play';
+}
+
+function henti() {
+  bermain = false; token++;
+  if (window.speechSynthesis) speechSynthesis.cancel();
+  $('btnMain').textContent = s > 0 || b > 0 ? '▶ Sambung' : '▶ Auto play';
+}
+
+function gerak(n) {
+  henti();
+  const baru = Math.max(0, Math.min(AKTIF.steps.length - 1, s + n));
+  if (baru === s) return;
+  s = baru; b = 0; mainkan(false);
+}
+
+$('btnMain').onclick = () => {
+  if (bermain) { henti(); $('status').textContent = '⏸ Dijeda. Tekan Sambung untuk teruskan dari ayat semasa.'; return; }
+  if (s === AKTIF.steps.length - 1 && b === AKTIF.steps[s].beats.length - 1) { s = 0; b = 0; }
+  bermain = true; $('btnMain').textContent = '⏸ Jeda'; mainkan(true);
+};
+$('btnPrev').onclick = () => gerak(-1);
+$('btnNext').onclick = () => gerak(1);
+$('btnUlang').onclick = () => { henti(); b = 0; mainkan(false); };
+$('btnReset').onclick = () => { henti(); s = 0; b = 0; papar(); $('btnMain').textContent = '▶ Auto play'; };
+$('suara').onchange = () => { henti(); papar(); };
+$('laju').onchange = () => { if (bermain) { henti(); $('status').textContent = 'Kelajuan dikemas kini. Tekan Sambung untuk teruskan.'; } };
+$('sari').onchange = () => { $('sarikata').hidden = !$('sari').checked; };
+document.addEventListener('keydown', (e) => {
+  if (/INPUT|SELECT|TEXTAREA/.test(e.target.tagName) || e.altKey || e.ctrlKey || e.metaKey) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); gerak(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); gerak(-1); }
+});
+if (!window.speechSynthesis) $('status').textContent = '🔇 Pelayar ini tidak menyokong suara. Buka halaman dalam Chrome.';
+
+/* ================================================================
+   PAPAN: LUKIS, TEMA PAPAN, SKRIN PENUH
+   ================================================================ */
+const papan = $('papan'), ink = $('ink'), ctx = ink.getContext('2d');
+let coretan = [], semasa = null, pen = false;
+function lukisInk() {
+  const r = papan.getBoundingClientRect(), d = window.devicePixelRatio || 1;
+  ink.width = Math.round(r.width * d); ink.height = Math.round(r.height * d);
+  ctx.setTransform(d, 0, 0, d, 0, 0); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 3;
+  for (const c of coretan) {
+    ctx.strokeStyle = c.warna; ctx.beginPath();
+    c.titik.forEach((p, i) => i ? ctx.lineTo(p[0] * r.width, p[1] * r.height) : ctx.moveTo(p[0] * r.width, p[1] * r.height));
+    ctx.stroke();
+  }
+}
+function padamInk() { coretan = []; lukisInk(); }
+const titik = (e) => { const r = ink.getBoundingClientRect(); return [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height]; };
+new ResizeObserver(() => {
+  lukisInk();
+  if (AKTIF && !pel().lama && (papan.clientWidth < 520) !== TEGAK) { binaPapan(); kemasPapan(AKTIF.states[s][b]); }
+}).observe(papan);
+ink.onpointerdown = (e) => { if (!pen) return; ink.setPointerCapture(e.pointerId); semasa = { warna: $('warnaPen').value, titik: [titik(e)] }; coretan.push(semasa); };
+ink.onpointermove = (e) => { if (semasa) { semasa.titik.push(titik(e)); lukisInk(); } };
+ink.onpointerup = ink.onpointercancel = () => { semasa = null; };
+$('btnPen').onclick = () => {
+  pen = !pen; ink.classList.toggle('on', pen);
+  $('btnPen').classList.toggle('aktif', pen); $('btnPen').setAttribute('aria-pressed', String(pen));
+  $('btnPen').textContent = pen ? '✓ Melukis' : '✎ Lukis';
+};
+$('btnUndo').onclick = () => { coretan.pop(); lukisInk(); };
+$('btnPadam').onclick = padamInk;
+$('btnPapan').onclick = () => {
+  papan.classList.toggle('putih');
+  try { localStorage.setItem('clab-smarttutor-papan', papan.classList.contains('putih') ? 'putih' : 'gelap'); } catch (e) {}
+};
+try { if (localStorage.getItem('clab-smarttutor-papan') === 'putih') papan.classList.add('putih'); } catch (e) {}
+$('btnPenuh').onclick = async () => {
+  try { if (document.fullscreenElement) await document.exitFullscreen(); else await papan.requestFullscreen(); }
+  catch (e) { $('status').textContent = 'Skrin penuh tidak disokong oleh pelayar ini.'; }
+};
+
+/* ================================================================
+   REKOD: EXPORT & SET SEMULA
+   ================================================================ */
+$('btnCsv').onclick = () => {
+  const csv = 'Topik,Pelajaran,Lulus kuiz,Betul cubaan pertama\n' + PELAJARAN.filter((l) => !l.ai).map((l) => `${l.t},"${l.n.replace(/"/g, '""')}",${rekod[l.id]?.lulus ? 'Ya' : 'Tidak'},${rekod[l.id]?.skor || ''}`).join('\n');
+  const url = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv' }));
+  const a = el('a', { href: url, download: 'smarttutor-kemajuan.csv' }); a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+$('btnSifar').onclick = () => {
+  if (!confirm('Padam semua rekod kuiz SmartTutor pada pelayar ini?')) return;
+  rekod = {}; simpan();
+  try { localStorage.removeItem('clab2done'); } catch (e) {}
+  paparSkor(); paparPilihan(); mulaKuiz();
+};
+
+/* ================================================================
+   TEMA (dikongsi dengan Laman Utama)
+   ================================================================ */
+(function () {
+  const butang = document.querySelectorAll('.tema button');
+  function pasang(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    butang.forEach((x) => x.setAttribute('aria-pressed', String(x.getAttribute('data-tema') === t)));
+  }
+  butang.forEach((x) => x.addEventListener('click', () => {
+    const t = x.getAttribute('data-tema');
+    try { localStorage.setItem('clab-tema', t); } catch (e) {}
+    pasang(t);
+  }));
+  pasang(document.documentElement.getAttribute('data-theme') || 'light');
+})();
+/* ================================================================
+   ADEGAN LAMA v2.3 (Ohm, operators, function, array, pointer, structure)
+   ================================================================ */
+function lukisAdeganLama(l) {
+  const a = [0, '', '', ''];
+  const parts = [], W = 560, H = 390;
+  const esc = (x) => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const text = (x, y, v, size = 16, cl = '') => parts.push(`<text x="${x}" y="${y}" text-anchor="middle" style="font-size:${size}px" class="${cl}">${esc(v)}</text>`);
+  const box = (x, y, w, h, label, value, hot = false) => {
+    parts.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" class="${hot ? 'fokus' : 'kotak'}"/>`);
+    text(x + w / 2, y + 21, label, 13, hot ? 'fokus-teks' : '');
+    text(x + w / 2, y + h - 13, value, 22, hot ? 'fokus-teks' : '');
+    if (hot) parts.push(`<circle cx="${x + w - 8}" cy="${y + 8}" r="5" class="denyut"/>`);
+  };
+  const arrow = (d, hot = true) => parts.push(`<path d="${d}" class="garis ${hot ? 'lukis' : ''}" pathLength="1" marker-end="url(#anakPanah)" opacity="${hot ? 1 : .3}"/>`);
+  const node = (x, y, w, h, label, type, hot = false) => {
+    const cls = hot ? 'fokus' : 'kotak';
+    const shape = type === 'decision' ? `<polygon points="${x + w / 2},${y} ${x + w},${y + h / 2} ${x + w / 2},${y + h} ${x},${y + h / 2}" class="${cls}"/>`
+      : type === 'io' ? `<polygon points="${x + 12},${y} ${x + w},${y} ${x + w - 12},${y + h} ${x},${y + h}" class="${cls}"/>`
+      : `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${type === 'terminal' ? h / 2 : 0}" class="${cls}"/>`;
+    parts.push(shape);
+    if (type === 'call') parts.push(`<path d="M${x + 9} ${y}v${h} M${x + w - 9} ${y}v${h}" class="garis"/>`);
+    text(x + w / 2, y + h / 2 + 5, label, 13, hot ? 'fokus-teks' : '');
+  };
+
+  text(280, 26, l.n, 20);
+
+  if (l.t === 1) {
+    text(280, 52, 'Electrical circuit • Ohm’s law', 13);
+    parts.push('<path d="M100 100 H230 l10 -12 15 24 15 -24 15 24 15 -24 10 12 H450 V190 H100 V160 M100 130 V100 M77 130 H123 M87 145 H113 M100 145 V160" class="garis lukis" pathLength="1"/>');
+    text(270, 80, 'R = 4 Ω'); text(65, 143, 'V');
+    arrow('M145 190 H230'); text(280, 215, 'I = 2.5 A');
+    box(20, 245, 155, 65, 'INPUT', '2.5 A, 4 Ω', s === 0);
+    box(202, 245, 155, 65, 'PROCESS', s >= 1 ? '2.5 × 4' : 'V = I × R', s === 1);
+    box(384, 245, 155, 65, 'OUTPUT', s >= 2 ? '10.00 V' : '?', s === 2);
+    arrow('M175 278 H200', s >= 1); arrow('M357 278 H382', s >= 2);
+  } else if (l.t === 2) {
+    box(90, 65, 155, 75, 'int a', '5', s === 0); box(315, 65, 155, 75, 'int b', '2', s === 0);
+    if (s >= 1) { arrow('M168 140 V175 H140 V195'); box(35, 195, 210, 75, 'integer division → float', '5 / 2 = 2.0', s === 1); }
+    if (s >= 2) { arrow('M392 140 V175 H420 V195'); box(315, 195, 210, 75, 'cast before division', '5.0 / 2 = 2.5', s === 2); }
+    if (s === 3) text(280, 315, '2.0 ≠ 2.5  •  bahagian pecahan penting', 18);
+  } else if (l.t === 3) {
+    node(215, 45, 130, 35, 'START', 'terminal'); arrow('M280 80 V95');
+    node(205, 95, 150, 40, 'mark = 65', 'process', s === 0); arrow('M280 135 V150', s >= 1);
+    node(190, 150, 180, 75, '65 ≥ 50?', 'decision', s === 1);
+    arrow('M190 188 H100 V260', s >= 2); arrow('M370 188 H460 V260', false);
+    text(120, 180, 'TRUE', 13); text(440, 180, 'FALSE', 13);
+    node(30, 260, 140, 45, 'Print PASS', 'io', s === 2); node(390, 260, 140, 45, 'Print FAIL', 'io');
+    arrow('M100 305 V325 H280 V340', s === 2); arrow('M460 305 V325 H280', false);
+    node(220, 340, 120, 35, 'END', 'terminal', s === 2);
+  } else if (l.t === 4) {
+    const d = l.n.startsWith('do-');
+    const i = Number((a[2].match(/i = (\d+)/) || [])[1] || 1);
+    const fasa = s === 0 ? 'init' : a[1].startsWith('Paparkan') ? 'print' : a[1].startsWith('Tambah') ? 'update' : 'cond';
+    const tamat = a[2].includes('FALSE');
+    box(25, 65, 135, 80, 'counter i', i, true);
+    text(92, 172, fasa === 'update' ? `${i - 1} + 1 = ${i}` : fasa === 'cond' ? `${i} ≤ 5 : ${tamat ? 'FALSE' : 'TRUE'}` : '', 14);
+    text(92, 208, 'Console output', 13);
+    box(15, 220, 155, 65, 'printf', a[3].trim() || '—', fasa === 'print');
+    const urutan = d ? ['init', 'print', 'update', 'cond'] : ['init', 'cond', 'print', 'update'];
+    const yy = {}; urutan.forEach((v, j) => { yy[v] = 70 + j * 65; });
+    node(290, 35, 120, 25, 'START', 'terminal'); arrow('M350 60 V70');
+    urutan.forEach((v, j) => {
+      node(275, yy[v], 150, 42, { init: 'i = 1', cond: 'i ≤ 5?', print: 'Print i', update: 'i++' }[v], v === 'cond' ? 'decision' : v === 'print' ? 'io' : 'process', fasa === v);
+      if (j < 3) arrow(`M350 ${yy[v] + 42} V${yy[urutan[j + 1]]}`, fasa === urutan[j + 1] && !tamat);
+    });
+    if (d) {
+      arrow(`M425 ${yy.cond + 21} H485 V${yy.print + 21} H425`, fasa === 'cond' && !tamat);
+      text(478, yy.cond + 12, 'Yes', 12); arrow(`M350 ${yy.cond + 42} V345`, tamat); text(370, 335, 'No', 12);
+    } else {
+      arrow(`M275 ${yy.update + 21} H230 V${yy.cond + 21} H275`, fasa === 'update');
+      arrow(`M425 ${yy.cond + 21} H500 V360 H410`, tamat);
+      text(475, yy.cond + 12, 'No', 12); text(365, yy.cond + 56, 'Yes', 12);
+    }
+    node(290, 345, 120, 30, 'END', 'terminal', tamat);
+  } else if (l.t === 5) {
+    text(140, 65, 'main()', 20); text(420, 65, 'tambah(a, b)', 20);
+    node(50, 85, 180, 42, 'tambah(3, 4)', 'call', s === 1);
+    node(330, 85, 180, 42, 'Function entry', 'terminal', s === 2);
+    if (s >= 1) arrow('M230 106 H330', s === 1);
+    if (s >= 2) { box(325, 150, 90, 65, 'a', '3', s === 2); box(435, 150, 90, 65, 'b', '4', s === 2); arrow('M420 127 V145', s === 2); }
+    if (s >= 3) { node(330, 240, 180, 42, 'return 3 + 4 = 7', 'process', s === 3); arrow('M420 215 V240', s === 3); arrow('M330 261 H140 V285', s === 3); box(50, 285, 180, 65, 'hasil', '7', s === 4); }
+    if (s === 0) text(280, 195, 'int tambah(int a, int b);', 18);
+  } else if (l.t === 6) {
+    const satu = l.n.startsWith('1D'), vals = satu ? [75, 80, 92, 68, 85] : [1, 2, 3, 4, 5, 6], sasar = satu ? 2 : 5;
+    vals.forEach((v, j) => {
+      const x = satu ? 20 + j * 105 : 110 + (j % 3) * 115, y = satu ? 100 : 65 + Math.floor(j / 3) * 90;
+      box(x, y, 95, 70, satu ? `[${j}]` : `[${Math.floor(j / 3)}][${j % 3}]`, v, s >= 1 && j === sasar);
+    });
+    if (s >= 1) {
+      const x = satu ? 20 + sasar * 105 + 47 : 110 + 2 * 115 + 47, y = satu ? 170 : 225;
+      arrow(`M${x} ${y} V255 H280 V275`); box(205, 275, 150, 70, 'x', vals[sasar], true);
+    }
+    text(280, 368, satu ? 'Index bermula pada 0' : 'Index baris → index lajur', 15);
+  } else if (l.n === 'Pointer') {
+    box(350, 120, 165, 90, 'x · 0x1000', s >= 2 ? '80' : '50', s === 0 || s === 2);
+    if (s >= 1) { box(35, 120, 180, 90, 'ptr', '0x1000', s === 1); arrow('M215 165 H350'); text(280, 150, 'points to', 13); }
+    if (s >= 2) text(280, 265, '*ptr = 80  →  x = 80', 21);
+    text(280, 325, '0x1000 hanya alamat contoh', 13);
+  } else {
+    node(140, 65, 280, 45, 'struct Pelajar', 'process', s === 0);
+    box(90, 145, 180, 75, 'nama[20]', s >= 1 ? 'Aina' : 'char array', s === 1);
+    box(290, 145, 180, 75, 'cgpa', s >= 1 ? '3.92' : 'float', s === 1);
+    arrow('M280 110 V130 H180 V145'); arrow('M280 130 H380 V145');
+    if (s >= 2) { arrow('M380 220 V265 H280 V280'); box(190, 280, 180, 65, 'p.cgpa', '3.92', true); }
+  }
+
+  $('visual').innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Papan visual: ${esc(l.n)}, langkah ${s + 1}" class="muncul">
+    <defs><marker id="anakPanah" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" class="anak-panah"/></marker></defs>${parts.join('')}</svg>`;
+}
+
+
+/* ================================================================
+   TANYA CIKGU C-BOT — AI (Fasa 6, beta)
+   Soalan → Apps Script (Code.gs) → Gemini → JSON pelajaran →
+   DISAHKAN di sini → dimainkan oleh enjin yang sama.
+   AI tidak pernah menjalankan kod dalam pelayar: hanya data.
+   ================================================================ */
+const CADANGAN = ['Saya tak faham nested loop', 'Terangkan while loop jumlah 1 hingga 3', 'Apa beza if dan if-else?', 'Bagaimana break berfungsi dalam loop?'];
+function idPelajar() {
+  try {
+    let id = localStorage.getItem('clab-smarttutor-id');
+    if (!id) { id = 'p' + Math.random().toString(36).slice(2, 10); localStorage.setItem('clab-smarttutor-id', id); }
+    return id;
+  } catch (e) { return 'tanpa-id'; }
+}
+
+// Sahkan & bersihkan JSON daripada AI. Pulangkan objek pelajaran atau {jawapan}.
+function sahkanAI(j) {
+  const teks = (x, max) => typeof x === 'string' ? x.slice(0, max) : (typeof x === 'number' ? String(x) : '');
+  if (!j || typeof j !== 'object') throw new Error('Format jawapan tidak sah.');
+  const topik = Math.min(7, Math.max(1, parseInt(j.topik, 10) || 4));
+  if (j.jenis === 'jawapan' || !Array.isArray(j.steps) || !j.steps.length || !Array.isArray(j.code)) {
+    return { jawapan: teks(j.jawapan || j.konsep || 'Maaf, saya tidak dapat menjawab soalan ini.', 900) };
+  }
+  const code = j.code.slice(0, 22).map((x) => teks(x, 120));
+  const vars = (Array.isArray(j.vars) ? j.vars : []).filter((v) => /^[A-Za-z_][\w.\[\]]{0,11}$/.test(v)).slice(0, 4);
+
+  // flowchart
+  let flow = null, nota = '';
+  if (j.flow && Array.isArray(j.flow.nodes) && Array.isArray(j.flow.edges)) {
+    const JENIS = ['terminal', 'process', 'decision', 'io', 'call'], LALUAN = ['v', 'loopL', 'loopL2', 'loopR', 'loopR2', 'outR', 'outR2', 'elbowL', 'elbowR'];
+    const nodes = j.flow.nodes.slice(0, 16).filter((n) => n && /^[\w-]{1,20}$/.test(n.id) && JENIS.includes(n.type)).map((n) => ({
+      id: n.id, type: n.type, label: teks(n.label, 22),
+      row: Math.min(12, Math.max(0, parseInt(n.row, 10) || 0)), col: [-1, 0, 1].includes(n.col) ? n.col : 0
+    }));
+    const ids = new Set(nodes.map((n) => n.id));
+    const edges = j.flow.edges.slice(0, 24).filter((e) => Array.isArray(e) && ids.has(e[0]) && ids.has(e[1]))
+      .map((e) => [e[0], e[1], teks(e[2] || '', 8), LALUAN.includes(e[3]) ? e[3] : 'v']);
+    flow = { nodes, edges };
+    const isu = nodes.length ? semakFlowchart(flow) : ['kosong'];
+    if (isu.length) { console.warn('Flowchart AI ditolak:', isu); flow = null; nota = ' Flowchart tidak dipaparkan kerana tidak memenuhi standard.'; }
+  }
+  const nodeIds = new Set(flow ? flow.nodes.map((n) => n.id) : []);
+  const edgeIds = new Set(flow ? flow.edges.map((e) => e[0] + '>' + e[1]) : []);
+
+  // langkah & beat
+  const steps = j.steps.slice(0, 40).map((st) => {
+    const beats = (Array.isArray(st && st.beats) ? st.beats : []).slice(0, 4).map((b0) => {
+      const b = {};
+      b.say = teks(b0.say, 240) || '…';
+      if (Number.isInteger(b0.line) && b0.line >= 0 && b0.line < code.length) {
+        b.line = b0.line;
+        b.part = typeof b0.part === 'string' && b0.part && code[b0.line].includes(b0.part) ? b0.part : '';
+      }
+      if ('node' in b0) b.node = nodeIds.has(b0.node) ? b0.node : null;
+      if ('edge' in b0) b.edge = edgeIds.has(b0.edge) ? b0.edge : null;
+      if (b0.vars && typeof b0.vars === 'object') {
+        const v = {};
+        Object.keys(b0.vars).forEach((key) => { if (vars.includes(key)) v[key] = teks(b0.vars[key], 12); });
+        if (Object.keys(v).length) b.vars = v;
+      }
+      if (vars.includes(b0.changed)) b.changed = b0.changed;
+      if (typeof b0.out === 'string') b.out = b0.out.slice(0, 120);
+      if (b0.cond && typeof b0.cond === 'object') b.cond = { expr: teks(b0.cond.expr, 28), hasil: b0.cond.hasil === true ? true : b0.cond.hasil === false ? false : null };
+      if (typeof b0.note === 'string') b.note = b0.note.slice(0, 30);
+      return b;
+    }).filter((b) => b.say);
+    return beats.length ? { beats } : null;
+  }).filter(Boolean);
+  if (!steps.length) throw new Error('Pelajaran tiada langkah.');
+  steps[0].beats[0] = Object.assign({ cond: null, note: '', changed: null }, steps[0].beats[0]);
+  steps.forEach((st) => { st.beats[0] = Object.assign({ cond: null, note: '', changed: null }, st.beats[0]); });
+
+  const kuiz = (Array.isArray(j.kuiz) ? j.kuiz : []).slice(0, 3).filter((q) => q && Array.isArray(q.opts) && q.opts.length >= 2 && Number.isInteger(q.a) && q.a >= 0 && q.a < q.opts.length)
+    .map((q) => ({ q: teks(q.q, 200), opts: q.opts.slice(0, 4).map((o) => teks(o, 80)), a: q.a, why: teks(q.why, 200) }));
+
+  return {
+    pelajaran: {
+      id: 'ai-' + Date.now(), t: topik, ai: true,
+      n: '🤖 ' + (teks(j.tajuk, 40) || 'Pelajaran C-Bot'),
+      c: (teks(j.konsep, 240) || '') + ' (Dijana AI — semak dengan nota kuliah.)' + nota,
+      vars, kuiz, bina: () => ({ code, flow, steps })
+    }
+  };
+}
+
+async function tanyaCBot(soalan) {
+  soalan = (soalan || '').trim();
+  const st = $('statusAI');
+  if (soalan.length < 4) { st.textContent = 'Tulis soalan anda dahulu.'; return; }
+  if (!AI_URL) { st.textContent = 'Cikgu C-Bot belum disambungkan kepada AI. (Pensyarah: isi AI_URL dalam fail ini.)'; return; }
+  henti();
+  $('btnTanya').disabled = true; $('jawapanAI').hidden = true;
+  st.className = 'lembut memuat'; st.textContent = 'Cikgu C-Bot sedang menyediakan pelajaran… (biasanya 15–60 saat)';
+  const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 150000);
+  try {
+    const res = await fetch(AI_URL, { method: 'POST', body: JSON.stringify({ soalan, id: idPelajar() }), signal: ctl.signal });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.ralat || 'Ralat pelayan.');
+    const hasil = sahkanAI(data.pelajaran);
+    st.className = 'lembut';
+    const baki = typeof data.baki === 'number' ? ` Baki soalan hari ini: ${data.baki}.` : '';
+    if (hasil.jawapan) {
+      $('jawapanAI').textContent = hasil.jawapan; $('jawapanAI').hidden = false;
+      st.textContent = 'Jawapan ringkas (tiada pelajaran papan untuk soalan ini).' + baki;
+      const id = ++token; cakap(hasil.jawapan, id);
+      return;
+    }
+    PELAJARAN.push(hasil.pelajaran);
+    pilih(PELAJARAN.length - 1);
+    st.textContent = `Pelajaran baharu "${hasil.pelajaran.n.replace('🤖 ', '')}" sedia di papan.` + baki;
+    $('papan').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    bermain = true; $('btnMain').textContent = '⏸ Jeda'; mainkan(true);
+  } catch (e) {
+    st.className = 'lembut';
+    st.textContent = e.name === 'AbortError' ? 'Masa menunggu tamat. Cuba lagi.' : '⚠ ' + e.message;
+  } finally {
+    clearTimeout(t); $('btnTanya').disabled = false;
+  }
+}
+$('btnTanya').onclick = () => tanyaCBot($('soalanAI').value);
+$('soalanAI').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); tanyaCBot($('soalanAI').value); } });
+$('cadanganAI').replaceChildren(...CADANGAN.map((c) => el('button', { type: 'button', on: () => { $('soalanAI').value = c; tanyaCBot(c); } }, c)));
+if (!AI_URL) $('statusAI').textContent = 'Cikgu C-Bot belum disambungkan kepada AI. Pelajaran sedia ada di bawah masih boleh digunakan.';
+
+/* MULA */
+paparSkor();
+pilih(3);
+</script>
+</body>
+</html>
