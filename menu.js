@@ -23,6 +23,7 @@
     ]],
     ['Belajar & Berlatih', [
       ['💻', 'Learn C', BASE + 'learn-c/', '', '1'],
+      ['🖥️', 'Program Studio', BASE + 'learn-c/#studio', '', '', 'sub'],
       ['🧑‍🏫', 'SmartTutor', BASE + 'smarttutor/', '', '2'],
       ['▶️', 'C Lab Compiler', 'https://circuitcode-lab.github.io/compiler/', '', '3'],
       ['🎮', 'Games', BASE + 'games/', '', '4']
@@ -70,6 +71,8 @@
   .cm-item{display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;color:inherit;font-family:inherit;font-weight:600;font-size:14.5px;line-height:1.3;
     padding:9px 10px;border-radius:11px;border:0;background:transparent;cursor:pointer;text-align:left}
   .cm-item:hover{background:rgba(123,63,228,.10)}
+  .cm-sub{padding-left:26px!important;font-size:13.5px!important}
+  .cm-kecil .cm-sub{padding-left:0!important}
   .cm-item.aktif{background:linear-gradient(135deg,#3A2CC9,#7B3FE4);color:#fff}
   .cm-ik{width:26px;flex:none;text-align:center;font-size:18px}
   .cm-no{margin-left:auto;font-size:11px;font-weight:800;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:rgba(123,63,228,.15)}
@@ -112,7 +115,7 @@
       var ik = '<span class="cm-ik" aria-hidden="true">' + m[0] + '</span><span class="cm-teks">' + m[1] + '</span>' +
         (m[4] ? '<span class="cm-no">' + m[4] + '</span>' : '') + (m[3] === 'luar' ? '<span class="cm-luar" aria-hidden="true">↗</span>' : '');
       if (m[3] === 'aksi') isi += '<button type="button" class="cm-item" data-aksi="' + m[2] + '" title="' + m[1] + '">' + ik + '</button>';
-      else isi += '<a class="cm-item' + (semasa(m[2]) ? ' aktif" aria-current="page' : '') + '" href="' + m[2] + '" title="' + m[1] + '"' +
+      else isi += '<a class="cm-item' + (m[5] ? ' cm-sub' : '') + (semasa(m[2]) ? ' aktif" aria-current="page' : '') + '" href="' + m[2] + '" title="' + m[1] + '"' +
         (m[3] === 'luar' ? ' target="_blank" rel="noopener"' : '') + (m[3] === 'muat' ? ' download' : '') + '>' + ik + '</a>';
     });
   });
